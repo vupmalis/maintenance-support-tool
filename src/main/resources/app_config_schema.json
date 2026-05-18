@@ -1,0 +1,148 @@
+{
+  "type": "object",
+  "properties": {
+    "sources": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "examples": [
+              "PrimaryDB"
+            ]
+          },
+          "type": {
+            "type": "string",
+            "examples": [
+              "db"
+            ]
+          },
+          "connectionDetails": {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "examples": [
+                  "PostgreSQL"
+                ]
+              },
+              "host": {
+                "type": "string",
+                "examples": [
+                  "localhost"
+                ]
+              },
+              "port": {
+                "type": "string",
+                "examples": [
+                  "5439"
+                ]
+              },
+              "userName": {
+                "type": "string",
+                "examples": [
+                  "stock"
+                ]
+              },
+              "password": {
+                "type": "string",
+                "examples": [
+                  "pass123"
+                ]
+              }
+            },
+            "required": [
+              "type",
+              "host",
+              "port",
+              "userName",
+              "password"
+            ]
+          }
+        },
+        "required": [
+          "name",
+          "type",
+          "connectionDetails"
+        ]
+      }
+    },
+    "searchSection": {
+      "type": "object",
+      "properties": {
+        "searchOptions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "examples": [
+                  "Search by Id"
+                ]
+              },
+              "source": {
+                "type": "string",
+                "examples": [
+                  "PrimaryDB"
+                ]
+              },
+              "request": {
+                "type": "string",
+                "examples": [
+                  "SELECT * FROM stocks WHERE id = :1"
+                ]
+              },
+              "parameters": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "type": "string",
+                      "examples": [
+                        "id"
+                      ]
+                    },
+                    "title": {
+                      "type": "string",
+                      "examples": [
+                        "Id"
+                      ]
+                    },
+                    "parameterId": {
+                      "type": "integer",
+                      "examples": [
+                        1
+                      ]
+                    }
+                  },
+                  "required": [
+                    "name",
+                    "title",
+                    "parameterId"
+                  ]
+                }
+              }
+            },
+            "required": [
+              "name",
+              "source",
+              "request",
+              "parameters"
+            ]
+          }
+        }
+      },
+      "required": [
+        "searchOptions"
+      ]
+    }
+  },
+  "required": [
+    "sources",
+    "searchSection"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema"
+}
