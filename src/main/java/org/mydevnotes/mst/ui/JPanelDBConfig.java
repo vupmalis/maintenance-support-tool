@@ -1,5 +1,7 @@
 package org.mydevnotes.mst.ui;
 
+import org.mydevnotes.mst.config.ConnectionDetails;
+
 /**
  *
  * @author vupma
@@ -12,6 +14,15 @@ public class JPanelDBConfig extends javax.swing.JPanel {
     public JPanelDBConfig() {
         initComponents();
     }
+    
+    public JPanelDBConfig(ConnectionDetails connectionDetails) {
+        super();
+        initComponents();
+        
+        jPasswordField.setText(connectionDetails.getPassword());
+        jTextFieldConnectionString.setText(String.format("jdbc:postgresql://%s:%s/%s", connectionDetails.getHost(), connectionDetails.getPort(), "postgres"));
+        jTextFieldUserName.setText(connectionDetails.getUserName());
+    }    
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -29,7 +40,7 @@ public class JPanelDBConfig extends javax.swing.JPanel {
         jPasswordField = new javax.swing.JPasswordField();
         jTextFieldUserName = new javax.swing.JTextField();
         jButtonDisconnect = new javax.swing.JButton();
-        jTextFieldConnectionString2 = new javax.swing.JTextField();
+        jTextFieldConnectionString = new javax.swing.JTextField();
 
         jLabel1.setLabelFor(jTextFieldUserName);
         jLabel1.setText("UserName:");
@@ -41,13 +52,15 @@ public class JPanelDBConfig extends javax.swing.JPanel {
 
         jButtonConnect.setText("Connect");
 
-        jPasswordField.setText("jPasswordField");
+        jPasswordField.setText("123456");
+        jPasswordField.setToolTipText("");
 
         jTextFieldUserName.setText("userName");
 
         jButtonDisconnect.setText("Disconnect");
 
-        jTextFieldConnectionString2.setText("jdbc:postgresql://localhost:5432/postgres");
+        jTextFieldConnectionString.setText("jdbc:postgresql://localhost:5432/postgres");
+        jTextFieldConnectionString.setToolTipText("");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -70,7 +83,7 @@ public class JPanelDBConfig extends javax.swing.JPanel {
                             .addComponent(jButtonConnect, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(jButtonDisconnect, javax.swing.GroupLayout.DEFAULT_SIZE, 90, Short.MAX_VALUE)))
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jTextFieldConnectionString2)
+                        .addComponent(jTextFieldConnectionString)
                         .addGap(94, 94, 94)))
                 .addContainerGap())
         );
@@ -90,7 +103,7 @@ public class JPanelDBConfig extends javax.swing.JPanel {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel3)
-                    .addComponent(jTextFieldConnectionString2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jTextFieldConnectionString, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
@@ -103,7 +116,7 @@ public class JPanelDBConfig extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JPasswordField jPasswordField;
-    private javax.swing.JTextField jTextFieldConnectionString2;
+    private javax.swing.JTextField jTextFieldConnectionString;
     private javax.swing.JTextField jTextFieldUserName;
     // End of variables declaration//GEN-END:variables
 }

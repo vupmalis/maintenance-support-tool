@@ -1,5 +1,8 @@
 package org.mydevnotes.mst.ui;
 
+import org.mydevnotes.mst.config.ConnectionDetails;
+import org.mydevnotes.mst.config.Source;
+
 /**
  *
  * @author vupma
@@ -10,7 +13,17 @@ public class JPanelConfig extends javax.swing.JPanel {
      * Creates new form JPanelConfig
      */
     public JPanelConfig() {
-        initComponents();
+        initComponents();        
+    }
+    
+    public void AddDataSourceConfig(Source dataSource){
+        
+        switch (dataSource.getType()) {
+            case "db":
+                jTabbedPane.addTab(dataSource.getName(),new JPanelDBConfig(dataSource.getConnectionDetails()));                
+                break;
+        }        
+                
     }
 
     /**

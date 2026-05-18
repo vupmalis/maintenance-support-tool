@@ -37,7 +37,7 @@
                       </Group>
                   </Group>
                   <Group type="102" attributes="0">
-                      <Component id="jTextFieldConnectionString2" max="32767" attributes="0"/>
+                      <Component id="jTextFieldConnectionString" max="32767" attributes="0"/>
                       <EmptySpace min="-2" pref="94" max="-2" attributes="0"/>
                   </Group>
               </Group>
@@ -63,7 +63,7 @@
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
                   <Component id="jLabel3" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="jTextFieldConnectionString2" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="jTextFieldConnectionString" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
               <EmptySpace max="32767" attributes="0"/>
           </Group>
@@ -99,7 +99,8 @@
     </Component>
     <Component class="javax.swing.JPasswordField" name="jPasswordField">
       <Properties>
-        <Property name="text" type="java.lang.String" value="jPasswordField"/>
+        <Property name="text" type="java.lang.String" value="123456"/>
+        <Property name="toolTipText" type="java.lang.String" value=""/>
       </Properties>
     </Component>
     <Component class="javax.swing.JTextField" name="jTextFieldUserName">
@@ -112,9 +113,10 @@
         <Property name="text" type="java.lang.String" value="Disconnect"/>
       </Properties>
     </Component>
-    <Component class="javax.swing.JTextField" name="jTextFieldConnectionString2">
+    <Component class="javax.swing.JTextField" name="jTextFieldConnectionString">
       <Properties>
         <Property name="text" type="java.lang.String" value="jdbc:postgresql://localhost:5432/postgres"/>
+        <Property name="toolTipText" type="java.lang.String" value=""/>
       </Properties>
     </Component>
   </SubComponents>

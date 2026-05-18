@@ -11,6 +11,10 @@ import java.io.InputStream;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
+import javax.swing.JOptionPane;
+import javax.swing.UIManager;
+import org.mydevnotes.mst.ApplicationContext;
 import org.mydevnotes.mst.config.AppConfig;
 
 /**
@@ -35,22 +39,69 @@ public class JFrameMain extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jSplitPane1 = new javax.swing.JSplitPane();
+        jSplitPane3 = new javax.swing.JSplitPane();
+        jPanelConfig = new org.mydevnotes.mst.ui.JPanelConfig();
+        jPanelSearchSection1 = new org.mydevnotes.mst.ui.JPanelSearchSection();
+        jSplitPane2 = new javax.swing.JSplitPane();
+        jScrollPaneSearchResult = new javax.swing.JScrollPane();
+        jScrollPaneDetails = new javax.swing.JScrollPane();
+
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Maintenance Support Tool");
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowOpened(java.awt.event.WindowEvent evt) {
+                formWindowOpened(evt);
+            }
+        });
+
+        jSplitPane1.setDividerLocation(80);
+        jSplitPane1.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
+
+        jSplitPane3.setDividerLocation(50);
+        jSplitPane3.setLeftComponent(jPanelConfig);
+        jSplitPane3.setRightComponent(jPanelSearchSection1);
+
+        jSplitPane1.setTopComponent(jSplitPane3);
+
+        jSplitPane2.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
+        jSplitPane2.setTopComponent(jScrollPaneSearchResult);
+        jSplitPane2.setRightComponent(jScrollPaneDetails);
+
+        jSplitPane1.setRightComponent(jSplitPane2);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 400, Short.MAX_VALUE)
+            .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 622, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 300, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 457, Short.MAX_VALUE)
+                .addContainerGap())
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
+
+        if (!ApplicationContext.getApplicationContext().configIsValid()) {
+            JOptionPane.showMessageDialog(
+                    JFrameMain.this,
+                    "App config has errors: " + ApplicationContext.getApplicationContext().getConfigValidationErrors(),
+                    "Config Error",
+                    JOptionPane.ERROR_MESSAGE
+            );
+
+            System.exit(1);
+        }
+
+
+    }//GEN-LAST:event_formWindowOpened
 
     /**
      * @param args the command line arguments
@@ -62,45 +113,61 @@ public class JFrameMain extends javax.swing.JFrame {
          * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
          */
         try {
+            
+            /*
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+                System.out.println(info.getName());
                 if ("Nimbus".equals(info.getName())) {
                     javax.swing.UIManager.setLookAndFeel(info.getClassName());
                     break;
                 }
             }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(JFrameMain.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(JFrameMain.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(JFrameMain.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+            */
+           
+            UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
+           
+            
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | javax.swing.UnsupportedLookAndFeelException ex) {
             java.util.logging.Logger.getLogger(JFrameMain.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
+        
+        //</editor-fold>
+       
         loadAppConfig(args);
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new JFrameMain().setVisible(true);
+                JFrameMain jFrameMain = new JFrameMain();
+
+                jFrameMain.initConfigSection(ApplicationContext.getApplicationContext().getAppConfig());
+
+                jFrameMain.setVisible(true);
             }
         });
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private org.mydevnotes.mst.ui.JPanelConfig jPanelConfig;
+    private org.mydevnotes.mst.ui.JPanelSearchSection jPanelSearchSection1;
+    private javax.swing.JScrollPane jScrollPaneDetails;
+    private javax.swing.JScrollPane jScrollPaneSearchResult;
+    private javax.swing.JSplitPane jSplitPane1;
+    private javax.swing.JSplitPane jSplitPane2;
+    private javax.swing.JSplitPane jSplitPane3;
     // End of variables declaration//GEN-END:variables
 
     private static void loadAppConfig(String[] args) {
         if (args.length == 0) {
             System.out.println("Reading config json");
-            
+
             ObjectMapper mapper = new ObjectMapper();
             InputStream is
                     = Thread.currentThread()
                             .getContextClassLoader()
                             .getResourceAsStream("app_config_example.json");
-            
+
             JsonNode schemaNode;
             try {
                 schemaNode = mapper.readTree(
@@ -108,35 +175,47 @@ public class JFrameMain extends javax.swing.JFrame {
                                 .getContextClassLoader()
                                 .getResourceAsStream("app_config_schema.json")
                 );
-                
+
                 JsonSchemaFactory factory = JsonSchemaFactory.getInstance(SpecVersion.VersionFlag.V7);
                 JsonSchema schema = factory.getSchema(schemaNode);
-                
+
                 JsonNode jsonNode = mapper.readTree(is);
                 Set<ValidationMessage> errors = schema.validate(jsonNode);
-                
+
                 if (errors.isEmpty()) {
                     System.out.println("Valid JSON!");
                 } else {
                     errors.forEach(System.out::println);
+                    String validationErrors = errors.stream()
+                            .map(ValidationMessage::getMessage)
+                            .collect(Collectors.joining(System.lineSeparator()));
+                    ApplicationContext.getApplicationContext().setConfigValidationErrors(validationErrors);
                     return;
                 }
             } catch (IOException ex) {
                 Logger.getLogger(JFrameMain.class.getName()).log(Level.SEVERE, null, ex);
             }
-            
+
             try {
                 is = Thread.currentThread()
-                            .getContextClassLoader()
-                            .getResourceAsStream("app_config_example.json");
-                
+                        .getContextClassLoader()
+                        .getResourceAsStream("app_config_example.json");
+
                 AppConfig appConfig = mapper.readValue(is, AppConfig.class);
-                
+
+                ApplicationContext.getApplicationContext().setAppConfig(appConfig);
+
                 appConfig.getSearchSection().getSearchOptions().forEach(search -> System.out.println("appConfig: " + search.getName()));
             } catch (Exception ex) {
                 Logger.getLogger(JFrameMain.class.getName()).log(Level.SEVERE, null, ex);
             }
-            
+
         }
+    }
+
+    private void initConfigSection(AppConfig appConfig) {
+
+        appConfig.getSources().forEach(dataSource ->  jPanelConfig.AddDataSourceConfig(dataSource));
+
     }
 }
