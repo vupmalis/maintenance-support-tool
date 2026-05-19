@@ -1,20 +1,23 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JPanel.java to edit this template
+ */
 package org.mydevnotes.mst.ui;
+
+import org.mydevnotes.mst.EventLogger;
 
 /**
  *
  * @author vupma
  */
-public class JPanelSearchSection extends javax.swing.JPanel {
+public class JPanelDebugOutput extends javax.swing.JPanel implements EventLogger {
 
     /**
-     * Creates new form JPanelSearchSection
+     * Creates new form JPanelDebugOutput
      */
-    public JPanelSearchSection() {
+    public JPanelDebugOutput() {
         initComponents();
     }
-    
-    
-    
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -25,24 +28,33 @@ public class JPanelSearchSection extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jTabbedPane1 = new javax.swing.JTabbedPane();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        jTextAreaLogs = new javax.swing.JTextArea();
+
+        jTextAreaLogs.setColumns(20);
+        jTextAreaLogs.setRows(5);
+        jScrollPane1.setViewportView(jTextAreaLogs);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 394, Short.MAX_VALUE)
-                .addContainerGap())
+            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 400, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 149, Short.MAX_VALUE)
+            .addComponent(jScrollPane1)
         );
     }// </editor-fold>//GEN-END:initComponents
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JTabbedPane jTabbedPane1;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JTextArea jTextAreaLogs;
     // End of variables declaration//GEN-END:variables
+
+    @Override
+    public void addLog(String log) {
+        jTextAreaLogs.append(log);
+    }
 }

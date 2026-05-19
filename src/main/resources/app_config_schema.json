@@ -42,13 +42,19 @@
               "userName": {
                 "type": "string",
                 "examples": [
-                  "stock"
+                  "iot_manager"
                 ]
               },
               "password": {
                 "type": "string",
                 "examples": [
-                  "pass123"
+                  "qwe123"
+                ]
+              },
+              "connectionString": {
+                "type": "string",
+                "examples": [
+                  "jdbc:postgresql://localhost:5432/iot_devices"
                 ]
               }
             },
@@ -57,7 +63,8 @@
               "host",
               "port",
               "userName",
-              "password"
+              "password",
+              "connectionString"
             ]
           }
         },
@@ -91,7 +98,7 @@
               "request": {
                 "type": "string",
                 "examples": [
-                  "SELECT * FROM stocks WHERE id = :1"
+                  "SELECT d.* FROM devices.devices AS d WHERE d.id=:1"
                 ]
               },
               "parameters": {

@@ -7,8 +7,9 @@
 				"type": "PostgreSQL",
 				"host": "localhost",
 				"port": "5439",
-				"userName": "stock",
-				"password": "pass123"
+				"userName": "iot_manager",
+				"password": "qwe123",
+                                "connectionString": "jdbc:postgresql://localhost:5432/iot_devices"
 			}
 		}
 	],
@@ -17,7 +18,7 @@
 			{
 				"name": "Search by Id",
 				"source": "PrimaryDB",
-				"request": "SELECT * FROM stocks WHERE id = :1",
+				"request": "SELECT d.* FROM devices.devices AS d WHERE d.id=:1",
 				"parameters": [
 					{
 						"name": "id",

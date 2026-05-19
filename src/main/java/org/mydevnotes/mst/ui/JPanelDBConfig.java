@@ -1,12 +1,16 @@
 package org.mydevnotes.mst.ui;
 
+import org.mydevnotes.mst.ApplicationContext;
 import org.mydevnotes.mst.config.ConnectionDetails;
+import org.mydevnotes.mst.config.Source;
 
 /**
  *
  * @author vupma
  */
 public class JPanelDBConfig extends javax.swing.JPanel {
+    
+    private Source dataSource;
 
     /**
      * Creates new form JPanelDBConfig
@@ -15,13 +19,14 @@ public class JPanelDBConfig extends javax.swing.JPanel {
         initComponents();
     }
     
-    public JPanelDBConfig(ConnectionDetails connectionDetails) {
-        super();
-        initComponents();
+    public JPanelDBConfig(Source dataSource) {
+        this();
         
-        jPasswordField.setText(connectionDetails.getPassword());
-        jTextFieldConnectionString.setText(String.format("jdbc:postgresql://%s:%s/%s", connectionDetails.getHost(), connectionDetails.getPort(), "postgres"));
-        jTextFieldUserName.setText(connectionDetails.getUserName());
+        jPasswordField.setText(dataSource.getConnectionDetails().getPassword());
+        jTextFieldConnectionString.setText(dataSource.getConnectionDetails().getConnectionString());
+        jTextFieldUserName.setText(dataSource.getConnectionDetails().getUserName());
+        
+        this.dataSource = dataSource;
     }    
 
     /**
@@ -51,6 +56,11 @@ public class JPanelDBConfig extends javax.swing.JPanel {
         jLabel3.setText("JDBC connection string:");
 
         jButtonConnect.setText("Connect");
+        jButtonConnect.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonConnectActionPerformed(evt);
+            }
+        });
 
         jPasswordField.setText("123456");
         jPasswordField.setToolTipText("");
@@ -58,6 +68,11 @@ public class JPanelDBConfig extends javax.swing.JPanel {
         jTextFieldUserName.setText("userName");
 
         jButtonDisconnect.setText("Disconnect");
+        jButtonDisconnect.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonDisconnectActionPerformed(evt);
+            }
+        });
 
         jTextFieldConnectionString.setText("jdbc:postgresql://localhost:5432/postgres");
         jTextFieldConnectionString.setToolTipText("");
@@ -107,6 +122,19 @@ public class JPanelDBConfig extends javax.swing.JPanel {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
+
+    private void jButtonConnectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonConnectActionPerformed
+        
+        this.dataSource.getConnectionDetails().setUserName(this.jTextFieldUserName.getText());
+        this.dataSource.getConnectionDetails().setPassword(String.valueOf(this.jPasswordField.getPassword()));
+        this.dataSource.getConnectionDetails().setConnectionString(jTextFieldConnectionString.getText());
+        
+        ApplicationContext.getApplicationContext().createPosgreSQLConnection(this.dataSource);
+    }//GEN-LAST:event_jButtonConnectActionPerformed
+
+    private void jButtonDisconnectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonDisconnectActionPerformed
+        ApplicationContext.getApplicationContext().disconnectPostgresqlConnection(this.dataSource);
+    }//GEN-LAST:event_jButtonDisconnectActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
