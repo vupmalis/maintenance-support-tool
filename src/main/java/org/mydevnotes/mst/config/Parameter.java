@@ -14,108 +14,137 @@ import jakarta.validation.constraints.NotNull;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
-    "name",
-    "title",
-    "parameterId"
+"name",
+"title",
+"type",
+"parameterId"
 })
 @Generated("jsonschema2pojo")
 public class Parameter {
 
-    /**
-     * 
-     * (Required)
-     * 
-     */
-    @JsonProperty("name")
-    @NotNull
-    private String name;
-    /**
-     * 
-     * (Required)
-     * 
-     */
-    @JsonProperty("title")
-    @NotNull
-    private String title;
-    /**
-     * 
-     * (Required)
-     * 
-     */
-    @JsonProperty("parameterId")
-    @NotNull
-    private int parameterId;
-    @JsonIgnore
-    private Map<String, @Valid Object> additionalProperties = new LinkedHashMap<String, Object>();
+/**
+*
+* (Required)
+*
+*/
+@JsonProperty("name")
+@NotNull
+private String name;
+/**
+*
+* (Required)
+*
+*/
+@JsonProperty("title")
+@NotNull
+private String title;
+/**
+*
+* (Required)
+*
+*/
+@JsonProperty("type")
+@NotNull
+private String type;
+/**
+*
+* (Required)
+*
+*/
+@JsonProperty("parameterId")
+@NotNull
+private int parameterId;
+@JsonIgnore
+private Map<String, @Valid Object> additionalProperties = new LinkedHashMap<String, Object>();
 
-    /**
-     * 
-     * (Required)
-     * 
-     */
-    @JsonProperty("name")
-    public String getName() {
-        return name;
-    }
+/**
+*
+* (Required)
+*
+*/
+@JsonProperty("name")
+public String getName() {
+return name;
+}
 
-    /**
-     * 
-     * (Required)
-     * 
-     */
-    @JsonProperty("name")
-    public void setName(String name) {
-        this.name = name;
-    }
+/**
+*
+* (Required)
+*
+*/
+@JsonProperty("name")
+public void setName(String name) {
+this.name = name;
+}
 
-    /**
-     * 
-     * (Required)
-     * 
-     */
-    @JsonProperty("title")
-    public String getTitle() {
-        return title;
-    }
+/**
+*
+* (Required)
+*
+*/
+@JsonProperty("title")
+public String getTitle() {
+return title;
+}
 
-    /**
-     * 
-     * (Required)
-     * 
-     */
-    @JsonProperty("title")
-    public void setTitle(String title) {
-        this.title = title;
-    }
+/**
+*
+* (Required)
+*
+*/
+@JsonProperty("title")
+public void setTitle(String title) {
+this.title = title;
+}
 
-    /**
-     * 
-     * (Required)
-     * 
-     */
-    @JsonProperty("parameterId")
-    public int getParameterId() {
-        return parameterId;
-    }
+/**
+*
+* (Required)
+*
+*/
+@JsonProperty("type")
+public String getType() {
+return type;
+}
 
-    /**
-     * 
-     * (Required)
-     * 
-     */
-    @JsonProperty("parameterId")
-    public void setParameterId(int parameterId) {
-        this.parameterId = parameterId;
-    }
+/**
+*
+* (Required)
+*
+*/
+@JsonProperty("type")
+public void setType(String type) {
+this.type = type;
+}
 
-    @JsonAnyGetter
-    public Map<String, Object> getAdditionalProperties() {
-        return this.additionalProperties;
-    }
+/**
+*
+* (Required)
+*
+*/
+@JsonProperty("parameterId")
+public int getParameterId() {
+return parameterId;
+}
 
-    @JsonAnySetter
-    public void setAdditionalProperty(String name, Object value) {
-        this.additionalProperties.put(name, value);
-    }
+/**
+*
+* (Required)
+*
+*/
+@JsonProperty("parameterId")
+public void setParameterId(int parameterId) {
+this.parameterId = parameterId;
+}
+
+@JsonAnyGetter
+public Map<String, Object> getAdditionalProperties() {
+return this.additionalProperties;
+}
+
+@JsonAnySetter
+public void setAdditionalProperty(String name, Object value) {
+this.additionalProperties.put(name, value);
+}
 
 }

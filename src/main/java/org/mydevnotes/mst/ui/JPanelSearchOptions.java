@@ -15,8 +15,6 @@ public class JPanelSearchOptions extends javax.swing.JPanel {
         initComponents();
     }
     
-    
-    
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -46,9 +44,9 @@ public class JPanelSearchOptions extends javax.swing.JPanel {
     private javax.swing.JTabbedPane jTabbedPane;
     // End of variables declaration//GEN-END:variables
 
-    void addSearchOption(SearchOption searchOption) {
+    void addSearchOption(SearchOption searchOption, JPanelResultSet resultUi) {
         
-        JPanelSearchOption newSearchOptionPanel = new JPanelSearchOption(searchOption);
+        JPanelSearchOption newSearchOptionPanel = new JPanelSearchOption(searchOption, resultUi);
         jTabbedPane.addTab(searchOption.getName(), newSearchOptionPanel);
         
     }

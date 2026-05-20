@@ -98,7 +98,7 @@
               "request": {
                 "type": "string",
                 "examples": [
-                  "SELECT d.* FROM devices.devices AS d WHERE d.id=:1"
+                  "SELECT d.* FROM devices.devices AS d WHERE d.id=?"
                 ]
               },
               "parameters": {
@@ -118,6 +118,12 @@
                         "Id"
                       ]
                     },
+                    "type": {
+                      "type": "string",
+                      "examples": [
+                        "int"
+                      ]
+                    },
                     "parameterId": {
                       "type": "integer",
                       "examples": [
@@ -128,6 +134,7 @@
                   "required": [
                     "name",
                     "title",
+                    "type",
                     "parameterId"
                   ]
                 }

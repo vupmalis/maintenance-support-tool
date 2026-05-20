@@ -7,11 +7,23 @@ package org.mydevnotes.mst.ui;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JTextField;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import javax.swing.table.DefaultTableModel;
+import org.mydevnotes.mst.ApplicationContext;
 import org.mydevnotes.mst.config.Parameter;
 import org.mydevnotes.mst.config.SearchOption;
+import org.mydevnotes.mst.dao.DBQueryExecutor;
 
 /**
  *
@@ -21,7 +33,9 @@ public class JPanelSearchOption extends javax.swing.JPanel {
 
     private SearchOption searchOption;
     private GridBagConstraints gbc;
-    private int row = 0;    
+    private int row = 0;
+    private JPanelResultSet resultUi;
+    Map<String, String> paramValues = new HashMap<>();
 
     /**
      * Creates new form JPanelSearchOption
@@ -30,23 +44,27 @@ public class JPanelSearchOption extends javax.swing.JPanel {
         initComponents();
     }
 
-    JPanelSearchOption(SearchOption searchOption) {
+    JPanelSearchOption(SearchOption searchOption, JPanelResultSet resultUi) {
         this();
         
-        this.searchOption = searchOption;              
-        
+        this.searchOption = searchOption;
+        this.resultUi = resultUi;
+
         gbc = new GridBagConstraints();
         gbc.insets = new Insets(5, 5, 5, 5);
         gbc.anchor = GridBagConstraints.WEST;
         gbc.fill = GridBagConstraints.HORIZONTAL;
-        
+
         jPanel1.setLayout(new GridBagLayout());
-        
-        for(Parameter parameter: searchOption.getParameters()){           
-            addField(parameter.getTitle(), new JTextField(15));            
+
+        for (Parameter parameter : searchOption.getParameters()) {
+            JTextField newField = new JTextField(15);
+            newField.setName(parameter.getName());
+            bindTextField(newField, this.paramValues);
+            addField(parameter.getTitle(), newField);
         }
     }
-    
+
     private void addField(String labelText, JComponent field) {
 
         // label
@@ -63,6 +81,40 @@ public class JPanelSearchOption extends javax.swing.JPanel {
         jPanel1.add(field, gbc);
 
         row++;
+    }
+
+    public static void bindTextField(
+            JTextField field,
+            Map<String, String> values
+    ) {
+
+        field.getDocument().addDocumentListener(
+                new DocumentListener() {
+
+            private void update() {
+
+                values.put(
+                        field.getName(),
+                        field.getText()
+                );
+            }
+
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                update();
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                update();
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                update();
+            }
+        }
+        );
     }
 
     /**
@@ -92,6 +144,11 @@ public class JPanelSearchOption extends javax.swing.JPanel {
         jScrollPaneParameters.setViewportView(jPanel1);
 
         jButtonSearch.setText("Search");
+        jButtonSearch.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonSearchActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -99,7 +156,7 @@ public class JPanelSearchOption extends javax.swing.JPanel {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPaneParameters, javax.swing.GroupLayout.DEFAULT_SIZE, 200, Short.MAX_VALUE)
+                .addComponent(jScrollPaneParameters)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jButtonSearch)
                 .addContainerGap())
@@ -110,10 +167,37 @@ public class JPanelSearchOption extends javax.swing.JPanel {
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jButtonSearch)
-                    .addComponent(jScrollPaneParameters, javax.swing.GroupLayout.DEFAULT_SIZE, 137, Short.MAX_VALUE))
+                    .addComponent(jScrollPaneParameters))
                 .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
+
+    private void jButtonSearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonSearchActionPerformed
+
+        if (ApplicationContext.getApplicationContext().getPosgreSQLDataSource(this.searchOption.getSource()) == null) {
+
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Not connected to " + this.searchOption.getSource(),
+                    "DB connection error",
+                    JOptionPane.ERROR_MESSAGE
+            );
+            return;
+        }
+        
+        ApplicationContext.getApplicationContext().getEventLogger().addLog("Execute query " + this.searchOption.getName() + "; for " + this.paramValues + "\n");
+
+        try (Connection connection = ApplicationContext.getApplicationContext().getPosgreSQLDataSource(this.searchOption.getSource()).getConnection();) {
+            DefaultTableModel tableModel = DBQueryExecutor.execute(this.searchOption, connection, this.paramValues);
+            
+            this.resultUi.setTableModel(tableModel);
+
+        } catch (Exception ex) {
+            ApplicationContext.getApplicationContext().getEventLogger().addLog("Error during query execution " + ex.getMessage());
+            Logger.getLogger(JPanelSearchOption.class.getName()).log(Level.SEVERE, null, ex);
+        } 
+
+    }//GEN-LAST:event_jButtonSearchActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

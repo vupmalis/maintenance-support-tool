@@ -23,6 +23,10 @@ public class ApplicationContext {
     private Map<String, HikariDataSource> postgreSqlDataSources = new HashMap<>();
     private EventLogger eventLogger;
 
+    public EventLogger getEventLogger() {
+        return eventLogger;
+    }
+
     public AppConfig getAppConfig() {
         return appConfig;
     }

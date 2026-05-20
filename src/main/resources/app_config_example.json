@@ -18,15 +18,22 @@
 			{
 				"name": "Search by Id",
 				"source": "PrimaryDB",
-				"request": "SELECT d.* FROM devices.devices AS d WHERE d.id=:1",
+				"request": "SELECT d.* FROM devices.devices AS d WHERE d.id=?",
 				"parameters": [
 					{
 						"name": "id",
 						"title": "Id",
-						"parameterId": 1						
+                                                "type": "int",
+						"parameterId": 1                                                
 					}				
 				]
-			}
+			},
+			{
+				"name": "Find all",
+				"source": "PrimaryDB",
+				"request": "SELECT d.* FROM devices.devices AS d",
+				"parameters": []
+			}                        
 		]
 	}
 }

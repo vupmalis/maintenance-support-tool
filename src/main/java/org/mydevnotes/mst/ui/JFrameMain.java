@@ -45,6 +45,7 @@ public class JFrameMain extends javax.swing.JFrame {
         jPanelSearchSection = new org.mydevnotes.mst.ui.JPanelSearchOptions();
         jSplitPane2 = new javax.swing.JSplitPane();
         jScrollPaneSearchResult = new javax.swing.JScrollPane();
+        jPanelResultSet1 = new org.mydevnotes.mst.ui.JPanelResultSet();
         jScrollPaneDetails = new javax.swing.JScrollPane();
         jSplitPane4 = new javax.swing.JSplitPane();
         jPanel1 = new javax.swing.JPanel();
@@ -67,7 +68,11 @@ public class JFrameMain extends javax.swing.JFrame {
 
         jSplitPane1.setTopComponent(jSplitPane3);
 
+        jSplitPane2.setDividerLocation(120);
         jSplitPane2.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
+
+        jScrollPaneSearchResult.setViewportView(jPanelResultSet1);
+
         jSplitPane2.setTopComponent(jScrollPaneSearchResult);
 
         jSplitPane4.setDividerLocation(240);
@@ -81,7 +86,7 @@ public class JFrameMain extends javax.swing.JFrame {
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 100, Short.MAX_VALUE)
+            .addGap(0, 224, Short.MAX_VALUE)
         );
 
         jSplitPane4.setLeftComponent(jPanel1);
@@ -180,6 +185,7 @@ public class JFrameMain extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel1;
     private org.mydevnotes.mst.ui.JPanelConfig jPanelConfig;
     private org.mydevnotes.mst.ui.JPanelDebugOutput jPanelDebugOutput;
+    private org.mydevnotes.mst.ui.JPanelResultSet jPanelResultSet1;
     private org.mydevnotes.mst.ui.JPanelSearchOptions jPanelSearchSection;
     private javax.swing.JScrollPane jScrollPaneDetails;
     private javax.swing.JScrollPane jScrollPaneSearchResult;
@@ -247,7 +253,7 @@ public class JFrameMain extends javax.swing.JFrame {
     private void initConfigSection(AppConfig appConfig) {
 
         appConfig.getSources().forEach(dataSource ->  jPanelConfig.addDataSourceConfig(dataSource));
-        appConfig.getSearchSection().getSearchOptions().forEach(searchOption -> jPanelSearchSection.addSearchOption(searchOption));
+        appConfig.getSearchSection().getSearchOptions().forEach(searchOption -> jPanelSearchSection.addSearchOption(searchOption, jPanelResultSet1));
 
     }
     
