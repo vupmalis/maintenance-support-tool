@@ -16,31 +16,12 @@ import jakarta.validation.constraints.NotNull;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
-    "name",
-    "dataSource",
     "objectType",
-    "request",
-    "parameters"
+    "detailsObjects"
 })
 @Generated("jsonschema2pojo")
-public class SearchOption {
+public class DetailsSection {
 
-    /**
-     * 
-     * (Required)
-     * 
-     */
-    @JsonProperty("name")
-    @NotNull
-    private String name;
-    /**
-     * 
-     * (Required)
-     * 
-     */
-    @JsonProperty("dataSource")
-    @NotNull
-    private String dataSource;
     /**
      * 
      * (Required)
@@ -54,59 +35,11 @@ public class SearchOption {
      * (Required)
      * 
      */
-    @JsonProperty("request")
+    @JsonProperty("detailsObjects")
     @NotNull
-    private String request;
-    /**
-     * 
-     * (Required)
-     * 
-     */
-    @JsonProperty("parameters")
-    @NotNull
-    private List<@Valid Parameter> parameters;
+    private List<@Valid DetailsObject> detailsObjects;
     @JsonIgnore
     private Map<String, @Valid Object> additionalProperties = new LinkedHashMap<String, Object>();
-
-    /**
-     * 
-     * (Required)
-     * 
-     */
-    @JsonProperty("name")
-    public String getName() {
-        return name;
-    }
-
-    /**
-     * 
-     * (Required)
-     * 
-     */
-    @JsonProperty("name")
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    /**
-     * 
-     * (Required)
-     * 
-     */
-    @JsonProperty("dataSource")
-    public String getDataSource() {
-        return dataSource;
-    }
-
-    /**
-     * 
-     * (Required)
-     * 
-     */
-    @JsonProperty("dataSource")
-    public void setDataSource(String dataSource) {
-        this.dataSource = dataSource;
-    }
 
     /**
      * 
@@ -133,9 +66,9 @@ public class SearchOption {
      * (Required)
      * 
      */
-    @JsonProperty("request")
-    public String getRequest() {
-        return request;
+    @JsonProperty("detailsObjects")
+    public List<DetailsObject> getDetailsObjects() {
+        return detailsObjects;
     }
 
     /**
@@ -143,29 +76,9 @@ public class SearchOption {
      * (Required)
      * 
      */
-    @JsonProperty("request")
-    public void setRequest(String request) {
-        this.request = request;
-    }
-
-    /**
-     * 
-     * (Required)
-     * 
-     */
-    @JsonProperty("parameters")
-    public List<Parameter> getParameters() {
-        return parameters;
-    }
-
-    /**
-     * 
-     * (Required)
-     * 
-     */
-    @JsonProperty("parameters")
-    public void setParameters(List<Parameter> parameters) {
-        this.parameters = parameters;
+    @JsonProperty("detailsObjects")
+    public void setDetailsObjects(List<DetailsObject> detailsObjects) {
+        this.detailsObjects = detailsObjects;
     }
 
     @JsonAnyGetter

@@ -1,3 +1,4 @@
+
 package org.mydevnotes.mst.config;
 
 import java.util.LinkedHashMap;
@@ -15,80 +16,138 @@ import jakarta.validation.constraints.NotNull;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
-"sources",
-"searchSection"
+    "dataSources",
+    "searchSection",
+    "detailsSection",
+    "objectAttributes"
 })
 @Generated("jsonschema2pojo")
 public class AppConfig {
 
-/**
-*
-* (Required)
-*
-*/
-@JsonProperty("sources")
-@NotNull
-private List<@Valid Source> sources;
-/**
-*
-* (Required)
-*
-*/
-@JsonProperty("searchSection")
-@Valid
-@NotNull
-private SearchSection searchSection;
-@JsonIgnore
-private Map<String, @Valid Object> additionalProperties = new LinkedHashMap<String, Object>();
+    /**
+     * 
+     * (Required)
+     * 
+     */
+    @JsonProperty("dataSources")
+    @NotNull
+    private List<@Valid DataSource> dataSources;
+    /**
+     * 
+     * (Required)
+     * 
+     */
+    @JsonProperty("searchSection")
+    @Valid
+    @NotNull
+    private SearchSection searchSection;
+    /**
+     * 
+     * (Required)
+     * 
+     */
+    @JsonProperty("detailsSection")
+    @NotNull
+    private List<@Valid DetailsSection> detailsSection;
+    /**
+     * 
+     * (Required)
+     * 
+     */
+    @JsonProperty("objectAttributes")
+    @NotNull
+    private List<@Valid ObjectAttribute> objectAttributes;
+    @JsonIgnore
+    private Map<String, @Valid Object> additionalProperties = new LinkedHashMap<String, Object>();
 
-/**
-*
-* (Required)
-*
-*/
-@JsonProperty("sources")
-public List<Source> getSources() {
-return sources;
-}
+    /**
+     * 
+     * (Required)
+     * 
+     */
+    @JsonProperty("dataSources")
+    public List<DataSource> getDataSources() {
+        return dataSources;
+    }
 
-/**
-*
-* (Required)
-*
-*/
-@JsonProperty("sources")
-public void setSources(List<Source> sources) {
-this.sources = sources;
-}
+    /**
+     * 
+     * (Required)
+     * 
+     */
+    @JsonProperty("dataSources")
+    public void setDataSources(List<DataSource> dataSources) {
+        this.dataSources = dataSources;
+    }
 
-/**
-*
-* (Required)
-*
-*/
-@JsonProperty("searchSection")
-public SearchSection getSearchSection() {
-return searchSection;
-}
+    /**
+     * 
+     * (Required)
+     * 
+     */
+    @JsonProperty("searchSection")
+    public SearchSection getSearchSection() {
+        return searchSection;
+    }
 
-/**
-*
-* (Required)
-*
-*/
-@JsonProperty("searchSection")
-public void setSearchSection(SearchSection searchSection) {
-this.searchSection = searchSection;
-}
+    /**
+     * 
+     * (Required)
+     * 
+     */
+    @JsonProperty("searchSection")
+    public void setSearchSection(SearchSection searchSection) {
+        this.searchSection = searchSection;
+    }
 
-@JsonAnyGetter
-public Map<String, Object> getAdditionalProperties() {
-return this.additionalProperties;
-}
+    /**
+     * 
+     * (Required)
+     * 
+     */
+    @JsonProperty("detailsSection")
+    public List<DetailsSection> getDetailsSection() {
+        return detailsSection;
+    }
 
-@JsonAnySetter
-public void setAdditionalProperty(String name, Object value) {
-this.additionalProperties.put(name, value);
-}
+    /**
+     * 
+     * (Required)
+     * 
+     */
+    @JsonProperty("detailsSection")
+    public void setDetailsSection(List<DetailsSection> detailsSection) {
+        this.detailsSection = detailsSection;
+    }
+
+    /**
+     * 
+     * (Required)
+     * 
+     */
+    @JsonProperty("objectAttributes")
+    public List<ObjectAttribute> getObjectAttributes() {
+        return objectAttributes;
+    }
+
+    /**
+     * 
+     * (Required)
+     * 
+     */
+    @JsonProperty("objectAttributes")
+    public void setObjectAttributes(List<ObjectAttribute> objectAttributes) {
+        this.objectAttributes = objectAttributes;
+    }
+
+    @JsonAnyGetter
+    public Map<String, Object> getAdditionalProperties() {
+        return this.additionalProperties;
+    }
+
+    @JsonAnySetter
+    public void setAdditionalProperty(String name, Object value) {
+        this.additionalProperties.put(name, value);
+    }
 
 }

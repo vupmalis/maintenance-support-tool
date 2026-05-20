@@ -1,3 +1,4 @@
+
 package org.mydevnotes.mst.config;
 
 import java.util.LinkedHashMap;
@@ -25,49 +26,49 @@ import jakarta.validation.constraints.NotNull;
 public class ConnectionDetails {
 
     /**
-     *
+     * 
      * (Required)
-     *
+     * 
      */
     @JsonProperty("type")
     @NotNull
     private String type;
     /**
-     *
+     * 
      * (Required)
-     *
+     * 
      */
     @JsonProperty("host")
     @NotNull
     private String host;
     /**
-     *
+     * 
      * (Required)
-     *
+     * 
      */
     @JsonProperty("port")
     @NotNull
     private String port;
     /**
-     *
+     * 
      * (Required)
-     *
+     * 
      */
     @JsonProperty("userName")
     @NotNull
     private String userName;
     /**
-     *
+     * 
      * (Required)
-     *
+     * 
      */
     @JsonProperty("password")
     @NotNull
     private String password;
     /**
-     *
+     * 
      * (Required)
-     *
+     * 
      */
     @JsonProperty("connectionString")
     @NotNull
@@ -76,9 +77,9 @@ public class ConnectionDetails {
     private Map<String, @Valid Object> additionalProperties = new LinkedHashMap<String, Object>();
 
     /**
-     *
+     * 
      * (Required)
-     *
+     * 
      */
     @JsonProperty("type")
     public String getType() {
@@ -86,9 +87,9 @@ public class ConnectionDetails {
     }
 
     /**
-     *
+     * 
      * (Required)
-     *
+     * 
      */
     @JsonProperty("type")
     public void setType(String type) {
@@ -96,9 +97,9 @@ public class ConnectionDetails {
     }
 
     /**
-     *
+     * 
      * (Required)
-     *
+     * 
      */
     @JsonProperty("host")
     public String getHost() {
@@ -106,9 +107,9 @@ public class ConnectionDetails {
     }
 
     /**
-     *
+     * 
      * (Required)
-     *
+     * 
      */
     @JsonProperty("host")
     public void setHost(String host) {
@@ -116,9 +117,9 @@ public class ConnectionDetails {
     }
 
     /**
-     *
+     * 
      * (Required)
-     *
+     * 
      */
     @JsonProperty("port")
     public String getPort() {
@@ -126,9 +127,9 @@ public class ConnectionDetails {
     }
 
     /**
-     *
+     * 
      * (Required)
-     *
+     * 
      */
     @JsonProperty("port")
     public void setPort(String port) {
@@ -136,9 +137,9 @@ public class ConnectionDetails {
     }
 
     /**
-     *
+     * 
      * (Required)
-     *
+     * 
      */
     @JsonProperty("userName")
     public String getUserName() {
@@ -146,9 +147,9 @@ public class ConnectionDetails {
     }
 
     /**
-     *
+     * 
      * (Required)
-     *
+     * 
      */
     @JsonProperty("userName")
     public void setUserName(String userName) {
@@ -156,9 +157,9 @@ public class ConnectionDetails {
     }
 
     /**
-     *
+     * 
      * (Required)
-     *
+     * 
      */
     @JsonProperty("password")
     public String getPassword() {
@@ -166,9 +167,9 @@ public class ConnectionDetails {
     }
 
     /**
-     *
+     * 
      * (Required)
-     *
+     * 
      */
     @JsonProperty("password")
     public void setPassword(String password) {
@@ -176,9 +177,9 @@ public class ConnectionDetails {
     }
 
     /**
-     *
+     * 
      * (Required)
-     *
+     * 
      */
     @JsonProperty("connectionString")
     public String getConnectionString() {
@@ -186,9 +187,9 @@ public class ConnectionDetails {
     }
 
     /**
-     *
+     * 
      * (Required)
-     *
+     * 
      */
     @JsonProperty("connectionString")
     public void setConnectionString(String connectionString) {
