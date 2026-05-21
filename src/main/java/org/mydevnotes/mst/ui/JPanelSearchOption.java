@@ -34,7 +34,7 @@ public class JPanelSearchOption extends javax.swing.JPanel {
     private SearchOption searchOption;
     private GridBagConstraints gbc;
     private int row = 0;
-    private JPanelResultSet resultUi;
+    private JPanelSearchResultSet resultUi;
     Map<String, String> paramValues = new HashMap<>();
 
     /**
@@ -44,7 +44,7 @@ public class JPanelSearchOption extends javax.swing.JPanel {
         initComponents();
     }
 
-    JPanelSearchOption(SearchOption searchOption, JPanelResultSet resultUi) {
+    JPanelSearchOption(SearchOption searchOption, JPanelSearchResultSet resultUi) {
         this();
         
         this.searchOption = searchOption;
@@ -174,11 +174,11 @@ public class JPanelSearchOption extends javax.swing.JPanel {
 
     private void jButtonSearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonSearchActionPerformed
 
-        if (ApplicationContext.getApplicationContext().getPosgreSQLDataSource(this.searchOption.getSource()) == null) {
+        if (ApplicationContext.getApplicationContext().getPosgreSQLDataSource(this.searchOption.getDataSource()) == null) {
 
             JOptionPane.showMessageDialog(
                     this,
-                    "Not connected to " + this.searchOption.getSource(),
+                    "Not connected to " + this.searchOption.getDataSource(),
                     "DB connection error",
                     JOptionPane.ERROR_MESSAGE
             );
@@ -187,10 +187,10 @@ public class JPanelSearchOption extends javax.swing.JPanel {
         
         ApplicationContext.getApplicationContext().getEventLogger().addLog("Execute query " + this.searchOption.getName() + "; for " + this.paramValues + "\n");
 
-        try (Connection connection = ApplicationContext.getApplicationContext().getPosgreSQLDataSource(this.searchOption.getSource()).getConnection();) {
+        try (Connection connection = ApplicationContext.getApplicationContext().getPosgreSQLDataSource(this.searchOption.getDataSource()).getConnection();) {
             DefaultTableModel tableModel = DBQueryExecutor.execute(this.searchOption, connection, this.paramValues);
             
-            this.resultUi.setTableModel(tableModel);
+            this.resultUi.setTableModel(tableModel, this.searchOption.getObjectType());
 
         } catch (Exception ex) {
             ApplicationContext.getApplicationContext().getEventLogger().addLog("Error during query execution " + ex.getMessage());

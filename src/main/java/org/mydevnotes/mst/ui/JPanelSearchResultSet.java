@@ -4,30 +4,83 @@
  */
 package org.mydevnotes.mst.ui;
 
+import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
+import org.mydevnotes.mst.ApplicationContext;
+import org.mydevnotes.mst.EventLogger;
+import org.mydevnotes.mst.dao.BusinessEntity;
 import org.mydevnotes.mst.ui.design.AlternateRowRenderer;
 
 /**
  *
  * @author vupma
  */
-public class JPanelResultSet extends javax.swing.JPanel {
+public class JPanelSearchResultSet extends javax.swing.JPanel {
+    
+    private SearchResultNavigationListener navigationListener;
+    private EventLogger eventLogger;
+    private String objectType;
+
+    public void setNavigationListener(SearchResultNavigationListener navigationListener) {
+        this.navigationListener = navigationListener;
+        this.eventLogger = ApplicationContext.getApplicationContext().getEventLogger();
+    }
 
     /**
      * Creates new form JPanelResultSet
      */
-    public JPanelResultSet() {
+    public JPanelSearchResultSet() {
         initComponents();
-        
+
         this.jTableResults.setDefaultRenderer(
-            Object.class,
-            new AlternateRowRenderer()
-        );        
+                Object.class,
+                new AlternateRowRenderer()
+        );
+
+        this.jTableResults.getSelectionModel()
+                .addListSelectionListener(e -> {
+
+                    if (e.getValueIsAdjusting()) {
+                        return;
+                    }
+
+                    int row = this.jTableResults.getSelectedRow();
+
+                    if (row < 0) {
+                        return;
+                    }
+
+                    row = this.jTableResults.convertRowIndexToModel(row);
+                    
+                    BusinessEntity parentEntity = new BusinessEntity();
+                    parentEntity.setId((Long) this.getValueAt(jTableResults, row, "id"));
+                    parentEntity.setType(this.objectType);                    
+                    parentEntity.setName((String) this.getValueAt(jTableResults, row, "name"));
+                    
+                    this.eventLogger.addLog(String.format("Extracting details for object id=%s \n",  parentEntity.getId()));
+                    this.populateDetails(parentEntity);
+                });
+
+    }
+
+    private void populateDetails(BusinessEntity parentEntity ) {        
+        this.navigationListener.populateDetails(parentEntity);
+    }
+
+    public void setTableModel(DefaultTableModel model, String objectType) {
+        this.jTableResults.setModel(model);
+        this.objectType = objectType;
     }
     
-    public void setTableModel(DefaultTableModel model){
-        this.jTableResults.setModel(model);
-    }
+    private Object getValueAt(JTable table, int row, String columnName) {
+
+        int viewIndex = table.getColumnModel()
+                .getColumnIndex(columnName);
+
+        int modelIndex = table.convertColumnIndexToModel(viewIndex);
+
+        return table.getModel().getValueAt(row, modelIndex);
+    }    
 
     /**
      * This method is called from within the constructor to initialize the form.

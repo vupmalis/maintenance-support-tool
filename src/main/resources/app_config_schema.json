@@ -1,7 +1,7 @@
 {
   "type": "object",
   "properties": {
-    "sources": {
+    "dataSources": {
       "type": "array",
       "items": {
         "type": "object",
@@ -89,10 +89,16 @@
                   "Search by Id"
                 ]
               },
-              "source": {
+              "dataSource": {
                 "type": "string",
                 "examples": [
                   "PrimaryDB"
+                ]
+              },
+              "objectType": {
+                "type": "string",
+                "examples": [
+                  "devices"
                 ]
               },
               "request": {
@@ -142,7 +148,8 @@
             },
             "required": [
               "name",
-              "source",
+              "dataSource",
+              "objectType",
               "request",
               "parameters"
             ]
@@ -152,11 +159,93 @@
       "required": [
         "searchOptions"
       ]
+    },
+    "detailsSection": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "objectType": {
+            "type": "string",
+            "examples": [
+              "locations"
+            ]
+          },
+          "detailsObjects": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "objectType": {
+                  "type": "string",
+                  "examples": [
+                    "devices"
+                  ]
+                },
+                "dataSource": {
+                  "type": "string",
+                  "examples": [
+                    "PrimaryDB"
+                  ]
+                },
+                "request": {
+                  "type": "string",
+                  "examples": [
+                    "SELECT d.id, d.name as device_name , dt.name as device_type FROM devices.devices AS d oin devices.device_types dt on dt.id = d.device_type_id WHERE d.location_id = ?"
+                  ]
+                }
+              },
+              "required": [
+                "objectType",
+                "dataSource",
+                "request"
+              ]
+            }
+          }
+        },
+        "required": [
+          "objectType",
+          "detailsObjects"
+        ]
+      }
+    },
+    "objectAttributes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "objectType": {
+            "type": "string",
+            "examples": [
+              "devices"
+            ]
+          },
+          "dataSource": {
+            "type": "string",
+            "examples": [
+              "PrimaryDB"
+            ]
+          },
+          "request": {
+            "type": "string",
+            "examples": [
+              "SELECT d.* FROM devices.devices d where d.id=?"
+            ]
+          }
+        },
+        "required": [
+          "objectType",
+          "dataSource",
+          "request"
+        ]
+      }
     }
   },
   "required": [
-    "sources",
-    "searchSection"
+    "dataSources",
+    "searchSection",
+    "detailsSection",
+    "objectAttributes"
   ],
   "$schema": "https://json-schema.org/draft/2020-12/schema"
 }

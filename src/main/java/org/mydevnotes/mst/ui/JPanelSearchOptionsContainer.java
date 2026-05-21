@@ -1,30 +1,20 @@
 package org.mydevnotes.mst.ui;
 
-import org.mydevnotes.mst.config.ConnectionDetails;
-import org.mydevnotes.mst.config.Source;
+import org.mydevnotes.mst.config.SearchOption;
 
 /**
  *
  * @author vupma
  */
-public class JPanelConfig extends javax.swing.JPanel {
+public class JPanelSearchOptionsContainer extends javax.swing.JPanel {
 
     /**
-     * Creates new form JPanelConfig
+     * Creates new form JPanelSearchSection
      */
-    public JPanelConfig() {
-        initComponents();        
+    public JPanelSearchOptionsContainer() {
+        initComponents();
     }
     
-    public void addDataSourceConfig(Source dataSource){
-        
-        switch (dataSource.getType()) {
-            case "db":
-                jTabbedPane.addTab(dataSource.getName(),new JPanelDBConfig(dataSource));                
-                break;
-        }        
-                
-    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -41,17 +31,11 @@ public class JPanelConfig extends javax.swing.JPanel {
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jTabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 388, Short.MAX_VALUE)
-                .addContainerGap())
+            .addComponent(jTabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 400, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jTabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 139, Short.MAX_VALUE)
-                .addContainerGap())
+            .addComponent(jTabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 149, Short.MAX_VALUE)
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -59,4 +43,11 @@ public class JPanelConfig extends javax.swing.JPanel {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTabbedPane jTabbedPane;
     // End of variables declaration//GEN-END:variables
+
+    void addSearchOption(SearchOption searchOption, JPanelSearchResultSet resultUi) {
+        
+        JPanelSearchOption newSearchOptionPanel = new JPanelSearchOption(searchOption, resultUi);
+        jTabbedPane.addTab(searchOption.getName(), newSearchOptionPanel);
+        
+    }
 }

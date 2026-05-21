@@ -5,8 +5,12 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import javax.swing.table.DefaultTableModel;
+import org.mydevnotes.mst.config.DetailsObject;
 import org.mydevnotes.mst.config.SearchOption;
 
 /**
@@ -15,6 +19,7 @@ import org.mydevnotes.mst.config.SearchOption;
  */
 public class DBQueryExecutor {
 
+    // TODO refactor to return BusinessEntity 
     public static DefaultTableModel execute(SearchOption searchOption, Connection connection, Map<String, String> params) throws SQLException, Exception {
 
         PreparedStatement ps = connection.prepareStatement(searchOption.getRequest());
@@ -29,7 +34,7 @@ public class DBQueryExecutor {
                     ps.setString(i + 1, params.get(parameter.getName()));
                     break;
                 }
-                case "int": {
+                case "long": {
                     ps.setLong(i + 1, Long.parseLong(params.get(parameter.getName())));
                     break;
                 }
@@ -42,7 +47,7 @@ public class DBQueryExecutor {
         ResultSet rs = ps.executeQuery();
 
         System.out.println("Process result");
-        
+
         /*
         ResultSetMetaData meta = rs.getMetaData();
         int columnCount = meta.getColumnCount();
@@ -58,11 +63,10 @@ public class DBQueryExecutor {
 
             System.out.println("-----");
         }
-        */
-        
+         */
         return buildTableModel(rs);
     }
-    
+
     public static DefaultTableModel buildTableModel(
             ResultSet rs
     ) throws Exception {
@@ -79,8 +83,8 @@ public class DBQueryExecutor {
         }
 
         // Table model
-        DefaultTableModel model =
-                new DefaultTableModel(columns, 0);
+        DefaultTableModel model
+                = new DefaultTableModel(columns, 0);
 
         // Rows
         while (rs.next()) {
@@ -95,6 +99,45 @@ public class DBQueryExecutor {
         }
 
         return model;
-    }    
+    }
+
+    public static List<BusinessEntity> execute(DetailsObject detailsObjectConfig, Connection connection, Object parentEntityId) throws SQLException {
+
+        List<BusinessEntity> result = new ArrayList<>();
+
+        System.out.println(detailsObjectConfig.getRequest());
+
+        PreparedStatement ps = connection.prepareStatement(detailsObjectConfig.getRequest());
+        System.out.println("Parent Id = " + parentEntityId);
+        ps.setLong(1, (long) parentEntityId);
+        ResultSet rs = ps.executeQuery();
+
+        ResultSetMetaData meta = rs.getMetaData();
+
+        String[] columns = new String[meta.getColumnCount()];
+
+        for (int i = 1; i <= columns.length; i++) {
+            columns[i - 1] = meta.getColumnLabel(i);
+        }
+
+        while (rs.next()) {
+
+            BusinessEntity businessEntity = new BusinessEntity();
+            Map<String, Object> businessEntityAttributes = new HashMap<>();
+
+            for (int i = 1; i <= columns.length; i++) {
+                businessEntityAttributes.put(columns[i - 1], rs.getObject(i));
+            }
+
+            businessEntity.setId(businessEntityAttributes.containsKey("id") ? (Long) businessEntityAttributes.get("id") : null);
+            businessEntity.setType(detailsObjectConfig.getObjectType());
+            businessEntity.setName(businessEntityAttributes.containsKey("name") ? (String) businessEntityAttributes.get("name") : "untitled");
+            businessEntity.setAttributes(businessEntityAttributes);
+
+            result.add(businessEntity);
+        }
+
+        return result;
+    }
 
 }

@@ -15,6 +15,7 @@ import java.util.stream.Collectors;
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 import org.mydevnotes.mst.ApplicationContext;
+import org.mydevnotes.mst.EventLogger;
 import org.mydevnotes.mst.config.AppConfig;
 
 /**
@@ -22,6 +23,8 @@ import org.mydevnotes.mst.config.AppConfig;
  * @author vupma
  */
 public class JFrameMain extends javax.swing.JFrame {
+    
+    private EventLogger eventLogger;
 
     /**
      * Creates new form JFrameMain
@@ -41,15 +44,15 @@ public class JFrameMain extends javax.swing.JFrame {
 
         jSplitPane1 = new javax.swing.JSplitPane();
         jSplitPane3 = new javax.swing.JSplitPane();
-        jPanelConfig = new org.mydevnotes.mst.ui.JPanelConfig();
-        jPanelSearchSection = new org.mydevnotes.mst.ui.JPanelSearchOptions();
+        jPanelConfigContainer = new org.mydevnotes.mst.ui.JPanelConfigContainer();
+        jPanelSearchOptionsContainer = new org.mydevnotes.mst.ui.JPanelSearchOptionsContainer();
         jSplitPane2 = new javax.swing.JSplitPane();
         jScrollPaneSearchResult = new javax.swing.JScrollPane();
-        jPanelResultSet1 = new org.mydevnotes.mst.ui.JPanelResultSet();
+        jPanelsearchResultSet = new org.mydevnotes.mst.ui.JPanelSearchResultSet();
         jScrollPaneDetails = new javax.swing.JScrollPane();
         jSplitPane4 = new javax.swing.JSplitPane();
-        jPanel1 = new javax.swing.JPanel();
         jPanelDebugOutput = new org.mydevnotes.mst.ui.JPanelDebugOutput();
+        jPanelSearchResultDetails = new org.mydevnotes.mst.ui.JPanelSearchResultDetails();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Maintenance Support Tool");
@@ -63,34 +66,22 @@ public class JFrameMain extends javax.swing.JFrame {
         jSplitPane1.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
 
         jSplitPane3.setDividerLocation(50);
-        jSplitPane3.setLeftComponent(jPanelConfig);
-        jSplitPane3.setRightComponent(jPanelSearchSection);
+        jSplitPane3.setLeftComponent(jPanelConfigContainer);
+        jSplitPane3.setRightComponent(jPanelSearchOptionsContainer);
 
         jSplitPane1.setTopComponent(jSplitPane3);
 
         jSplitPane2.setDividerLocation(120);
         jSplitPane2.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
 
-        jScrollPaneSearchResult.setViewportView(jPanelResultSet1);
+        jScrollPaneSearchResult.setViewportView(jPanelsearchResultSet);
 
         jSplitPane2.setTopComponent(jScrollPaneSearchResult);
 
-        jSplitPane4.setDividerLocation(240);
+        jSplitPane4.setDividerLocation(100);
         jSplitPane4.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
-
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 620, Short.MAX_VALUE)
-        );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 224, Short.MAX_VALUE)
-        );
-
-        jSplitPane4.setLeftComponent(jPanel1);
         jSplitPane4.setBottomComponent(jPanelDebugOutput);
+        jSplitPane4.setLeftComponent(jPanelSearchResultDetails);
 
         jScrollPaneDetails.setViewportView(jSplitPane4);
 
@@ -171,8 +162,11 @@ public class JFrameMain extends javax.swing.JFrame {
             public void run() {
                 JFrameMain jFrameMain = new JFrameMain();
 
-                ApplicationContext.getApplicationContext().setEventLogger(jFrameMain.jPanelDebugOutput);
+                jFrameMain.eventLogger = jFrameMain.jPanelDebugOutput;
+                ApplicationContext.getApplicationContext().setEventLogger(jFrameMain.eventLogger);
                 jFrameMain.initConfigSection(ApplicationContext.getApplicationContext().getAppConfig());
+                
+                jFrameMain.initSearchResultSection();
                 
                 jFrameMain.initShutdownHook();
 
@@ -182,11 +176,11 @@ public class JFrameMain extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JPanel jPanel1;
-    private org.mydevnotes.mst.ui.JPanelConfig jPanelConfig;
+    private org.mydevnotes.mst.ui.JPanelConfigContainer jPanelConfigContainer;
     private org.mydevnotes.mst.ui.JPanelDebugOutput jPanelDebugOutput;
-    private org.mydevnotes.mst.ui.JPanelResultSet jPanelResultSet1;
-    private org.mydevnotes.mst.ui.JPanelSearchOptions jPanelSearchSection;
+    private org.mydevnotes.mst.ui.JPanelSearchOptionsContainer jPanelSearchOptionsContainer;
+    private org.mydevnotes.mst.ui.JPanelSearchResultDetails jPanelSearchResultDetails;
+    private org.mydevnotes.mst.ui.JPanelSearchResultSet jPanelsearchResultSet;
     private javax.swing.JScrollPane jScrollPaneDetails;
     private javax.swing.JScrollPane jScrollPaneSearchResult;
     private javax.swing.JSplitPane jSplitPane1;
@@ -196,7 +190,10 @@ public class JFrameMain extends javax.swing.JFrame {
     // End of variables declaration//GEN-END:variables
 
     private static void loadAppConfig(String[] args) {
-        if (args.length == 0) {
+        
+        var eventLog = ApplicationContext.getApplicationContext().getEventLogger();
+        
+        if (args.length == 0) { // TODO refactor to accept config file as input parameter
             System.out.println("Reading config json");
 
             ObjectMapper mapper = new ObjectMapper();
@@ -220,7 +217,7 @@ public class JFrameMain extends javax.swing.JFrame {
                 Set<ValidationMessage> errors = schema.validate(jsonNode);
 
                 if (errors.isEmpty()) {
-                    System.out.println("Valid JSON!");
+                    System.out.println("Valid received JSON!");                   
                 } else {
                     errors.forEach(System.out::println);
                     String validationErrors = errors.stream()
@@ -252,8 +249,8 @@ public class JFrameMain extends javax.swing.JFrame {
 
     private void initConfigSection(AppConfig appConfig) {
 
-        appConfig.getSources().forEach(dataSource ->  jPanelConfig.addDataSourceConfig(dataSource));
-        appConfig.getSearchSection().getSearchOptions().forEach(searchOption -> jPanelSearchSection.addSearchOption(searchOption, jPanelResultSet1));
+        appConfig.getDataSources().forEach(dataSource ->  jPanelConfigContainer.addDataSourceConfig(dataSource));
+        appConfig.getSearchSection().getSearchOptions().forEach(searchOption -> this.jPanelSearchOptionsContainer.addSearchOption(searchOption, this.jPanelsearchResultSet));
 
     }
     
@@ -264,4 +261,8 @@ public class JFrameMain extends javax.swing.JFrame {
             ApplicationContext.getApplicationContext().closeAllDataSources();
         }));
     }    
+
+    private void initSearchResultSection() {
+        this.jPanelsearchResultSet.setNavigationListener(jPanelSearchResultDetails);
+    }
 }

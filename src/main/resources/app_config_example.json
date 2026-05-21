@@ -1,5 +1,5 @@
 {
-	"sources": [
+	"dataSources": [
 		{
 			"name": "PrimaryDB",
 			"type": "db",
@@ -17,23 +17,70 @@
 		"searchOptions": [
 			{
 				"name": "Search by Id",
-				"source": "PrimaryDB",
+				"dataSource": "PrimaryDB",
+                                "objectType": "devices",
 				"request": "SELECT d.* FROM devices.devices AS d WHERE d.id=?",
 				"parameters": [
 					{
 						"name": "id",
 						"title": "Id",
-                                                "type": "int",
+                                                "type": "long",
 						"parameterId": 1                                                
 					}				
 				]
 			},
 			{
 				"name": "Find all",
-				"source": "PrimaryDB",
+				"dataSource": "PrimaryDB",
+                                "objectType": "devices",
 				"request": "SELECT d.* FROM devices.devices AS d",
 				"parameters": []
-			}                        
+			},
+			{
+				"name": "All locations",
+				"dataSource": "PrimaryDB",
+                                "objectType": "locations",
+				"request": "SELECT l.* FROM devices.locations AS l",
+				"parameters": []
+			}                          
 		]
-	}
+	},
+        "detailsSection": [
+            {               
+                "objectType": "locations",
+                "detailsObjects": 
+                [
+                    {
+                        "objectType": "devices",
+                        "dataSource": "PrimaryDB",
+                        "request": "SELECT d.id, d.name as device_name , dt.name as device_type FROM devices.devices AS d join devices.device_types dt on dt.id = d.device_type_id WHERE d.location_id = ?"
+                    },
+                    {
+                        "objectType": "automations",
+                        "dataSource": "PrimaryDB",
+                        "request": "SELECT a.id, a.name  FROM devices.automations AS a where a.location_id = ?"
+                    }                    
+                    
+        
+                ]
+            },
+            {               
+                "objectType": "devices",
+                "detailsObjects": 
+                [
+                    {
+                        "objectType": "events",
+                        "dataSource": "PrimaryDB",
+                        "request": "SELECT de.id, de.event_type FROM devices.device_events AS de where de.device_id = ?"
+                    }                    
+                ]
+            }            
+        ],
+        "objectAttributes": [
+           {
+               "objectType": "devices",
+               "dataSource": "PrimaryDB",
+               "request": "SELECT d.* FROM devices.devices d where d.id=?"
+           }         
+        ]
 }

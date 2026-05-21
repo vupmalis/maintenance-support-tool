@@ -1,8 +1,7 @@
 package org.mydevnotes.mst.ui;
 
 import org.mydevnotes.mst.ApplicationContext;
-import org.mydevnotes.mst.config.ConnectionDetails;
-import org.mydevnotes.mst.config.Source;
+import org.mydevnotes.mst.config.DataSource;
 
 /**
  *
@@ -10,7 +9,7 @@ import org.mydevnotes.mst.config.Source;
  */
 public class JPanelDBConfig extends javax.swing.JPanel {
     
-    private Source dataSource;
+    private DataSource dataSource;
 
     /**
      * Creates new form JPanelDBConfig
@@ -19,7 +18,7 @@ public class JPanelDBConfig extends javax.swing.JPanel {
         initComponents();
     }
     
-    public JPanelDBConfig(Source dataSource) {
+    public JPanelDBConfig(DataSource dataSource) {
         this();
         
         jPasswordField.setText(dataSource.getConnectionDetails().getPassword());

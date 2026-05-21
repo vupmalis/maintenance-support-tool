@@ -61,14 +61,14 @@
 
           <Layout class="org.netbeans.modules.form.compat2.layouts.support.JSplitPaneSupportLayout"/>
           <SubComponents>
-            <Component class="org.mydevnotes.mst.ui.JPanelConfig" name="jPanelConfig">
+            <Component class="org.mydevnotes.mst.ui.JPanelConfigContainer" name="jPanelConfigContainer">
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JSplitPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JSplitPaneSupportLayout$JSplitPaneConstraintsDescription">
                   <JSplitPaneConstraints position="left"/>
                 </Constraint>
               </Constraints>
             </Component>
-            <Component class="org.mydevnotes.mst.ui.JPanelSearchOptions" name="jPanelSearchSection">
+            <Component class="org.mydevnotes.mst.ui.JPanelSearchOptionsContainer" name="jPanelSearchOptionsContainer">
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JSplitPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JSplitPaneSupportLayout$JSplitPaneConstraintsDescription">
                   <JSplitPaneConstraints position="right"/>
@@ -99,7 +99,7 @@
 
               <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
               <SubComponents>
-                <Component class="org.mydevnotes.mst.ui.JPanelResultSet" name="jPanelResultSet1">
+                <Component class="org.mydevnotes.mst.ui.JPanelSearchResultSet" name="jPanelsearchResultSet">
                 </Component>
               </SubComponents>
             </Container>
@@ -114,36 +114,23 @@
               <SubComponents>
                 <Container class="javax.swing.JSplitPane" name="jSplitPane4">
                   <Properties>
-                    <Property name="dividerLocation" type="int" value="240"/>
+                    <Property name="dividerLocation" type="int" value="100"/>
                     <Property name="orientation" type="int" value="0"/>
                   </Properties>
 
                   <Layout class="org.netbeans.modules.form.compat2.layouts.support.JSplitPaneSupportLayout"/>
                   <SubComponents>
-                    <Container class="javax.swing.JPanel" name="jPanel1">
-                      <Constraints>
-                        <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JSplitPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JSplitPaneSupportLayout$JSplitPaneConstraintsDescription">
-                          <JSplitPaneConstraints position="left"/>
-                        </Constraint>
-                      </Constraints>
-
-                      <Layout>
-                        <DimensionLayout dim="0">
-                          <Group type="103" groupAlignment="0" attributes="0">
-                              <EmptySpace min="0" pref="620" max="32767" attributes="0"/>
-                          </Group>
-                        </DimensionLayout>
-                        <DimensionLayout dim="1">
-                          <Group type="103" groupAlignment="0" attributes="0">
-                              <EmptySpace min="0" pref="224" max="32767" attributes="0"/>
-                          </Group>
-                        </DimensionLayout>
-                      </Layout>
-                    </Container>
                     <Component class="org.mydevnotes.mst.ui.JPanelDebugOutput" name="jPanelDebugOutput">
                       <Constraints>
                         <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JSplitPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JSplitPaneSupportLayout$JSplitPaneConstraintsDescription">
                           <JSplitPaneConstraints position="bottom"/>
+                        </Constraint>
+                      </Constraints>
+                    </Component>
+                    <Component class="org.mydevnotes.mst.ui.JPanelSearchResultDetails" name="jPanelSearchResultDetails">
+                      <Constraints>
+                        <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JSplitPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JSplitPaneSupportLayout$JSplitPaneConstraintsDescription">
+                          <JSplitPaneConstraints position="left"/>
                         </Constraint>
                       </Constraints>
                     </Component>

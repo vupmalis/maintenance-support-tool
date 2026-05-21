@@ -5,7 +5,7 @@ import com.zaxxer.hikari.HikariDataSource;
 import java.util.HashMap;
 import java.util.Map;
 import org.mydevnotes.mst.config.AppConfig;
-import org.mydevnotes.mst.config.Source;
+import org.mydevnotes.mst.config.DataSource;
 
 /**
  *
@@ -53,7 +53,7 @@ public class ApplicationContext {
         return configValidationErrors.isBlank();
     }
 
-    public void createPosgreSQLConnection(Source dataSource) {
+    public void createPosgreSQLConnection(DataSource dataSource) {
 
         disconnectPostgresqlConnection(dataSource);
 
@@ -74,7 +74,7 @@ public class ApplicationContext {
         eventLogger.addLog("Created connection to " + dataSource.getName() + "\n");
     }
 
-    public void disconnectPostgresqlConnection(Source dataSource) {
+    public void disconnectPostgresqlConnection(DataSource dataSource) {
         if (postgreSqlDataSources.containsKey(dataSource.getName())) {
             HikariDataSource oldDataSource = postgreSqlDataSources.get(dataSource.getName());
             
