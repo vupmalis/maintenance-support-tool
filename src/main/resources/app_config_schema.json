@@ -75,7 +75,7 @@
         ]
       }
     },
-    "searchSection": {
+    "searchConfig": {
       "type": "object",
       "properties": {
         "searchOptions": {
@@ -95,7 +95,7 @@
                   "PrimaryDB"
                 ]
               },
-              "objectType": {
+              "businessEntityType": {
                 "type": "string",
                 "examples": [
                   "devices"
@@ -107,7 +107,7 @@
                   "SELECT d.* FROM devices.devices AS d WHERE d.id=?"
                 ]
               },
-              "parameters": {
+              "searchParameters": {
                 "type": "array",
                 "items": {
                   "type": "object",
@@ -127,7 +127,7 @@
                     "type": {
                       "type": "string",
                       "examples": [
-                        "int"
+                        "long"
                       ]
                     },
                     "parameterId": {
@@ -149,9 +149,9 @@
             "required": [
               "name",
               "dataSource",
-              "objectType",
+              "businessEntityType",
               "request",
-              "parameters"
+              "searchParameters"
             ]
           }
         }
@@ -160,23 +160,23 @@
         "searchOptions"
       ]
     },
-    "detailsSection": {
+    "childEntities": {
       "type": "array",
       "items": {
         "type": "object",
         "properties": {
-          "objectType": {
+          "businessEntityType": {
             "type": "string",
             "examples": [
               "locations"
             ]
           },
-          "detailsObjects": {
+          "searchDetails": {
             "type": "array",
             "items": {
               "type": "object",
               "properties": {
-                "objectType": {
+                "businessEntityType": {
                   "type": "string",
                   "examples": [
                     "devices"
@@ -191,12 +191,12 @@
                 "request": {
                   "type": "string",
                   "examples": [
-                    "SELECT d.id, d.name as device_name , dt.name as device_type FROM devices.devices AS d oin devices.device_types dt on dt.id = d.device_type_id WHERE d.location_id = ?"
+                    "SELECT d.id, d.name as device_name , dt.name as device_type FROM devices.devices AS d join devices.device_types dt on dt.id = d.device_type_id WHERE d.location_id = ?"
                   ]
                 }
               },
               "required": [
-                "objectType",
+                "businessEntityType",
                 "dataSource",
                 "request"
               ]
@@ -204,17 +204,17 @@
           }
         },
         "required": [
-          "objectType",
-          "detailsObjects"
+          "businessEntityType",
+          "searchDetails"
         ]
       }
     },
-    "objectAttributes": {
+    "entityAttributes": {
       "type": "array",
       "items": {
         "type": "object",
         "properties": {
-          "objectType": {
+          "businessEntityType": {
             "type": "string",
             "examples": [
               "devices"
@@ -234,7 +234,7 @@
           }
         },
         "required": [
-          "objectType",
+          "businessEntityType",
           "dataSource",
           "request"
         ]
@@ -243,9 +243,9 @@
   },
   "required": [
     "dataSources",
-    "searchSection",
-    "detailsSection",
-    "objectAttributes"
+    "searchConfig",
+    "childEntities",
+    "entityAttributes"
   ],
   "$schema": "https://json-schema.org/draft/2020-12/schema"
 }

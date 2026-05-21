@@ -21,8 +21,8 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
 import org.mydevnotes.mst.ApplicationContext;
-import org.mydevnotes.mst.config.Parameter;
 import org.mydevnotes.mst.config.SearchOption;
+import org.mydevnotes.mst.config.SearchParameter;
 import org.mydevnotes.mst.dao.DBQueryExecutor;
 
 /**
@@ -46,7 +46,7 @@ public class JPanelSearchOption extends javax.swing.JPanel {
 
     JPanelSearchOption(SearchOption searchOption, JPanelSearchResultSet resultUi) {
         this();
-        
+
         this.searchOption = searchOption;
         this.resultUi = resultUi;
 
@@ -57,7 +57,7 @@ public class JPanelSearchOption extends javax.swing.JPanel {
 
         jPanel1.setLayout(new GridBagLayout());
 
-        for (Parameter parameter : searchOption.getParameters()) {
+        for (SearchParameter parameter : searchOption.getSearchParameters()) {
             JTextField newField = new JTextField(15);
             newField.setName(parameter.getName());
             bindTextField(newField, this.paramValues);
@@ -184,18 +184,18 @@ public class JPanelSearchOption extends javax.swing.JPanel {
             );
             return;
         }
-        
+
         ApplicationContext.getApplicationContext().getEventLogger().addLog("Execute query " + this.searchOption.getName() + "; for " + this.paramValues + "\n");
 
         try (Connection connection = ApplicationContext.getApplicationContext().getPosgreSQLDataSource(this.searchOption.getDataSource()).getConnection();) {
             DefaultTableModel tableModel = DBQueryExecutor.execute(this.searchOption, connection, this.paramValues);
-            
-            this.resultUi.setTableModel(tableModel, this.searchOption.getObjectType());
+
+            this.resultUi.setTableModel(tableModel, this.searchOption.getBusinessEntityType());
 
         } catch (Exception ex) {
             ApplicationContext.getApplicationContext().getEventLogger().addLog("Error during query execution " + ex.getMessage());
             Logger.getLogger(JPanelSearchOption.class.getName()).log(Level.SEVERE, null, ex);
-        } 
+        }
 
     }//GEN-LAST:event_jButtonSearchActionPerformed
 

@@ -15,37 +15,46 @@ import jakarta.validation.constraints.NotNull;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
-    "objectType",
-    "dataSource",
-    "request"
+    "name",
+    "title",
+    "type",
+    "parameterId"
 })
 @Generated("jsonschema2pojo")
-public class DetailsObject {
+public class SearchParameter {
 
     /**
      * 
      * (Required)
      * 
      */
-    @JsonProperty("objectType")
+    @JsonProperty("name")
     @NotNull
-    private String objectType;
+    private String name;
     /**
      * 
      * (Required)
      * 
      */
-    @JsonProperty("dataSource")
+    @JsonProperty("title")
     @NotNull
-    private String dataSource;
+    private String title;
     /**
      * 
      * (Required)
      * 
      */
-    @JsonProperty("request")
+    @JsonProperty("type")
     @NotNull
-    private String request;
+    private String type;
+    /**
+     * 
+     * (Required)
+     * 
+     */
+    @JsonProperty("parameterId")
+    @NotNull
+    private int parameterId;
     @JsonIgnore
     private Map<String, @Valid Object> additionalProperties = new LinkedHashMap<String, Object>();
 
@@ -54,9 +63,9 @@ public class DetailsObject {
      * (Required)
      * 
      */
-    @JsonProperty("objectType")
-    public String getObjectType() {
-        return objectType;
+    @JsonProperty("name")
+    public String getName() {
+        return name;
     }
 
     /**
@@ -64,9 +73,9 @@ public class DetailsObject {
      * (Required)
      * 
      */
-    @JsonProperty("objectType")
-    public void setObjectType(String objectType) {
-        this.objectType = objectType;
+    @JsonProperty("name")
+    public void setName(String name) {
+        this.name = name;
     }
 
     /**
@@ -74,9 +83,9 @@ public class DetailsObject {
      * (Required)
      * 
      */
-    @JsonProperty("dataSource")
-    public String getDataSource() {
-        return dataSource;
+    @JsonProperty("title")
+    public String getTitle() {
+        return title;
     }
 
     /**
@@ -84,9 +93,9 @@ public class DetailsObject {
      * (Required)
      * 
      */
-    @JsonProperty("dataSource")
-    public void setDataSource(String dataSource) {
-        this.dataSource = dataSource;
+    @JsonProperty("title")
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     /**
@@ -94,9 +103,9 @@ public class DetailsObject {
      * (Required)
      * 
      */
-    @JsonProperty("request")
-    public String getRequest() {
-        return request;
+    @JsonProperty("type")
+    public String getType() {
+        return type;
     }
 
     /**
@@ -104,9 +113,29 @@ public class DetailsObject {
      * (Required)
      * 
      */
-    @JsonProperty("request")
-    public void setRequest(String request) {
-        this.request = request;
+    @JsonProperty("type")
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    /**
+     * 
+     * (Required)
+     * 
+     */
+    @JsonProperty("parameterId")
+    public int getParameterId() {
+        return parameterId;
+    }
+
+    /**
+     * 
+     * (Required)
+     * 
+     */
+    @JsonProperty("parameterId")
+    public void setParameterId(int parameterId) {
+        this.parameterId = parameterId;
     }
 
     @JsonAnyGetter

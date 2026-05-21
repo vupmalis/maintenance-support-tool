@@ -2,7 +2,6 @@
 package org.mydevnotes.mst.config;
 
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 import javax.annotation.processing.Generated;
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
@@ -16,28 +15,37 @@ import jakarta.validation.constraints.NotNull;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
-    "objectType",
-    "detailsObjects"
+    "businessEntityType",
+    "dataSource",
+    "request"
 })
 @Generated("jsonschema2pojo")
-public class DetailsSection {
+public class SearchDetail {
 
     /**
      * 
      * (Required)
      * 
      */
-    @JsonProperty("objectType")
+    @JsonProperty("businessEntityType")
     @NotNull
-    private String objectType;
+    private String businessEntityType;
     /**
      * 
      * (Required)
      * 
      */
-    @JsonProperty("detailsObjects")
+    @JsonProperty("dataSource")
     @NotNull
-    private List<@Valid DetailsObject> detailsObjects;
+    private String dataSource;
+    /**
+     * 
+     * (Required)
+     * 
+     */
+    @JsonProperty("request")
+    @NotNull
+    private String request;
     @JsonIgnore
     private Map<String, @Valid Object> additionalProperties = new LinkedHashMap<String, Object>();
 
@@ -46,9 +54,9 @@ public class DetailsSection {
      * (Required)
      * 
      */
-    @JsonProperty("objectType")
-    public String getObjectType() {
-        return objectType;
+    @JsonProperty("businessEntityType")
+    public String getBusinessEntityType() {
+        return businessEntityType;
     }
 
     /**
@@ -56,9 +64,9 @@ public class DetailsSection {
      * (Required)
      * 
      */
-    @JsonProperty("objectType")
-    public void setObjectType(String objectType) {
-        this.objectType = objectType;
+    @JsonProperty("businessEntityType")
+    public void setBusinessEntityType(String businessEntityType) {
+        this.businessEntityType = businessEntityType;
     }
 
     /**
@@ -66,9 +74,9 @@ public class DetailsSection {
      * (Required)
      * 
      */
-    @JsonProperty("detailsObjects")
-    public List<DetailsObject> getDetailsObjects() {
-        return detailsObjects;
+    @JsonProperty("dataSource")
+    public String getDataSource() {
+        return dataSource;
     }
 
     /**
@@ -76,9 +84,29 @@ public class DetailsSection {
      * (Required)
      * 
      */
-    @JsonProperty("detailsObjects")
-    public void setDetailsObjects(List<DetailsObject> detailsObjects) {
-        this.detailsObjects = detailsObjects;
+    @JsonProperty("dataSource")
+    public void setDataSource(String dataSource) {
+        this.dataSource = dataSource;
+    }
+
+    /**
+     * 
+     * (Required)
+     * 
+     */
+    @JsonProperty("request")
+    public String getRequest() {
+        return request;
+    }
+
+    /**
+     * 
+     * (Required)
+     * 
+     */
+    @JsonProperty("request")
+    public void setRequest(String request) {
+        this.request = request;
     }
 
     @JsonAnyGetter

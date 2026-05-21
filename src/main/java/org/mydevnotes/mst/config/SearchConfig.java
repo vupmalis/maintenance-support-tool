@@ -19,7 +19,7 @@ import jakarta.validation.constraints.NotNull;
     "searchOptions"
 })
 @Generated("jsonschema2pojo")
-public class SearchSection {
+public class SearchConfig {
 
     /**
      * 

@@ -17,9 +17,9 @@ import jakarta.validation.constraints.NotNull;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
     "dataSources",
-    "searchSection",
-    "detailsSection",
-    "objectAttributes"
+    "searchConfig",
+    "childEntities",
+    "entityAttributes"
 })
 @Generated("jsonschema2pojo")
 public class AppConfig {
@@ -37,26 +37,26 @@ public class AppConfig {
      * (Required)
      * 
      */
-    @JsonProperty("searchSection")
+    @JsonProperty("searchConfig")
     @Valid
     @NotNull
-    private SearchSection searchSection;
+    private SearchConfig searchConfig;
     /**
      * 
      * (Required)
      * 
      */
-    @JsonProperty("detailsSection")
+    @JsonProperty("childEntities")
     @NotNull
-    private List<@Valid DetailsSection> detailsSection;
+    private List<@Valid ChildEntity> childEntities;
     /**
      * 
      * (Required)
      * 
      */
-    @JsonProperty("objectAttributes")
+    @JsonProperty("entityAttributes")
     @NotNull
-    private List<@Valid ObjectAttribute> objectAttributes;
+    private List<@Valid EntityAttribute> entityAttributes;
     @JsonIgnore
     private Map<String, @Valid Object> additionalProperties = new LinkedHashMap<String, Object>();
 
@@ -85,9 +85,9 @@ public class AppConfig {
      * (Required)
      * 
      */
-    @JsonProperty("searchSection")
-    public SearchSection getSearchSection() {
-        return searchSection;
+    @JsonProperty("searchConfig")
+    public SearchConfig getSearchConfig() {
+        return searchConfig;
     }
 
     /**
@@ -95,9 +95,9 @@ public class AppConfig {
      * (Required)
      * 
      */
-    @JsonProperty("searchSection")
-    public void setSearchSection(SearchSection searchSection) {
-        this.searchSection = searchSection;
+    @JsonProperty("searchConfig")
+    public void setSearchConfig(SearchConfig searchConfig) {
+        this.searchConfig = searchConfig;
     }
 
     /**
@@ -105,9 +105,9 @@ public class AppConfig {
      * (Required)
      * 
      */
-    @JsonProperty("detailsSection")
-    public List<DetailsSection> getDetailsSection() {
-        return detailsSection;
+    @JsonProperty("childEntities")
+    public List<ChildEntity> getChildEntities() {
+        return childEntities;
     }
 
     /**
@@ -115,9 +115,9 @@ public class AppConfig {
      * (Required)
      * 
      */
-    @JsonProperty("detailsSection")
-    public void setDetailsSection(List<DetailsSection> detailsSection) {
-        this.detailsSection = detailsSection;
+    @JsonProperty("childEntities")
+    public void setChildEntities(List<ChildEntity> childEntities) {
+        this.childEntities = childEntities;
     }
 
     /**
@@ -125,9 +125,9 @@ public class AppConfig {
      * (Required)
      * 
      */
-    @JsonProperty("objectAttributes")
-    public List<ObjectAttribute> getObjectAttributes() {
-        return objectAttributes;
+    @JsonProperty("entityAttributes")
+    public List<EntityAttribute> getEntityAttributes() {
+        return entityAttributes;
     }
 
     /**
@@ -135,9 +135,9 @@ public class AppConfig {
      * (Required)
      * 
      */
-    @JsonProperty("objectAttributes")
-    public void setObjectAttributes(List<ObjectAttribute> objectAttributes) {
-        this.objectAttributes = objectAttributes;
+    @JsonProperty("entityAttributes")
+    public void setEntityAttributes(List<EntityAttribute> entityAttributes) {
+        this.entityAttributes = entityAttributes;
     }
 
     @JsonAnyGetter

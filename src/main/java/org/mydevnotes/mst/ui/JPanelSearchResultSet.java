@@ -5,6 +5,7 @@
 package org.mydevnotes.mst.ui;
 
 import javax.swing.JTable;
+import javax.swing.ListSelectionModel;
 import javax.swing.table.DefaultTableModel;
 import org.mydevnotes.mst.ApplicationContext;
 import org.mydevnotes.mst.EventLogger;
@@ -32,6 +33,8 @@ public class JPanelSearchResultSet extends javax.swing.JPanel {
     public JPanelSearchResultSet() {
         initComponents();
 
+        this.jTableResults.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        
         this.jTableResults.setDefaultRenderer(
                 Object.class,
                 new AlternateRowRenderer()

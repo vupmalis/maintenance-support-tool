@@ -10,7 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.swing.table.DefaultTableModel;
-import org.mydevnotes.mst.config.DetailsObject;
+import org.mydevnotes.mst.config.SearchDetail;
 import org.mydevnotes.mst.config.SearchOption;
 
 /**
@@ -25,18 +25,16 @@ public class DBQueryExecutor {
         PreparedStatement ps = connection.prepareStatement(searchOption.getRequest());
 
         // Set parameters
-        for (int i = 0; i < searchOption.getParameters().size(); i++) {
+        for (int i = 0; i < searchOption.getSearchParameters().size(); i++) {
 
-            var parameter = searchOption.getParameters().get(i);
+            var parameter = searchOption.getSearchParameters().get(i);
 
             switch (parameter.getType()) {
-                case "String": {
+                case "String" ->  {
                     ps.setString(i + 1, params.get(parameter.getName()));
-                    break;
                 }
-                case "long": {
+                case "long" ->  {
                     ps.setLong(i + 1, Long.parseLong(params.get(parameter.getName())));
-                    break;
                 }
             }
         }
@@ -48,22 +46,6 @@ public class DBQueryExecutor {
 
         System.out.println("Process result");
 
-        /*
-        ResultSetMetaData meta = rs.getMetaData();
-        int columnCount = meta.getColumnCount();
-
-        // Read result
-        while (rs.next()) {
-
-            for (int i = 1; i <= columnCount; i++) {
-                String columnName = meta.getColumnName(i);
-                Object value = rs.getObject(i);
-                System.out.println(columnName + " = " + value);
-            }
-
-            System.out.println("-----");
-        }
-         */
         return buildTableModel(rs);
     }
 
@@ -101,7 +83,7 @@ public class DBQueryExecutor {
         return model;
     }
 
-    public static List<BusinessEntity> execute(DetailsObject detailsObjectConfig, Connection connection, Object parentEntityId) throws SQLException {
+    public static List<BusinessEntity> execute(SearchDetail detailsObjectConfig, Connection connection, Object parentEntityId) throws SQLException {
 
         List<BusinessEntity> result = new ArrayList<>();
 
@@ -130,7 +112,7 @@ public class DBQueryExecutor {
             }
 
             businessEntity.setId(businessEntityAttributes.containsKey("id") ? (Long) businessEntityAttributes.get("id") : null);
-            businessEntity.setType(detailsObjectConfig.getObjectType());
+            businessEntity.setType(detailsObjectConfig.getBusinessEntityType());
             businessEntity.setName(businessEntityAttributes.containsKey("name") ? (String) businessEntityAttributes.get("name") : "untitled");
             businessEntity.setAttributes(businessEntityAttributes);
 
