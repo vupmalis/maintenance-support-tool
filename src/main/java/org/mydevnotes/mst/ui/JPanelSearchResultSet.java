@@ -32,6 +32,7 @@ public class JPanelSearchResultSet extends javax.swing.JPanel {
         initComponents();
 
         this.jTableResults.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        this.cleanup();
 
         this.jTableResults.setDefaultRenderer(
                 Object.class,
@@ -62,6 +63,10 @@ public class JPanelSearchResultSet extends javax.swing.JPanel {
                     this.eventLogger.addLog(String.format("Extracting details for object id=%s \n", parentEntity.getId()));
                     this.populateDetails(parentEntity);
                 });
+    }
+
+    public void cleanup() {
+        this.jTableResults.setModel(new DefaultTableModel(new String[]{}, 0));
     }
 
     private Map<String, Object> getSelectedRowAsBusinessEntity(int row) {

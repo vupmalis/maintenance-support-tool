@@ -52,6 +52,8 @@ public class JPanelSearchResultDetails extends javax.swing.JPanel implements Sea
                 if (entityNode.getBusinessEntity() != null){
                     this.jPanelSearchResultSetAttributes.setBusinessEntity(entityNode.getBusinessEntity());
                 }
+            } else {
+                this.jPanelSearchResultSetAttributes.cleanup();
             }
         });        
     }
