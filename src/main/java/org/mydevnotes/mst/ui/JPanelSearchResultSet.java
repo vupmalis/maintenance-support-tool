@@ -1,10 +1,9 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JPanel.java to edit this template
- */
 package org.mydevnotes.mst.ui;
 
+import java.util.HashMap;
+import java.util.Map;
 import javax.swing.JTable;
+import javax.swing.ListSelectionModel;
 import javax.swing.table.DefaultTableModel;
 import org.mydevnotes.mst.ApplicationContext;
 import org.mydevnotes.mst.EventLogger;
@@ -16,7 +15,7 @@ import org.mydevnotes.mst.ui.design.AlternateRowRenderer;
  * @author vupma
  */
 public class JPanelSearchResultSet extends javax.swing.JPanel {
-    
+
     private SearchResultNavigationListener navigationListener;
     private EventLogger eventLogger;
     private String objectType;
@@ -31,6 +30,9 @@ public class JPanelSearchResultSet extends javax.swing.JPanel {
      */
     public JPanelSearchResultSet() {
         initComponents();
+
+        this.jTableResults.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        this.cleanup();
 
         this.jTableResults.setDefaultRenderer(
                 Object.class,
@@ -51,27 +53,47 @@ public class JPanelSearchResultSet extends javax.swing.JPanel {
                     }
 
                     row = this.jTableResults.convertRowIndexToModel(row);
-                    
+
                     BusinessEntity parentEntity = new BusinessEntity();
                     parentEntity.setId((Long) this.getValueAt(jTableResults, row, "id"));
-                    parentEntity.setType(this.objectType);                    
+                    parentEntity.setType(this.objectType);
                     parentEntity.setName((String) this.getValueAt(jTableResults, row, "name"));
-                    
-                    this.eventLogger.addLog(String.format("Extracting details for object id=%s \n",  parentEntity.getId()));
+                    parentEntity.setAttributes(getSelectedRowAsBusinessEntity(row));
+
+                    this.eventLogger.addLog(String.format("Extracting details for object id=%s \n", parentEntity.getId()));
                     this.populateDetails(parentEntity);
                 });
-
     }
 
-    private void populateDetails(BusinessEntity parentEntity ) {        
-        this.navigationListener.populateDetails(parentEntity);
+    public void cleanup() {
+        this.jTableResults.setModel(new DefaultTableModel(new String[]{}, 0));
+    }
+
+    private Map<String, Object> getSelectedRowAsBusinessEntity(int row) {
+
+        Map<String, Object> rowData = new HashMap<>();
+
+        for (int col = 0; col < this.jTableResults.getColumnCount(); col++) {
+            String columnName = this.jTableResults.getColumnName(col);
+            Object value = this.jTableResults.getValueAt(row, col);
+            rowData.put(columnName, value);
+        }
+
+        return rowData;
+    }
+
+    private void populateDetails(BusinessEntity parentEntity) {
+
+        if (this.navigationListener != null) {
+            this.navigationListener.populateDetails(parentEntity);
+        }
     }
 
     public void setTableModel(DefaultTableModel model, String objectType) {
         this.jTableResults.setModel(model);
         this.objectType = objectType;
     }
-    
+
     private Object getValueAt(JTable table, int row, String columnName) {
 
         int viewIndex = table.getColumnModel()
@@ -80,7 +102,21 @@ public class JPanelSearchResultSet extends javax.swing.JPanel {
         int modelIndex = table.convertColumnIndexToModel(viewIndex);
 
         return table.getModel().getValueAt(row, modelIndex);
-    }    
+    }
+
+    public void setBusinessEntity(BusinessEntity businessEntity) {
+        DefaultTableModel model = new DefaultTableModel(new Object[]{"Attribute", "Value"}, 0);
+
+        if (businessEntity.getAttributes() != null) {
+            businessEntity.getAttributes().forEach((key, value) -> {
+                Object[] row = new Object[]{key, value};
+                model.addRow(row);
+            });
+        }
+
+        this.setTableModel(model, businessEntity.getType());
+
+    }
 
     /**
      * This method is called from within the constructor to initialize the form.

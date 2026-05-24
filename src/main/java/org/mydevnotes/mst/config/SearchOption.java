@@ -18,9 +18,9 @@ import jakarta.validation.constraints.NotNull;
 @JsonPropertyOrder({
     "name",
     "dataSource",
-    "objectType",
+    "businessEntityType",
     "request",
-    "parameters"
+    "searchParameters"
 })
 @Generated("jsonschema2pojo")
 public class SearchOption {
@@ -46,9 +46,9 @@ public class SearchOption {
      * (Required)
      * 
      */
-    @JsonProperty("objectType")
+    @JsonProperty("businessEntityType")
     @NotNull
-    private String objectType;
+    private String businessEntityType;
     /**
      * 
      * (Required)
@@ -62,9 +62,9 @@ public class SearchOption {
      * (Required)
      * 
      */
-    @JsonProperty("parameters")
+    @JsonProperty("searchParameters")
     @NotNull
-    private List<@Valid Parameter> parameters;
+    private List<@Valid SearchParameter> searchParameters;
     @JsonIgnore
     private Map<String, @Valid Object> additionalProperties = new LinkedHashMap<String, Object>();
 
@@ -113,9 +113,9 @@ public class SearchOption {
      * (Required)
      * 
      */
-    @JsonProperty("objectType")
-    public String getObjectType() {
-        return objectType;
+    @JsonProperty("businessEntityType")
+    public String getBusinessEntityType() {
+        return businessEntityType;
     }
 
     /**
@@ -123,9 +123,9 @@ public class SearchOption {
      * (Required)
      * 
      */
-    @JsonProperty("objectType")
-    public void setObjectType(String objectType) {
-        this.objectType = objectType;
+    @JsonProperty("businessEntityType")
+    public void setBusinessEntityType(String businessEntityType) {
+        this.businessEntityType = businessEntityType;
     }
 
     /**
@@ -153,9 +153,9 @@ public class SearchOption {
      * (Required)
      * 
      */
-    @JsonProperty("parameters")
-    public List<Parameter> getParameters() {
-        return parameters;
+    @JsonProperty("searchParameters")
+    public List<SearchParameter> getSearchParameters() {
+        return searchParameters;
     }
 
     /**
@@ -163,9 +163,9 @@ public class SearchOption {
      * (Required)
      * 
      */
-    @JsonProperty("parameters")
-    public void setParameters(List<Parameter> parameters) {
-        this.parameters = parameters;
+    @JsonProperty("searchParameters")
+    public void setSearchParameters(List<SearchParameter> searchParameters) {
+        this.searchParameters = searchParameters;
     }
 
     @JsonAnyGetter

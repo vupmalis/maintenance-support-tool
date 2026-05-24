@@ -15,46 +15,37 @@ import jakarta.validation.constraints.NotNull;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
-    "name",
-    "title",
-    "type",
-    "parameterId"
+    "businessEntityType",
+    "dataSource",
+    "request"
 })
 @Generated("jsonschema2pojo")
-public class Parameter {
+public class EntityAttribute {
 
     /**
      * 
      * (Required)
      * 
      */
-    @JsonProperty("name")
+    @JsonProperty("businessEntityType")
     @NotNull
-    private String name;
+    private String businessEntityType;
     /**
      * 
      * (Required)
      * 
      */
-    @JsonProperty("title")
+    @JsonProperty("dataSource")
     @NotNull
-    private String title;
+    private String dataSource;
     /**
      * 
      * (Required)
      * 
      */
-    @JsonProperty("type")
+    @JsonProperty("request")
     @NotNull
-    private String type;
-    /**
-     * 
-     * (Required)
-     * 
-     */
-    @JsonProperty("parameterId")
-    @NotNull
-    private int parameterId;
+    private String request;
     @JsonIgnore
     private Map<String, @Valid Object> additionalProperties = new LinkedHashMap<String, Object>();
 
@@ -63,9 +54,9 @@ public class Parameter {
      * (Required)
      * 
      */
-    @JsonProperty("name")
-    public String getName() {
-        return name;
+    @JsonProperty("businessEntityType")
+    public String getBusinessEntityType() {
+        return businessEntityType;
     }
 
     /**
@@ -73,9 +64,9 @@ public class Parameter {
      * (Required)
      * 
      */
-    @JsonProperty("name")
-    public void setName(String name) {
-        this.name = name;
+    @JsonProperty("businessEntityType")
+    public void setBusinessEntityType(String businessEntityType) {
+        this.businessEntityType = businessEntityType;
     }
 
     /**
@@ -83,9 +74,9 @@ public class Parameter {
      * (Required)
      * 
      */
-    @JsonProperty("title")
-    public String getTitle() {
-        return title;
+    @JsonProperty("dataSource")
+    public String getDataSource() {
+        return dataSource;
     }
 
     /**
@@ -93,9 +84,9 @@ public class Parameter {
      * (Required)
      * 
      */
-    @JsonProperty("title")
-    public void setTitle(String title) {
-        this.title = title;
+    @JsonProperty("dataSource")
+    public void setDataSource(String dataSource) {
+        this.dataSource = dataSource;
     }
 
     /**
@@ -103,9 +94,9 @@ public class Parameter {
      * (Required)
      * 
      */
-    @JsonProperty("type")
-    public String getType() {
-        return type;
+    @JsonProperty("request")
+    public String getRequest() {
+        return request;
     }
 
     /**
@@ -113,29 +104,9 @@ public class Parameter {
      * (Required)
      * 
      */
-    @JsonProperty("type")
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    /**
-     * 
-     * (Required)
-     * 
-     */
-    @JsonProperty("parameterId")
-    public int getParameterId() {
-        return parameterId;
-    }
-
-    /**
-     * 
-     * (Required)
-     * 
-     */
-    @JsonProperty("parameterId")
-    public void setParameterId(int parameterId) {
-        this.parameterId = parameterId;
+    @JsonProperty("request")
+    public void setRequest(String request) {
+        this.request = request;
     }
 
     @JsonAnyGetter

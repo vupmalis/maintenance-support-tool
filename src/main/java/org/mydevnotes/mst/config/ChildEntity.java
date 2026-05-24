@@ -2,6 +2,7 @@
 package org.mydevnotes.mst.config;
 
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import javax.annotation.processing.Generated;
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
@@ -15,37 +16,28 @@ import jakarta.validation.constraints.NotNull;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
-    "objectType",
-    "dataSource",
-    "request"
+    "businessEntityType",
+    "searchDetails"
 })
 @Generated("jsonschema2pojo")
-public class ObjectAttribute {
+public class ChildEntity {
 
     /**
      * 
      * (Required)
      * 
      */
-    @JsonProperty("objectType")
+    @JsonProperty("businessEntityType")
     @NotNull
-    private String objectType;
+    private String businessEntityType;
     /**
      * 
      * (Required)
      * 
      */
-    @JsonProperty("dataSource")
+    @JsonProperty("searchDetails")
     @NotNull
-    private String dataSource;
-    /**
-     * 
-     * (Required)
-     * 
-     */
-    @JsonProperty("request")
-    @NotNull
-    private String request;
+    private List<@Valid SearchDetail> searchDetails;
     @JsonIgnore
     private Map<String, @Valid Object> additionalProperties = new LinkedHashMap<String, Object>();
 
@@ -54,9 +46,9 @@ public class ObjectAttribute {
      * (Required)
      * 
      */
-    @JsonProperty("objectType")
-    public String getObjectType() {
-        return objectType;
+    @JsonProperty("businessEntityType")
+    public String getBusinessEntityType() {
+        return businessEntityType;
     }
 
     /**
@@ -64,9 +56,9 @@ public class ObjectAttribute {
      * (Required)
      * 
      */
-    @JsonProperty("objectType")
-    public void setObjectType(String objectType) {
-        this.objectType = objectType;
+    @JsonProperty("businessEntityType")
+    public void setBusinessEntityType(String businessEntityType) {
+        this.businessEntityType = businessEntityType;
     }
 
     /**
@@ -74,9 +66,9 @@ public class ObjectAttribute {
      * (Required)
      * 
      */
-    @JsonProperty("dataSource")
-    public String getDataSource() {
-        return dataSource;
+    @JsonProperty("searchDetails")
+    public List<SearchDetail> getSearchDetails() {
+        return searchDetails;
     }
 
     /**
@@ -84,29 +76,9 @@ public class ObjectAttribute {
      * (Required)
      * 
      */
-    @JsonProperty("dataSource")
-    public void setDataSource(String dataSource) {
-        this.dataSource = dataSource;
-    }
-
-    /**
-     * 
-     * (Required)
-     * 
-     */
-    @JsonProperty("request")
-    public String getRequest() {
-        return request;
-    }
-
-    /**
-     * 
-     * (Required)
-     * 
-     */
-    @JsonProperty("request")
-    public void setRequest(String request) {
-        this.request = request;
+    @JsonProperty("searchDetails")
+    public void setSearchDetails(List<SearchDetail> searchDetails) {
+        this.searchDetails = searchDetails;
     }
 
     @JsonAnyGetter

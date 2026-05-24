@@ -239,7 +239,7 @@ public class JFrameMain extends javax.swing.JFrame {
 
                 ApplicationContext.getApplicationContext().setAppConfig(appConfig);
 
-                appConfig.getSearchSection().getSearchOptions().forEach(search -> System.out.println("appConfig: " + search.getName()));
+                appConfig.getSearchConfig().getSearchOptions().forEach(search -> System.out.println("appConfig: " + search.getName()));
             } catch (IOException ex) {
                 Logger.getLogger(JFrameMain.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -250,7 +250,7 @@ public class JFrameMain extends javax.swing.JFrame {
     private void initConfigSection(AppConfig appConfig) {
 
         appConfig.getDataSources().forEach(dataSource ->  jPanelConfigContainer.addDataSourceConfig(dataSource));
-        appConfig.getSearchSection().getSearchOptions().forEach(searchOption -> this.jPanelSearchOptionsContainer.addSearchOption(searchOption, this.jPanelsearchResultSet));
+        appConfig.getSearchConfig().getSearchOptions().forEach(searchOption -> this.jPanelSearchOptionsContainer.addSearchOption(searchOption, this.jPanelsearchResultSet));
 
     }
     

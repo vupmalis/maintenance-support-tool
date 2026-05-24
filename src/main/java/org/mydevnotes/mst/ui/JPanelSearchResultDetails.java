@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JPanel.java to edit this template
- */
 package org.mydevnotes.mst.ui;
 
 import org.mydevnotes.mst.ui.tree.BusinessEntityNode;
@@ -11,15 +7,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
-import javax.swing.table.DefaultTableModel;
+import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import org.mydevnotes.mst.ApplicationContext;
 import org.mydevnotes.mst.config.AppConfig;
+import org.mydevnotes.mst.config.ChildEntity;
 import org.mydevnotes.mst.config.DataSource;
-import org.mydevnotes.mst.config.DetailsObject;
-import org.mydevnotes.mst.config.DetailsSection;
+import org.mydevnotes.mst.config.SearchDetail;
 import org.mydevnotes.mst.dao.BusinessEntity;
 import org.mydevnotes.mst.dao.DBQueryExecutor;
 import org.mydevnotes.mst.ui.tree.BusinessEntityTreeCellRenderer;
@@ -36,6 +31,31 @@ public class JPanelSearchResultDetails extends javax.swing.JPanel implements Sea
     public JPanelSearchResultDetails() {
         initComponents();
         this.jTreeDetails.setCellRenderer(new BusinessEntityTreeCellRenderer());
+        
+        this.jTreeDetails.addTreeSelectionListener(e -> {
+
+            DefaultMutableTreeNode node =
+                    (DefaultMutableTreeNode) this.jTreeDetails.getLastSelectedPathComponent();
+
+            if (node == null) {
+                return;
+            }
+
+            Object obj = node.getUserObject();
+
+            if (obj instanceof BusinessEntityNode entityNode) {
+
+                System.out.println(entityNode.getBusinessEntity().getId());
+                System.out.println(entityNode.getBusinessEntity().getAttributes());
+
+                // trigger your logic here
+                if (entityNode.getBusinessEntity() != null){
+                    this.jPanelSearchResultSetAttributes.setBusinessEntity(entityNode.getBusinessEntity());
+                }
+            } else {
+                this.jPanelSearchResultSetAttributes.cleanup();
+            }
+        });        
     }
 
     /**
@@ -51,10 +71,14 @@ public class JPanelSearchResultDetails extends javax.swing.JPanel implements Sea
         jScrollPane1 = new javax.swing.JScrollPane();
         jTreeDetails = new javax.swing.JTree();
         jScrollPane2 = new javax.swing.JScrollPane();
+        jPanelSearchResultSetAttributes = new org.mydevnotes.mst.ui.JPanelSearchResultSet();
 
         jScrollPane1.setViewportView(jTreeDetails);
 
         jSplitPane1.setLeftComponent(jScrollPane1);
+
+        jScrollPane2.setViewportView(jPanelSearchResultSetAttributes);
+
         jSplitPane1.setRightComponent(jScrollPane2);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
@@ -71,6 +95,7 @@ public class JPanelSearchResultDetails extends javax.swing.JPanel implements Sea
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private org.mydevnotes.mst.ui.JPanelSearchResultSet jPanelSearchResultSetAttributes;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JSplitPane jSplitPane1;
@@ -83,7 +108,7 @@ public class JPanelSearchResultDetails extends javax.swing.JPanel implements Sea
         DefaultMutableTreeNode root = new DefaultMutableTreeNode(new BusinessEntityNode(parentEntity));
 
         AppConfig config = ApplicationContext.getApplicationContext().getAppConfig();
-        var detailsConfig = config.getDetailsSection().stream().filter(cd -> parentEntity.getType().equals(cd.getObjectType())).findFirst().orElse(null);
+        var detailsConfig = config.getChildEntities().stream().filter(cd -> parentEntity.getType().equals(cd.getBusinessEntityType())).findFirst().orElse(null);
 
         if (detailsConfig != null) {
             addDetailsNodes(detailsConfig, root, parentEntity.getId());
@@ -93,18 +118,18 @@ public class JPanelSearchResultDetails extends javax.swing.JPanel implements Sea
                 = new DefaultTreeModel(root);
 
         jTreeDetails.setModel(model);
-
+        expandAll(jTreeDetails);
     }
 
-    private void addDetailsNodes(DetailsSection detailsConfig, DefaultMutableTreeNode root, Object id) {
+    private void addDetailsNodes(ChildEntity detailsConfig, DefaultMutableTreeNode root, Object id) {
 
-        for (DetailsObject detailsObjectConfig : detailsConfig.getDetailsObjects()) {
+        for (SearchDetail detailsObjectConfig : detailsConfig.getSearchDetails()) {
 
             List<BusinessEntity> detailsEntities = retrieveDetailsEntities(detailsObjectConfig, id);
 
             if (!detailsEntities.isEmpty()) {
 
-                DefaultMutableTreeNode detailsOfGivenTypeRoot = new DefaultMutableTreeNode(detailsObjectConfig.getObjectType());
+                DefaultMutableTreeNode detailsOfGivenTypeRoot = new DefaultMutableTreeNode(detailsObjectConfig.getBusinessEntityType());
                 root.add(detailsOfGivenTypeRoot);
 
                 detailsEntities.forEach(entity -> detailsOfGivenTypeRoot.add(new DefaultMutableTreeNode(new BusinessEntityNode(entity))));
@@ -112,7 +137,7 @@ public class JPanelSearchResultDetails extends javax.swing.JPanel implements Sea
         }
     }
 
-    private List<BusinessEntity> retrieveDetailsEntities(DetailsObject detailsObjectConfig, Object id) {
+    private List<BusinessEntity> retrieveDetailsEntities(SearchDetail detailsObjectConfig, Object id) {
         List<BusinessEntity> detailsEntities = new ArrayList<>();
 
         DataSource dataSource = ApplicationContext.getApplicationContext().getAppConfig().getDataSources().stream().filter(ds -> detailsObjectConfig.getDataSource().equals(ds.getName())).findFirst().orElse(null);
@@ -125,7 +150,7 @@ public class JPanelSearchResultDetails extends javax.swing.JPanel implements Sea
                 try (Connection connection = databaseDataStore.getConnection();) {
 
                     detailsEntities = DBQueryExecutor.execute(detailsObjectConfig, connection, id);
-                    ApplicationContext.getApplicationContext().getEventLogger().addLog("Found " + detailsEntities.size() + " " + detailsObjectConfig.getObjectType() + "(s)\n");
+                    ApplicationContext.getApplicationContext().getEventLogger().addLog("Found " + detailsEntities.size() + " " + detailsObjectConfig.getBusinessEntityType() + "(s)\n");
 
                 } catch (Exception ex) {
                     ApplicationContext.getApplicationContext().getEventLogger().addLog("Error during details query execution " + ex.getMessage());
@@ -136,4 +161,13 @@ public class JPanelSearchResultDetails extends javax.swing.JPanel implements Sea
 
         return detailsEntities;
     }
+    
+    public static void expandAll(JTree tree) {
+        int row = 0;
+
+        while (row < tree.getRowCount()) {
+            tree.expandRow(row);
+            row++;
+        }
+    }    
 }

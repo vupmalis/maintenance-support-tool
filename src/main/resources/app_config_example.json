@@ -13,14 +13,14 @@
 			}
 		}
 	],
-	"searchSection": {
+	"searchConfig": {
 		"searchOptions": [
 			{
 				"name": "Search by Id",
 				"dataSource": "PrimaryDB",
-                                "objectType": "devices",
+                                "businessEntityType": "devices",
 				"request": "SELECT d.* FROM devices.devices AS d WHERE d.id=?",
-				"parameters": [
+				"searchParameters": [
 					{
 						"name": "id",
 						"title": "Id",
@@ -32,31 +32,31 @@
 			{
 				"name": "Find all",
 				"dataSource": "PrimaryDB",
-                                "objectType": "devices",
+                                "businessEntityType": "devices",
 				"request": "SELECT d.* FROM devices.devices AS d",
-				"parameters": []
+				"searchParameters": []
 			},
 			{
 				"name": "All locations",
 				"dataSource": "PrimaryDB",
-                                "objectType": "locations",
+                                "businessEntityType": "locations",
 				"request": "SELECT l.* FROM devices.locations AS l",
-				"parameters": []
+				"searchParameters": []
 			}                          
 		]
 	},
-        "detailsSection": [
+        "childEntities": [
             {               
-                "objectType": "locations",
-                "detailsObjects": 
+                "businessEntityType": "locations",
+                "searchDetails": 
                 [
                     {
-                        "objectType": "devices",
+                        "businessEntityType": "devices",
                         "dataSource": "PrimaryDB",
-                        "request": "SELECT d.id, d.name as device_name , dt.name as device_type FROM devices.devices AS d join devices.device_types dt on dt.id = d.device_type_id WHERE d.location_id = ?"
+                        "request": "SELECT d.id, d.name, dt.name as device_type FROM devices.devices AS d join devices.device_types dt on dt.id = d.device_type_id WHERE d.location_id = ?"
                     },
                     {
-                        "objectType": "automations",
+                        "businessEntityType": "automations",
                         "dataSource": "PrimaryDB",
                         "request": "SELECT a.id, a.name  FROM devices.automations AS a where a.location_id = ?"
                     }                    
@@ -65,20 +65,20 @@
                 ]
             },
             {               
-                "objectType": "devices",
-                "detailsObjects": 
+                "businessEntityType": "devices",
+                "searchDetails": 
                 [
                     {
-                        "objectType": "events",
+                        "businessEntityType": "events",
                         "dataSource": "PrimaryDB",
                         "request": "SELECT de.id, de.event_type FROM devices.device_events AS de where de.device_id = ?"
                     }                    
                 ]
             }            
         ],
-        "objectAttributes": [
+        "entityAttributes": [
            {
-               "objectType": "devices",
+               "businessEntityType": "devices",
                "dataSource": "PrimaryDB",
                "request": "SELECT d.* FROM devices.devices d where d.id=?"
            }         
