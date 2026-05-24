@@ -31,6 +31,29 @@ public class JPanelSearchResultDetails extends javax.swing.JPanel implements Sea
     public JPanelSearchResultDetails() {
         initComponents();
         this.jTreeDetails.setCellRenderer(new BusinessEntityTreeCellRenderer());
+        
+        this.jTreeDetails.addTreeSelectionListener(e -> {
+
+            DefaultMutableTreeNode node =
+                    (DefaultMutableTreeNode) this.jTreeDetails.getLastSelectedPathComponent();
+
+            if (node == null) {
+                return;
+            }
+
+            Object obj = node.getUserObject();
+
+            if (obj instanceof BusinessEntityNode entityNode) {
+
+                System.out.println(entityNode.getBusinessEntity().getId());
+                System.out.println(entityNode.getBusinessEntity().getAttributes());
+
+                // trigger your logic here
+                if (entityNode.getBusinessEntity() != null){
+                    this.jPanelSearchResultSetAttributes.setBusinessEntity(entityNode.getBusinessEntity());
+                }
+            }
+        });        
     }
 
     /**
@@ -46,10 +69,14 @@ public class JPanelSearchResultDetails extends javax.swing.JPanel implements Sea
         jScrollPane1 = new javax.swing.JScrollPane();
         jTreeDetails = new javax.swing.JTree();
         jScrollPane2 = new javax.swing.JScrollPane();
+        jPanelSearchResultSetAttributes = new org.mydevnotes.mst.ui.JPanelSearchResultSet();
 
         jScrollPane1.setViewportView(jTreeDetails);
 
         jSplitPane1.setLeftComponent(jScrollPane1);
+
+        jScrollPane2.setViewportView(jPanelSearchResultSetAttributes);
+
         jSplitPane1.setRightComponent(jScrollPane2);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
@@ -66,6 +93,7 @@ public class JPanelSearchResultDetails extends javax.swing.JPanel implements Sea
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private org.mydevnotes.mst.ui.JPanelSearchResultSet jPanelSearchResultSetAttributes;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JSplitPane jSplitPane1;

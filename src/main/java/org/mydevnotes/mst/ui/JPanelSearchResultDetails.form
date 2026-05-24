@@ -54,6 +54,10 @@
           </Constraints>
 
           <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
+          <SubComponents>
+            <Component class="org.mydevnotes.mst.ui.JPanelSearchResultSet" name="jPanelSearchResultSetAttributes">
+            </Component>
+          </SubComponents>
         </Container>
       </SubComponents>
     </Container>
