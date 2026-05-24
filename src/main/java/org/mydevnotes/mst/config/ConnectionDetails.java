@@ -19,7 +19,8 @@ import jakarta.validation.constraints.NotNull;
     "host",
     "port",
     "userName",
-    "password"
+    "password",
+    "connectionString"
 })
 @Generated("jsonschema2pojo")
 public class ConnectionDetails {
@@ -64,6 +65,14 @@ public class ConnectionDetails {
     @JsonProperty("password")
     @NotNull
     private String password;
+    /**
+     * 
+     * (Required)
+     * 
+     */
+    @JsonProperty("connectionString")
+    @NotNull
+    private String connectionString;
     @JsonIgnore
     private Map<String, @Valid Object> additionalProperties = new LinkedHashMap<String, Object>();
 
@@ -165,6 +174,26 @@ public class ConnectionDetails {
     @JsonProperty("password")
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    /**
+     * 
+     * (Required)
+     * 
+     */
+    @JsonProperty("connectionString")
+    public String getConnectionString() {
+        return connectionString;
+    }
+
+    /**
+     * 
+     * (Required)
+     * 
+     */
+    @JsonProperty("connectionString")
+    public void setConnectionString(String connectionString) {
+        this.connectionString = connectionString;
     }
 
     @JsonAnyGetter

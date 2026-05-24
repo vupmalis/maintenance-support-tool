@@ -1,7 +1,7 @@
 {
   "type": "object",
   "properties": {
-    "sources": {
+    "dataSources": {
       "type": "array",
       "items": {
         "type": "object",
@@ -42,13 +42,19 @@
               "userName": {
                 "type": "string",
                 "examples": [
-                  "stock"
+                  "iot_manager"
                 ]
               },
               "password": {
                 "type": "string",
                 "examples": [
-                  "pass123"
+                  "qwe123"
+                ]
+              },
+              "connectionString": {
+                "type": "string",
+                "examples": [
+                  "jdbc:postgresql://localhost:5432/iot_devices"
                 ]
               }
             },
@@ -57,7 +63,8 @@
               "host",
               "port",
               "userName",
-              "password"
+              "password",
+              "connectionString"
             ]
           }
         },
@@ -68,7 +75,7 @@
         ]
       }
     },
-    "searchSection": {
+    "searchConfig": {
       "type": "object",
       "properties": {
         "searchOptions": {
@@ -82,19 +89,25 @@
                   "Search by Id"
                 ]
               },
-              "source": {
+              "dataSource": {
                 "type": "string",
                 "examples": [
                   "PrimaryDB"
                 ]
               },
+              "businessEntityType": {
+                "type": "string",
+                "examples": [
+                  "devices"
+                ]
+              },
               "request": {
                 "type": "string",
                 "examples": [
-                  "SELECT * FROM stocks WHERE id = :1"
+                  "SELECT d.* FROM devices.devices AS d WHERE d.id=?"
                 ]
               },
-              "parameters": {
+              "searchParameters": {
                 "type": "array",
                 "items": {
                   "type": "object",
@@ -111,6 +124,12 @@
                         "Id"
                       ]
                     },
+                    "type": {
+                      "type": "string",
+                      "examples": [
+                        "long"
+                      ]
+                    },
                     "parameterId": {
                       "type": "integer",
                       "examples": [
@@ -121,6 +140,7 @@
                   "required": [
                     "name",
                     "title",
+                    "type",
                     "parameterId"
                   ]
                 }
@@ -128,9 +148,10 @@
             },
             "required": [
               "name",
-              "source",
+              "dataSource",
+              "businessEntityType",
               "request",
-              "parameters"
+              "searchParameters"
             ]
           }
         }
@@ -138,11 +159,93 @@
       "required": [
         "searchOptions"
       ]
+    },
+    "childEntities": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "businessEntityType": {
+            "type": "string",
+            "examples": [
+              "locations"
+            ]
+          },
+          "searchDetails": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "businessEntityType": {
+                  "type": "string",
+                  "examples": [
+                    "devices"
+                  ]
+                },
+                "dataSource": {
+                  "type": "string",
+                  "examples": [
+                    "PrimaryDB"
+                  ]
+                },
+                "request": {
+                  "type": "string",
+                  "examples": [
+                    "SELECT d.id, d.name as device_name , dt.name as device_type FROM devices.devices AS d join devices.device_types dt on dt.id = d.device_type_id WHERE d.location_id = ?"
+                  ]
+                }
+              },
+              "required": [
+                "businessEntityType",
+                "dataSource",
+                "request"
+              ]
+            }
+          }
+        },
+        "required": [
+          "businessEntityType",
+          "searchDetails"
+        ]
+      }
+    },
+    "entityAttributes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "businessEntityType": {
+            "type": "string",
+            "examples": [
+              "devices"
+            ]
+          },
+          "dataSource": {
+            "type": "string",
+            "examples": [
+              "PrimaryDB"
+            ]
+          },
+          "request": {
+            "type": "string",
+            "examples": [
+              "SELECT d.* FROM devices.devices d where d.id=?"
+            ]
+          }
+        },
+        "required": [
+          "businessEntityType",
+          "dataSource",
+          "request"
+        ]
+      }
     }
   },
   "required": [
-    "sources",
-    "searchSection"
+    "dataSources",
+    "searchConfig",
+    "childEntities",
+    "entityAttributes"
   ],
   "$schema": "https://json-schema.org/draft/2020-12/schema"
 }

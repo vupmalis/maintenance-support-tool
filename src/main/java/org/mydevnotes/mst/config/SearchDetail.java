@@ -2,7 +2,6 @@
 package org.mydevnotes.mst.config;
 
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 import javax.annotation.processing.Generated;
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
@@ -16,31 +15,13 @@ import jakarta.validation.constraints.NotNull;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
-    "name",
-    "dataSource",
     "businessEntityType",
-    "request",
-    "searchParameters"
+    "dataSource",
+    "request"
 })
 @Generated("jsonschema2pojo")
-public class SearchOption {
+public class SearchDetail {
 
-    /**
-     * 
-     * (Required)
-     * 
-     */
-    @JsonProperty("name")
-    @NotNull
-    private String name;
-    /**
-     * 
-     * (Required)
-     * 
-     */
-    @JsonProperty("dataSource")
-    @NotNull
-    private String dataSource;
     /**
      * 
      * (Required)
@@ -54,17 +35,17 @@ public class SearchOption {
      * (Required)
      * 
      */
-    @JsonProperty("request")
+    @JsonProperty("dataSource")
     @NotNull
-    private String request;
+    private String dataSource;
     /**
      * 
      * (Required)
      * 
      */
-    @JsonProperty("searchParameters")
+    @JsonProperty("request")
     @NotNull
-    private List<@Valid SearchParameter> searchParameters;
+    private String request;
     @JsonIgnore
     private Map<String, @Valid Object> additionalProperties = new LinkedHashMap<String, Object>();
 
@@ -73,9 +54,9 @@ public class SearchOption {
      * (Required)
      * 
      */
-    @JsonProperty("name")
-    public String getName() {
-        return name;
+    @JsonProperty("businessEntityType")
+    public String getBusinessEntityType() {
+        return businessEntityType;
     }
 
     /**
@@ -83,9 +64,9 @@ public class SearchOption {
      * (Required)
      * 
      */
-    @JsonProperty("name")
-    public void setName(String name) {
-        this.name = name;
+    @JsonProperty("businessEntityType")
+    public void setBusinessEntityType(String businessEntityType) {
+        this.businessEntityType = businessEntityType;
     }
 
     /**
@@ -113,26 +94,6 @@ public class SearchOption {
      * (Required)
      * 
      */
-    @JsonProperty("businessEntityType")
-    public String getBusinessEntityType() {
-        return businessEntityType;
-    }
-
-    /**
-     * 
-     * (Required)
-     * 
-     */
-    @JsonProperty("businessEntityType")
-    public void setBusinessEntityType(String businessEntityType) {
-        this.businessEntityType = businessEntityType;
-    }
-
-    /**
-     * 
-     * (Required)
-     * 
-     */
     @JsonProperty("request")
     public String getRequest() {
         return request;
@@ -146,26 +107,6 @@ public class SearchOption {
     @JsonProperty("request")
     public void setRequest(String request) {
         this.request = request;
-    }
-
-    /**
-     * 
-     * (Required)
-     * 
-     */
-    @JsonProperty("searchParameters")
-    public List<SearchParameter> getSearchParameters() {
-        return searchParameters;
-    }
-
-    /**
-     * 
-     * (Required)
-     * 
-     */
-    @JsonProperty("searchParameters")
-    public void setSearchParameters(List<SearchParameter> searchParameters) {
-        this.searchParameters = searchParameters;
     }
 
     @JsonAnyGetter

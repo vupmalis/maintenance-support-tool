@@ -1,3 +1,4 @@
+
 package org.mydevnotes.mst.config;
 
 import java.util.LinkedHashMap;
@@ -14,38 +15,37 @@ import jakarta.validation.constraints.NotNull;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
-    "name",
-    "type",
-    "connectionDetails"
+    "businessEntityType",
+    "dataSource",
+    "request"
 })
 @Generated("jsonschema2pojo")
-public class Source {
+public class EntityAttribute {
 
     /**
      * 
      * (Required)
      * 
      */
-    @JsonProperty("name")
+    @JsonProperty("businessEntityType")
     @NotNull
-    private String name;
+    private String businessEntityType;
     /**
      * 
      * (Required)
      * 
      */
-    @JsonProperty("type")
+    @JsonProperty("dataSource")
     @NotNull
-    private String type;
+    private String dataSource;
     /**
      * 
      * (Required)
      * 
      */
-    @JsonProperty("connectionDetails")
-    @Valid
+    @JsonProperty("request")
     @NotNull
-    private ConnectionDetails connectionDetails;
+    private String request;
     @JsonIgnore
     private Map<String, @Valid Object> additionalProperties = new LinkedHashMap<String, Object>();
 
@@ -54,9 +54,9 @@ public class Source {
      * (Required)
      * 
      */
-    @JsonProperty("name")
-    public String getName() {
-        return name;
+    @JsonProperty("businessEntityType")
+    public String getBusinessEntityType() {
+        return businessEntityType;
     }
 
     /**
@@ -64,9 +64,9 @@ public class Source {
      * (Required)
      * 
      */
-    @JsonProperty("name")
-    public void setName(String name) {
-        this.name = name;
+    @JsonProperty("businessEntityType")
+    public void setBusinessEntityType(String businessEntityType) {
+        this.businessEntityType = businessEntityType;
     }
 
     /**
@@ -74,9 +74,9 @@ public class Source {
      * (Required)
      * 
      */
-    @JsonProperty("type")
-    public String getType() {
-        return type;
+    @JsonProperty("dataSource")
+    public String getDataSource() {
+        return dataSource;
     }
 
     /**
@@ -84,9 +84,9 @@ public class Source {
      * (Required)
      * 
      */
-    @JsonProperty("type")
-    public void setType(String type) {
-        this.type = type;
+    @JsonProperty("dataSource")
+    public void setDataSource(String dataSource) {
+        this.dataSource = dataSource;
     }
 
     /**
@@ -94,9 +94,9 @@ public class Source {
      * (Required)
      * 
      */
-    @JsonProperty("connectionDetails")
-    public ConnectionDetails getConnectionDetails() {
-        return connectionDetails;
+    @JsonProperty("request")
+    public String getRequest() {
+        return request;
     }
 
     /**
@@ -104,9 +104,9 @@ public class Source {
      * (Required)
      * 
      */
-    @JsonProperty("connectionDetails")
-    public void setConnectionDetails(ConnectionDetails connectionDetails) {
-        this.connectionDetails = connectionDetails;
+    @JsonProperty("request")
+    public void setRequest(String request) {
+        this.request = request;
     }
 
     @JsonAnyGetter

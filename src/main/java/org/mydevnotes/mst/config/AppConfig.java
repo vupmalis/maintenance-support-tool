@@ -1,3 +1,4 @@
+
 package org.mydevnotes.mst.config;
 
 import java.util.LinkedHashMap;
@@ -15,80 +16,138 @@ import jakarta.validation.constraints.NotNull;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
-"sources",
-"searchSection"
+    "dataSources",
+    "searchConfig",
+    "childEntities",
+    "entityAttributes"
 })
 @Generated("jsonschema2pojo")
 public class AppConfig {
 
-/**
-*
-* (Required)
-*
-*/
-@JsonProperty("sources")
-@NotNull
-private List<@Valid Source> sources;
-/**
-*
-* (Required)
-*
-*/
-@JsonProperty("searchSection")
-@Valid
-@NotNull
-private SearchSection searchSection;
-@JsonIgnore
-private Map<String, @Valid Object> additionalProperties = new LinkedHashMap<String, Object>();
+    /**
+     * 
+     * (Required)
+     * 
+     */
+    @JsonProperty("dataSources")
+    @NotNull
+    private List<@Valid DataSource> dataSources;
+    /**
+     * 
+     * (Required)
+     * 
+     */
+    @JsonProperty("searchConfig")
+    @Valid
+    @NotNull
+    private SearchConfig searchConfig;
+    /**
+     * 
+     * (Required)
+     * 
+     */
+    @JsonProperty("childEntities")
+    @NotNull
+    private List<@Valid ChildEntity> childEntities;
+    /**
+     * 
+     * (Required)
+     * 
+     */
+    @JsonProperty("entityAttributes")
+    @NotNull
+    private List<@Valid EntityAttribute> entityAttributes;
+    @JsonIgnore
+    private Map<String, @Valid Object> additionalProperties = new LinkedHashMap<String, Object>();
 
-/**
-*
-* (Required)
-*
-*/
-@JsonProperty("sources")
-public List<Source> getSources() {
-return sources;
-}
+    /**
+     * 
+     * (Required)
+     * 
+     */
+    @JsonProperty("dataSources")
+    public List<DataSource> getDataSources() {
+        return dataSources;
+    }
 
-/**
-*
-* (Required)
-*
-*/
-@JsonProperty("sources")
-public void setSources(List<Source> sources) {
-this.sources = sources;
-}
+    /**
+     * 
+     * (Required)
+     * 
+     */
+    @JsonProperty("dataSources")
+    public void setDataSources(List<DataSource> dataSources) {
+        this.dataSources = dataSources;
+    }
 
-/**
-*
-* (Required)
-*
-*/
-@JsonProperty("searchSection")
-public SearchSection getSearchSection() {
-return searchSection;
-}
+    /**
+     * 
+     * (Required)
+     * 
+     */
+    @JsonProperty("searchConfig")
+    public SearchConfig getSearchConfig() {
+        return searchConfig;
+    }
 
-/**
-*
-* (Required)
-*
-*/
-@JsonProperty("searchSection")
-public void setSearchSection(SearchSection searchSection) {
-this.searchSection = searchSection;
-}
+    /**
+     * 
+     * (Required)
+     * 
+     */
+    @JsonProperty("searchConfig")
+    public void setSearchConfig(SearchConfig searchConfig) {
+        this.searchConfig = searchConfig;
+    }
 
-@JsonAnyGetter
-public Map<String, Object> getAdditionalProperties() {
-return this.additionalProperties;
-}
+    /**
+     * 
+     * (Required)
+     * 
+     */
+    @JsonProperty("childEntities")
+    public List<ChildEntity> getChildEntities() {
+        return childEntities;
+    }
 
-@JsonAnySetter
-public void setAdditionalProperty(String name, Object value) {
-this.additionalProperties.put(name, value);
-}
+    /**
+     * 
+     * (Required)
+     * 
+     */
+    @JsonProperty("childEntities")
+    public void setChildEntities(List<ChildEntity> childEntities) {
+        this.childEntities = childEntities;
+    }
+
+    /**
+     * 
+     * (Required)
+     * 
+     */
+    @JsonProperty("entityAttributes")
+    public List<EntityAttribute> getEntityAttributes() {
+        return entityAttributes;
+    }
+
+    /**
+     * 
+     * (Required)
+     * 
+     */
+    @JsonProperty("entityAttributes")
+    public void setEntityAttributes(List<EntityAttribute> entityAttributes) {
+        this.entityAttributes = entityAttributes;
+    }
+
+    @JsonAnyGetter
+    public Map<String, Object> getAdditionalProperties() {
+        return this.additionalProperties;
+    }
+
+    @JsonAnySetter
+    public void setAdditionalProperty(String name, Object value) {
+        this.additionalProperties.put(name, value);
+    }
 
 }

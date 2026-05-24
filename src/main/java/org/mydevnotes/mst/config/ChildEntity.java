@@ -1,3 +1,4 @@
+
 package org.mydevnotes.mst.config;
 
 import java.util.LinkedHashMap;
@@ -15,19 +16,28 @@ import jakarta.validation.constraints.NotNull;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
-    "searchOptions"
+    "businessEntityType",
+    "searchDetails"
 })
 @Generated("jsonschema2pojo")
-public class SearchSection {
+public class ChildEntity {
 
     /**
      * 
      * (Required)
      * 
      */
-    @JsonProperty("searchOptions")
+    @JsonProperty("businessEntityType")
     @NotNull
-    private List<@Valid SearchOption> searchOptions;
+    private String businessEntityType;
+    /**
+     * 
+     * (Required)
+     * 
+     */
+    @JsonProperty("searchDetails")
+    @NotNull
+    private List<@Valid SearchDetail> searchDetails;
     @JsonIgnore
     private Map<String, @Valid Object> additionalProperties = new LinkedHashMap<String, Object>();
 
@@ -36,9 +46,9 @@ public class SearchSection {
      * (Required)
      * 
      */
-    @JsonProperty("searchOptions")
-    public List<SearchOption> getSearchOptions() {
-        return searchOptions;
+    @JsonProperty("businessEntityType")
+    public String getBusinessEntityType() {
+        return businessEntityType;
     }
 
     /**
@@ -46,9 +56,29 @@ public class SearchSection {
      * (Required)
      * 
      */
-    @JsonProperty("searchOptions")
-    public void setSearchOptions(List<SearchOption> searchOptions) {
-        this.searchOptions = searchOptions;
+    @JsonProperty("businessEntityType")
+    public void setBusinessEntityType(String businessEntityType) {
+        this.businessEntityType = businessEntityType;
+    }
+
+    /**
+     * 
+     * (Required)
+     * 
+     */
+    @JsonProperty("searchDetails")
+    public List<SearchDetail> getSearchDetails() {
+        return searchDetails;
+    }
+
+    /**
+     * 
+     * (Required)
+     * 
+     */
+    @JsonProperty("searchDetails")
+    public void setSearchDetails(List<SearchDetail> searchDetails) {
+        this.searchDetails = searchDetails;
     }
 
     @JsonAnyGetter

@@ -1,3 +1,4 @@
+
 package org.mydevnotes.mst.config;
 
 import java.util.LinkedHashMap;
@@ -16,10 +17,11 @@ import jakarta.validation.constraints.NotNull;
 @JsonPropertyOrder({
     "name",
     "title",
+    "type",
     "parameterId"
 })
 @Generated("jsonschema2pojo")
-public class Parameter {
+public class SearchParameter {
 
     /**
      * 
@@ -37,6 +39,14 @@ public class Parameter {
     @JsonProperty("title")
     @NotNull
     private String title;
+    /**
+     * 
+     * (Required)
+     * 
+     */
+    @JsonProperty("type")
+    @NotNull
+    private String type;
     /**
      * 
      * (Required)
@@ -86,6 +96,26 @@ public class Parameter {
     @JsonProperty("title")
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    /**
+     * 
+     * (Required)
+     * 
+     */
+    @JsonProperty("type")
+    public String getType() {
+        return type;
+    }
+
+    /**
+     * 
+     * (Required)
+     * 
+     */
+    @JsonProperty("type")
+    public void setType(String type) {
+        this.type = type;
     }
 
     /**
