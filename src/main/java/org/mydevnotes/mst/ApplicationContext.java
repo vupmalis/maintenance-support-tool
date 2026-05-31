@@ -22,7 +22,7 @@ public class ApplicationContext  implements BusinessEntitySelectionListener, Bus
     
     private BusinessEntity selectedBusinessEntity;
     private BusinessEntity selectedChildBusinessEntity;
-    private List<BusinessEntitySelectionListener> selectionListeners = new ArrayList();
+    private List<BusinessEntityListener> selectionListeners = new ArrayList();
 
     public void setEventLogger(EventLogger eventLogger) {
         this.eventLogger = eventLogger;
@@ -119,7 +119,7 @@ public class ApplicationContext  implements BusinessEntitySelectionListener, Bus
     @Override
     public void onMainBusinessEntitySelected(BusinessEntity businessEntity) {
         this.selectedBusinessEntity = businessEntity;
-        this.selectionListeners.forEach(listener -> listener.onMainBusinessEntitySelected(businessEntity));
+        this.selectionListeners.forEach(listener -> listener.onBusinessEntitySelected(businessEntity));
     }
 
     @Override
@@ -130,7 +130,7 @@ public class ApplicationContext  implements BusinessEntitySelectionListener, Bus
     @Override
     public void onChildBusinessEntitySelected(BusinessEntity businessEntity) {
         this.selectedChildBusinessEntity = businessEntity;
-        this.selectionListeners.forEach(listener -> listener.onChildBusinessEntitySelected(businessEntity));
+        this.selectionListeners.forEach(listener -> listener.onBusinessEntitySelected(businessEntity));
     }
 
     @Override
@@ -138,7 +138,7 @@ public class ApplicationContext  implements BusinessEntitySelectionListener, Bus
         return this.selectedChildBusinessEntity;
     }
     
-    public void addSelectionListener(BusinessEntitySelectionListener selectionListener){
+    public void addSelectionListener(BusinessEntityListener selectionListener){
         this.selectionListeners.add(selectionListener);
     }
 }

@@ -1,24 +1,28 @@
 package org.mydevnotes.mst.ui;
 
+import java.nio.file.Path;
+import java.util.Map;
 import javax.swing.JButton;
+import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
 import org.mydevnotes.mst.ApplicationContext;
-import org.mydevnotes.mst.BusinessEntitySelectionListener;
+import org.mydevnotes.mst.BusinessEntityListener;
+import org.mydevnotes.mst.action.ActionScriptExecutor;
 import org.mydevnotes.mst.config.AppConfig;
-import org.mydevnotes.mst.config.BusinessEntityConfig;
 import org.mydevnotes.mst.dao.BusinessEntity;
 
 /**
  *
  * @author vupma
  */
-public class JPanelBusinessEntityActions extends javax.swing.JPanel implements BusinessEntitySelectionListener {
+public class JPanelBusinessEntityActions extends javax.swing.JPanel implements BusinessEntityListener {
 
     /**
      * Creates new form JPanelBusinessEntityActions
      */
     public JPanelBusinessEntityActions() {
         initComponents();
-        ApplicationContext.getApplicationContext().addSelectionListener(this);
+        ApplicationContext.getApplicationContext().addSelectionListener((BusinessEntityListener) this);
     }
 
     /**
@@ -44,12 +48,7 @@ public class JPanelBusinessEntityActions extends javax.swing.JPanel implements B
     // End of variables declaration//GEN-END:variables
 
     @Override
-    public void onMainBusinessEntitySelected(BusinessEntity businessEntity) {
-
-    }
-
-    @Override
-    public void onChildBusinessEntitySelected(BusinessEntity businessEntity) {
+    public void onBusinessEntitySelected(BusinessEntity businessEntity) {
 
         this.removeAll();
 
@@ -60,11 +59,34 @@ public class JPanelBusinessEntityActions extends javax.swing.JPanel implements B
             var entityConfig = appConfig.getBusinessEntityConfig().stream().filter(cfg -> cfg.getBusinessEntityType().equals(businessEntity.getType())).findFirst().orElse(null);
 
             if (entityConfig != null) {
-                JButton b1 = new JButton("Start");
-                JButton b2 = new JButton("Stop");
 
-                this.add(b1);
-                this.add(b2);
+                entityConfig.getActions().forEach(actionConfig -> {
+                    JButton actionButton = new JButton(actionConfig.getName());
+                    actionButton.setToolTipText("Todo - add toolTip to config");
+                    actionButton.addActionListener(e -> {
+
+                        new Thread(() -> {
+                            try {
+                                ActionScriptExecutor engine = new ActionScriptExecutor();
+
+                                Object result = engine.execute(
+                                        Path.of(actionConfig.getScript()),
+                                        businessEntity
+                                );
+
+                                SwingUtilities.invokeLater(()
+                                        -> JOptionPane.showMessageDialog(null, "Result: " + result)
+                                );
+
+                            } catch (Exception ex) {
+                                ex.printStackTrace();
+                            }
+                        }).start();
+
+                    });
+                    this.add(actionButton);
+
+                });
             }
 
         }

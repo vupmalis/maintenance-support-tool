@@ -63,8 +63,9 @@ public class JPanelSearchResultSet extends javax.swing.JPanel {
                     parentEntity.setAttributes(getSelectedRowAsBusinessEntity(row));
 
                     this.eventLogger.addLog(String.format("Extracting details for object id=%s \n", parentEntity.getId()));
-                    this.businessEntitySelectionListener.onMainBusinessEntitySelected(parentEntity);
+                    
                     this.businessEntitySelectionListener.onChildBusinessEntitySelected(null);
+                    this.businessEntitySelectionListener.onMainBusinessEntitySelected(parentEntity);
                     
                     this.populateDetails(parentEntity);
                 });
@@ -135,6 +136,8 @@ public class JPanelSearchResultSet extends javax.swing.JPanel {
         jScrollPane1 = new javax.swing.JScrollPane();
         jTableResults = new javax.swing.JTable();
 
+        setLayout(new java.awt.BorderLayout());
+
         jTableResults.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},
@@ -148,16 +151,7 @@ public class JPanelSearchResultSet extends javax.swing.JPanel {
         ));
         jScrollPane1.setViewportView(jTableResults);
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
-        this.setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 400, Short.MAX_VALUE)
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 162, Short.MAX_VALUE)
-        );
+        add(jScrollPane1, java.awt.BorderLayout.CENTER);
     }// </editor-fold>//GEN-END:initComponents
 
 
