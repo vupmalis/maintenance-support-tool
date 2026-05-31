@@ -2,7 +2,9 @@ package org.mydevnotes.mst;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import org.mydevnotes.mst.config.AppConfig;
 import org.mydevnotes.mst.config.DataSource;
@@ -20,6 +22,7 @@ public class ApplicationContext  implements BusinessEntitySelectionListener, Bus
     
     private BusinessEntity selectedBusinessEntity;
     private BusinessEntity selectedChildBusinessEntity;
+    private List<BusinessEntitySelectionListener> selectionListeners = new ArrayList();
 
     public void setEventLogger(EventLogger eventLogger) {
         this.eventLogger = eventLogger;
@@ -114,8 +117,9 @@ public class ApplicationContext  implements BusinessEntitySelectionListener, Bus
     }
 
     @Override
-    public void setMainBusinessEntity(BusinessEntity businessEntity) {
+    public void onMainBusinessEntitySelected(BusinessEntity businessEntity) {
         this.selectedBusinessEntity = businessEntity;
+        this.selectionListeners.forEach(listener -> listener.onMainBusinessEntitySelected(businessEntity));
     }
 
     @Override
@@ -124,13 +128,17 @@ public class ApplicationContext  implements BusinessEntitySelectionListener, Bus
     }
 
     @Override
-    public void setChildBusinessEntity(BusinessEntity businessEntity) {
+    public void onChildBusinessEntitySelected(BusinessEntity businessEntity) {
         this.selectedChildBusinessEntity = businessEntity;
+        this.selectionListeners.forEach(listener -> listener.onChildBusinessEntitySelected(businessEntity));
     }
 
     @Override
     public BusinessEntity getChildBusinessEntity() {
         return this.selectedChildBusinessEntity;
     }
-
+    
+    public void addSelectionListener(BusinessEntitySelectionListener selectionListener){
+        this.selectionListeners.add(selectionListener);
+    }
 }

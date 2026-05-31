@@ -8,8 +8,8 @@ import org.mydevnotes.mst.dao.BusinessEntity;
  */
 public interface BusinessEntitySelectionListener {
     
-    public void setMainBusinessEntity(BusinessEntity businessEntity);
+    public void onMainBusinessEntitySelected(BusinessEntity businessEntity);
     
-    public void setChildBusinessEntity(BusinessEntity businessEntity);
+    public void onChildBusinessEntitySelected(BusinessEntity businessEntity);
    
 }

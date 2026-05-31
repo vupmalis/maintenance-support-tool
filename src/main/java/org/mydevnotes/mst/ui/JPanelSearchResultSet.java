@@ -63,8 +63,8 @@ public class JPanelSearchResultSet extends javax.swing.JPanel {
                     parentEntity.setAttributes(getSelectedRowAsBusinessEntity(row));
 
                     this.eventLogger.addLog(String.format("Extracting details for object id=%s \n", parentEntity.getId()));
-                    this.businessEntitySelectionListener.setMainBusinessEntity(parentEntity);
-                    this.businessEntitySelectionListener.setChildBusinessEntity(null);
+                    this.businessEntitySelectionListener.onMainBusinessEntitySelected(parentEntity);
+                    this.businessEntitySelectionListener.onChildBusinessEntitySelected(null);
                     
                     this.populateDetails(parentEntity);
                 });

@@ -1,20 +1,24 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JPanel.java to edit this template
- */
 package org.mydevnotes.mst.ui;
+
+import javax.swing.JButton;
+import org.mydevnotes.mst.ApplicationContext;
+import org.mydevnotes.mst.BusinessEntitySelectionListener;
+import org.mydevnotes.mst.config.AppConfig;
+import org.mydevnotes.mst.config.BusinessEntityConfig;
+import org.mydevnotes.mst.dao.BusinessEntity;
 
 /**
  *
  * @author vupma
  */
-public class JPanelBusinessEntityActions extends javax.swing.JPanel {
+public class JPanelBusinessEntityActions extends javax.swing.JPanel implements BusinessEntitySelectionListener {
 
     /**
      * Creates new form JPanelBusinessEntityActions
      */
     public JPanelBusinessEntityActions() {
         initComponents();
+        ApplicationContext.getApplicationContext().addSelectionListener(this);
     }
 
     /**
@@ -28,28 +32,45 @@ public class JPanelBusinessEntityActions extends javax.swing.JPanel {
 
         jButton1 = new javax.swing.JButton();
 
-        jButton1.setText("jButton1");
+        setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
-        this.setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jButton1)
-                .addContainerGap(319, Short.MAX_VALUE))
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(14, Short.MAX_VALUE)
-                .addComponent(jButton1)
-                .addContainerGap())
-        );
+        jButton1.setText("Test");
+        add(jButton1);
     }// </editor-fold>//GEN-END:initComponents
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
     // End of variables declaration//GEN-END:variables
+
+    @Override
+    public void onMainBusinessEntitySelected(BusinessEntity businessEntity) {
+
+    }
+
+    @Override
+    public void onChildBusinessEntitySelected(BusinessEntity businessEntity) {
+
+        this.removeAll();
+
+        if (businessEntity != null) {
+
+            AppConfig appConfig = ApplicationContext.getApplicationContext().getAppConfig();
+
+            var entityConfig = appConfig.getBusinessEntityConfig().stream().filter(cfg -> cfg.getBusinessEntityType().equals(businessEntity.getType())).findFirst().orElse(null);
+
+            if (entityConfig != null) {
+                JButton b1 = new JButton("Start");
+                JButton b2 = new JButton("Stop");
+
+                this.add(b1);
+                this.add(b2);
+            }
+
+        }
+
+        this.revalidate();
+        this.repaint();
+
+    }
 }

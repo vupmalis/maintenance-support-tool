@@ -54,7 +54,7 @@ public class JPanelSearchResultDetails extends javax.swing.JPanel implements Sea
 
                 // trigger your logic here
                 if (entityNode.getBusinessEntity() != null) {
-                    this.businessEntitySelectionListener.setChildBusinessEntity(entityNode.getBusinessEntity());
+                    this.businessEntitySelectionListener.onChildBusinessEntitySelected(entityNode.getBusinessEntity());
                     this.jPanelSearchResultSetAttributes.setBusinessEntity(entityNode.getBusinessEntity());
                 }
             } else {
@@ -77,6 +77,9 @@ public class JPanelSearchResultDetails extends javax.swing.JPanel implements Sea
         jTreeDetails = new javax.swing.JTree();
         jScrollPane2 = new javax.swing.JScrollPane();
         jPanelSearchResultSetAttributes = new org.mydevnotes.mst.ui.JPanelSearchResultSet();
+        jPanelBusinessEntityActions1 = new org.mydevnotes.mst.ui.JPanelBusinessEntityActions();
+
+        setLayout(new java.awt.BorderLayout());
 
         jScrollPane1.setViewportView(jTreeDetails);
 
@@ -86,20 +89,13 @@ public class JPanelSearchResultDetails extends javax.swing.JPanel implements Sea
 
         jSplitPane1.setRightComponent(jScrollPane2);
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
-        this.setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 247, Short.MAX_VALUE)
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 99, Short.MAX_VALUE)
-        );
+        add(jSplitPane1, java.awt.BorderLayout.CENTER);
+        add(jPanelBusinessEntityActions1, java.awt.BorderLayout.SOUTH);
     }// </editor-fold>//GEN-END:initComponents
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private org.mydevnotes.mst.ui.JPanelBusinessEntityActions jPanelBusinessEntityActions1;
     private org.mydevnotes.mst.ui.JPanelSearchResultSet jPanelSearchResultSetAttributes;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
@@ -110,7 +106,7 @@ public class JPanelSearchResultDetails extends javax.swing.JPanel implements Sea
     @Override
     public void populateDetails(BusinessEntity parentEntity) {
 
-        this.businessEntitySelectionListener.setChildBusinessEntity(null);
+        this.businessEntitySelectionListener.onChildBusinessEntitySelected(null);
         DefaultMutableTreeNode root = new DefaultMutableTreeNode(new BusinessEntityNode(parentEntity));
 
         addDetailsNodes(root, parentEntity, 0);
