@@ -6,6 +6,7 @@ import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.table.DefaultTableModel;
 import org.mydevnotes.mst.ApplicationContext;
+import org.mydevnotes.mst.BusinessEntitySelectionListener;
 import org.mydevnotes.mst.EventLogger;
 import org.mydevnotes.mst.dao.BusinessEntity;
 import org.mydevnotes.mst.ui.design.AlternateRowRenderer;
@@ -19,6 +20,7 @@ public class JPanelSearchResultSet extends javax.swing.JPanel {
     private SearchResultNavigationListener navigationListener;
     private EventLogger eventLogger;
     private String objectType;
+    private BusinessEntitySelectionListener businessEntitySelectionListener = ApplicationContext.getApplicationContext();
 
     public void setNavigationListener(SearchResultNavigationListener navigationListener) {
         this.navigationListener = navigationListener;
@@ -61,6 +63,9 @@ public class JPanelSearchResultSet extends javax.swing.JPanel {
                     parentEntity.setAttributes(getSelectedRowAsBusinessEntity(row));
 
                     this.eventLogger.addLog(String.format("Extracting details for object id=%s \n", parentEntity.getId()));
+                    this.businessEntitySelectionListener.setMainBusinessEntity(parentEntity);
+                    this.businessEntitySelectionListener.setChildBusinessEntity(null);
+                    
                     this.populateDetails(parentEntity);
                 });
     }

@@ -11,6 +11,7 @@ import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import org.mydevnotes.mst.ApplicationContext;
+import org.mydevnotes.mst.BusinessEntitySelectionListener;
 import org.mydevnotes.mst.config.AppConfig;
 import org.mydevnotes.mst.config.DataSource;
 import org.mydevnotes.mst.config.SearchDetail;
@@ -26,6 +27,7 @@ public class JPanelSearchResultDetails extends javax.swing.JPanel implements Sea
 
     // safe guard against infinite loops
     private static final int MAX_TREE_HIGHT = 15;
+    private BusinessEntitySelectionListener businessEntitySelectionListener = ApplicationContext.getApplicationContext();
 
     /**
      * Creates new form JPanelDetails
@@ -52,6 +54,7 @@ public class JPanelSearchResultDetails extends javax.swing.JPanel implements Sea
 
                 // trigger your logic here
                 if (entityNode.getBusinessEntity() != null) {
+                    this.businessEntitySelectionListener.setChildBusinessEntity(entityNode.getBusinessEntity());
                     this.jPanelSearchResultSetAttributes.setBusinessEntity(entityNode.getBusinessEntity());
                 }
             } else {
@@ -107,6 +110,7 @@ public class JPanelSearchResultDetails extends javax.swing.JPanel implements Sea
     @Override
     public void populateDetails(BusinessEntity parentEntity) {
 
+        this.businessEntitySelectionListener.setChildBusinessEntity(null);
         DefaultMutableTreeNode root = new DefaultMutableTreeNode(new BusinessEntityNode(parentEntity));
 
         addDetailsNodes(root, parentEntity, 0);

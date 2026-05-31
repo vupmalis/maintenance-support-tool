@@ -6,16 +6,20 @@ import java.util.HashMap;
 import java.util.Map;
 import org.mydevnotes.mst.config.AppConfig;
 import org.mydevnotes.mst.config.DataSource;
+import org.mydevnotes.mst.dao.BusinessEntity;
 
 /**
  *
  * @author vupma
  */
-public class ApplicationContext {
+public class ApplicationContext  implements BusinessEntitySelectionListener, BusinessEntitySelectionProvider{
 
     String configValidationErrors = "";    
 
     private AppConfig appConfig;
+    
+    private BusinessEntity selectedBusinessEntity;
+    private BusinessEntity selectedChildBusinessEntity;
 
     public void setEventLogger(EventLogger eventLogger) {
         this.eventLogger = eventLogger;
@@ -107,6 +111,26 @@ public class ApplicationContext {
                 e.printStackTrace();
             }
         });
+    }
+
+    @Override
+    public void setMainBusinessEntity(BusinessEntity businessEntity) {
+        this.selectedBusinessEntity = businessEntity;
+    }
+
+    @Override
+    public BusinessEntity getMainBusinessEntity() {
+        return this.selectedBusinessEntity;
+    }
+
+    @Override
+    public void setChildBusinessEntity(BusinessEntity businessEntity) {
+        this.selectedChildBusinessEntity = businessEntity;
+    }
+
+    @Override
+    public BusinessEntity getChildBusinessEntity() {
+        return this.selectedChildBusinessEntity;
     }
 
 }
