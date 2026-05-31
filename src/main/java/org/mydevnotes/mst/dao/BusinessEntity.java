@@ -1,5 +1,6 @@
 package org.mydevnotes.mst.dao;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -11,7 +12,8 @@ public class BusinessEntity {
     private Long id;
     private String name;
     private String type;
-    private Map<String, Object> attributes;    
+    private Map<String, Object> attributes;
+    private List<BusinessEntity> children;
     
     public Long getId() {
         return id;
@@ -44,7 +46,12 @@ public class BusinessEntity {
     public void setAttributes(Map<String, Object> attributes) {
         this.attributes = attributes;
     }
-    
-    
-    
+
+    public List<BusinessEntity> getChildren() {
+        return children;
+    }
+
+    public void setChildren(List<BusinessEntity> children) {
+        this.children = children;
+    }
 }

@@ -12,7 +12,6 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import org.mydevnotes.mst.ApplicationContext;
 import org.mydevnotes.mst.config.AppConfig;
-import org.mydevnotes.mst.config.ChildEntity;
 import org.mydevnotes.mst.config.DataSource;
 import org.mydevnotes.mst.config.SearchDetail;
 import org.mydevnotes.mst.dao.BusinessEntity;
@@ -25,17 +24,20 @@ import org.mydevnotes.mst.ui.tree.BusinessEntityTreeCellRenderer;
  */
 public class JPanelSearchResultDetails extends javax.swing.JPanel implements SearchResultNavigationListener {
 
+    // safe guard against infinite loops
+    private static final int MAX_TREE_HIGHT = 15;
+
     /**
      * Creates new form JPanelDetails
      */
     public JPanelSearchResultDetails() {
         initComponents();
         this.jTreeDetails.setCellRenderer(new BusinessEntityTreeCellRenderer());
-        
+
         this.jTreeDetails.addTreeSelectionListener(e -> {
 
-            DefaultMutableTreeNode node =
-                    (DefaultMutableTreeNode) this.jTreeDetails.getLastSelectedPathComponent();
+            DefaultMutableTreeNode node
+                    = (DefaultMutableTreeNode) this.jTreeDetails.getLastSelectedPathComponent();
 
             if (node == null) {
                 return;
@@ -49,13 +51,13 @@ public class JPanelSearchResultDetails extends javax.swing.JPanel implements Sea
                 System.out.println(entityNode.getBusinessEntity().getAttributes());
 
                 // trigger your logic here
-                if (entityNode.getBusinessEntity() != null){
+                if (entityNode.getBusinessEntity() != null) {
                     this.jPanelSearchResultSetAttributes.setBusinessEntity(entityNode.getBusinessEntity());
                 }
             } else {
                 this.jPanelSearchResultSetAttributes.cleanup();
             }
-        });        
+        });
     }
 
     /**
@@ -107,12 +109,7 @@ public class JPanelSearchResultDetails extends javax.swing.JPanel implements Sea
 
         DefaultMutableTreeNode root = new DefaultMutableTreeNode(new BusinessEntityNode(parentEntity));
 
-        AppConfig config = ApplicationContext.getApplicationContext().getAppConfig();
-        var detailsConfig = config.getChildEntities().stream().filter(cd -> parentEntity.getType().equals(cd.getBusinessEntityType())).findFirst().orElse(null);
-
-        if (detailsConfig != null) {
-            addDetailsNodes(detailsConfig, root, parentEntity.getId());
-        }
+        addDetailsNodes(root, parentEntity, 0);
 
         DefaultTreeModel model
                 = new DefaultTreeModel(root);
@@ -121,18 +118,30 @@ public class JPanelSearchResultDetails extends javax.swing.JPanel implements Sea
         expandAll(jTreeDetails);
     }
 
-    private void addDetailsNodes(ChildEntity detailsConfig, DefaultMutableTreeNode root, Object id) {
+    private void addDetailsNodes(DefaultMutableTreeNode root, BusinessEntity parentEntity, int treeHight) {
 
-        for (SearchDetail detailsObjectConfig : detailsConfig.getSearchDetails()) {
+        if (treeHight > MAX_TREE_HIGHT) {
+            return;
+        }
 
-            List<BusinessEntity> detailsEntities = retrieveDetailsEntities(detailsObjectConfig, id);
+        AppConfig config = ApplicationContext.getApplicationContext().getAppConfig();
+        var detailsConfig = config.getChildEntities().stream().filter(cd -> parentEntity.getType().equals(cd.getBusinessEntityType())).findFirst().orElse(null);
 
-            if (!detailsEntities.isEmpty()) {
+        if (detailsConfig != null) {
+            for (SearchDetail detailsObjectConfig : detailsConfig.getSearchDetails()) {
 
-                DefaultMutableTreeNode detailsOfGivenTypeRoot = new DefaultMutableTreeNode(detailsObjectConfig.getBusinessEntityType());
-                root.add(detailsOfGivenTypeRoot);
+                List<BusinessEntity> detailsEntities = retrieveDetailsEntities(detailsObjectConfig, parentEntity.getId());
 
-                detailsEntities.forEach(entity -> detailsOfGivenTypeRoot.add(new DefaultMutableTreeNode(new BusinessEntityNode(entity))));
+                if (!detailsEntities.isEmpty()) {
+
+                    DefaultMutableTreeNode detailsOfGivenTypeRoot = new DefaultMutableTreeNode(detailsObjectConfig.getBusinessEntityType());
+                    root.add(detailsOfGivenTypeRoot);
+
+                    detailsEntities.forEach(entity -> {
+                        detailsOfGivenTypeRoot.add(new DefaultMutableTreeNode(new BusinessEntityNode(entity)));
+                        addDetailsNodes(detailsOfGivenTypeRoot, entity, treeHight + 1);
+                    });
+                }
             }
         }
     }
@@ -161,7 +170,7 @@ public class JPanelSearchResultDetails extends javax.swing.JPanel implements Sea
 
         return detailsEntities;
     }
-    
+
     public static void expandAll(JTree tree) {
         int row = 0;
 
@@ -169,5 +178,5 @@ public class JPanelSearchResultDetails extends javax.swing.JPanel implements Sea
             tree.expandRow(row);
             row++;
         }
-    }    
+    }
 }
