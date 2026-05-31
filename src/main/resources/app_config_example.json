@@ -71,7 +71,7 @@
                     {
                         "businessEntityType": "events",
                         "dataSource": "PrimaryDB",
-                        "request": "SELECT de.id, de.event_type FROM devices.device_events AS de where de.device_id = ?"
+                        "request": "SELECT de.id, de.event_type as name FROM devices.device_events AS de where de.device_id = ?"
                     }                    
                 ]
             }            
