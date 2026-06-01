@@ -47,7 +47,19 @@
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
             <version>42.7.11</version>
-        </dependency>        
+        </dependency>  
+        
+        <dependency>
+            <groupId>org.apache.groovy</groupId>
+            <artifactId>groovy</artifactId>
+            <version>4.0.22</version>
+        </dependency>    
+        
+        <dependency>
+            <groupId>org.apache.groovy</groupId>
+            <artifactId>groovy-sql</artifactId>
+            <version>4.0.28</version>
+        </dependency>                                        
         
     </dependencies>
     

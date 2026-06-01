@@ -7,11 +7,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JOptionPane;
 import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import org.mydevnotes.mst.ApplicationContext;
 import org.mydevnotes.mst.BusinessEntitySelectionListener;
+import org.mydevnotes.mst.DataSourceNotFoundException;
 import org.mydevnotes.mst.config.AppConfig;
 import org.mydevnotes.mst.config.DataSource;
 import org.mydevnotes.mst.config.SearchDetail;
@@ -154,16 +156,28 @@ public class JPanelSearchResultDetails extends javax.swing.JPanel implements Sea
         if (dataSource != null) {
             if ("db".equals(dataSource.getType()) && "PostgreSQL".equals(dataSource.getConnectionDetails().getType())) {
 
-                HikariDataSource databaseDataStore = ApplicationContext.getApplicationContext().getPosgreSQLDataSource(detailsObjectConfig.getDataSource());
+                try {
+                    HikariDataSource databaseDataStore = ApplicationContext.getApplicationContext().getPosgreSQLDataSource(detailsObjectConfig.getDataSource());
 
-                try (Connection connection = databaseDataStore.getConnection();) {
+                    try (Connection connection = databaseDataStore.getConnection();) {
 
-                    detailsEntities = DBQueryExecutor.execute(detailsObjectConfig, connection, id);
-                    ApplicationContext.getApplicationContext().getEventLogger().addLog("Found " + detailsEntities.size() + " " + detailsObjectConfig.getBusinessEntityType() + "(s)\n");
+                        detailsEntities = DBQueryExecutor.execute(detailsObjectConfig, connection, id);
+                        ApplicationContext.getApplicationContext().getEventLogger().addLog("Found " + detailsEntities.size() + " " + detailsObjectConfig.getBusinessEntityType() + "(s)\n");
 
-                } catch (Exception ex) {
-                    ApplicationContext.getApplicationContext().getEventLogger().addLog("Error during details query execution " + ex.getMessage());
-                    Logger.getLogger(JPanelSearchOption.class.getName()).log(Level.SEVERE, null, ex);
+                    } catch (Exception ex) {
+                        ApplicationContext.getApplicationContext().getEventLogger().addLog("Error during details query execution " + ex.getMessage());
+                        Logger.getLogger(JPanelSearchOption.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+
+                } catch (DataSourceNotFoundException ex) {
+                    System.getLogger(JPanelSearchResultDetails.class.getName()).log(System.Logger.Level.ERROR, (String) null, ex);
+
+                    JOptionPane.showMessageDialog(
+                            this,
+                            "Not connected to " + detailsObjectConfig.getDataSource(),
+                            "DB connection error",
+                            JOptionPane.ERROR_MESSAGE
+                    );
                 }
             }
         }

@@ -9,12 +9,13 @@ import java.util.Map;
 import org.mydevnotes.mst.config.AppConfig;
 import org.mydevnotes.mst.config.DataSource;
 import org.mydevnotes.mst.dao.BusinessEntity;
+import org.mydevnotes.mst.action.scripts.ScriptResourcesProvider;
 
 /**
  *
  * @author vupma
  */
-public class ApplicationContext  implements BusinessEntitySelectionListener, BusinessEntitySelectionProvider{
+public class ApplicationContext  implements BusinessEntitySelectionListener, BusinessEntitySelectionProvider, ScriptResourcesProvider{
 
     String configValidationErrors = "";    
 
@@ -94,8 +95,14 @@ public class ApplicationContext  implements BusinessEntitySelectionListener, Bus
         }
     }
 
-    public HikariDataSource getPosgreSQLDataSource(String dataSourceName) {
-        return postgreSqlDataSources.get(dataSourceName);
+    @Override
+    public HikariDataSource getPosgreSQLDataSource(String dataSourceName) throws DataSourceNotFoundException{
+        
+        if (postgreSqlDataSources.containsKey(dataSourceName)) {        
+            return postgreSqlDataSources.get(dataSourceName);
+        } else {
+            throw new DataSourceNotFoundException("Config does not contains PostgreSQL Datasource " + dataSourceName);
+        }
     }
 
     public void closeAllDataSources() {
@@ -141,4 +148,15 @@ public class ApplicationContext  implements BusinessEntitySelectionListener, Bus
     public void addSelectionListener(BusinessEntityListener selectionListener){
         this.selectionListeners.add(selectionListener);
     }
+
+    @Override
+    public Long getBusinessEntityId() {
+        return this.getChildBusinessEntity() == null ? this.getChildBusinessEntity().getId() : this.getMainBusinessEntity().getId();
+    }
+
+    @Override
+    public String getBusinessEntityType() {
+        return this.getChildBusinessEntity() == null ? this.getChildBusinessEntity().getType() : this.getMainBusinessEntity().getType();        
+    }
+
 }

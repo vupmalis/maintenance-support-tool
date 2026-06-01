@@ -7,6 +7,8 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Map;
+import org.mydevnotes.mst.ApplicationContext;
+import org.mydevnotes.mst.action.scripts.ScriptResourcesProvider;
 import org.mydevnotes.mst.dao.BusinessEntity;
 
 /**
@@ -23,9 +25,8 @@ public class ActionScriptExecutor {
         //context.forEach(binding::setVariable);
         // also expose a helper service
         //binding.setVariable("db", new DbService());
-        binding.setVariable("message", "Hello world");
-        binding.setVariable("id", businessEntity.getId());
-        binding.setVariable("entityType", businessEntity.getType());
+        binding.setVariable("scriptPath", scriptPath.toString());
+        binding.setVariable("scriptResourceProvider", (ScriptResourcesProvider)ApplicationContext.getApplicationContext());
 
         GroovyShell shell = new GroovyShell(binding);
 
