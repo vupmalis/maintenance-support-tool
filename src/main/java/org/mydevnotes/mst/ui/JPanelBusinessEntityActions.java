@@ -70,6 +70,7 @@ public class JPanelBusinessEntityActions extends javax.swing.JPanel implements B
                                 ActionScriptExecutor engine = new ActionScriptExecutor();
 
                                 Object result = engine.execute(
+                                        ApplicationContext.getApplicationContext().getConfigPath(),
                                         Path.of(actionConfig.getScript()),
                                         businessEntity
                                 );

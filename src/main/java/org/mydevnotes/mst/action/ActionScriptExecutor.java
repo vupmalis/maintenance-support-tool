@@ -2,6 +2,7 @@ package org.mydevnotes.mst.action;
 
 import groovy.lang.Binding;
 import groovy.lang.GroovyShell;
+import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -17,7 +18,7 @@ import org.mydevnotes.mst.dao.BusinessEntity;
  */
 public class ActionScriptExecutor {
 
-    public Object execute(Path scriptPath, BusinessEntity businessEntity) throws Exception {
+    public Object execute(Path configPath, Path scriptPath, BusinessEntity businessEntity) throws Exception {
 
         Binding binding = new Binding();
 
@@ -25,18 +26,31 @@ public class ActionScriptExecutor {
         //context.forEach(binding::setVariable);
         // also expose a helper service
         //binding.setVariable("db", new DbService());
-        binding.setVariable("scriptPath", scriptPath.toString());
-        binding.setVariable("scriptResourceProvider", (ScriptResourcesProvider)ApplicationContext.getApplicationContext());
+        //binding.setVariable("scriptPath", scriptPath.toString());
+        binding.setVariable("scriptResourceProvider", (ScriptResourcesProvider) ApplicationContext.getApplicationContext());
 
         GroovyShell shell = new GroovyShell(binding);
 
-        InputStream is = Thread.currentThread()
-                .getContextClassLoader()
-                .getResourceAsStream(scriptPath.toString());
-
-        //String script = Files.readString(scriptPath);
-        String script = new String(is.readAllBytes(), StandardCharsets.UTF_8);
+        String script = loadScript(configPath, scriptPath);
         return shell.evaluate(script);
+    }
+
+    private String loadScript(Path configPath, Path scriptPath) throws IOException {
+
+        String script;
+        if (configPath != null) {
+
+            script = Files.readString(configPath.resolve(scriptPath));
+
+        } else {
+            InputStream is = Thread.currentThread()
+                    .getContextClassLoader()
+                    .getResourceAsStream(scriptPath.toString());
+
+            //String script = Files.readString(scriptPath);
+            script = new String(is.readAllBytes(), StandardCharsets.UTF_8);
+        }
+        return script;
     }
 
 }

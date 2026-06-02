@@ -2,6 +2,7 @@ package org.mydevnotes.mst;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -24,6 +25,7 @@ public class ApplicationContext  implements BusinessEntitySelectionListener, Bus
     private BusinessEntity selectedBusinessEntity;
     private BusinessEntity selectedChildBusinessEntity;
     private List<BusinessEntityListener> selectionListeners = new ArrayList();
+    private Path configPath;
 
     public void setEventLogger(EventLogger eventLogger) {
         this.eventLogger = eventLogger;
@@ -157,6 +159,18 @@ public class ApplicationContext  implements BusinessEntitySelectionListener, Bus
     @Override
     public String getBusinessEntityType() {
         return this.getChildBusinessEntity() == null ? this.getChildBusinessEntity().getType() : this.getMainBusinessEntity().getType();        
+    }
+
+    public boolean isConfigLoaded() {
+        return getAppConfig() != null;
+    }
+
+    public void setConfigPath(Path configPath) {
+        this.configPath = configPath;
+    }
+    
+    public Path getConfigPath(){
+        return this.configPath;
     }
 
 }
