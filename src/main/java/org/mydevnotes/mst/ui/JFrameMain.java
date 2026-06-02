@@ -10,6 +10,8 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -161,7 +163,10 @@ public class JFrameMain extends javax.swing.JFrame {
 
                 jFrameMain.eventLogger = jFrameMain.jPanelDebugOutput;
                 ApplicationContext.getApplicationContext().setEventLogger(jFrameMain.eventLogger);
-                jFrameMain.initConfigSection(ApplicationContext.getApplicationContext().getAppConfig());
+
+                if (ApplicationContext.getApplicationContext().isConfigLoaded()) {
+                    jFrameMain.initConfigSection(ApplicationContext.getApplicationContext().getAppConfig());
+                }
 
                 jFrameMain.initSearchResultSection();
 
@@ -233,6 +238,8 @@ public class JFrameMain extends javax.swing.JFrame {
                 Logger.getLogger(JFrameMain.class.getName()).log(Level.SEVERE, null, ex);
             }
 
+            ApplicationContext.getApplicationContext().setConfigPath(getConfigPath(args));
+
         } catch (FileNotFoundException ex) {
             System.getLogger(JFrameMain.class.getName()).log(System.Logger.Level.ERROR, (String) null, ex);
         }
@@ -242,17 +249,28 @@ public class JFrameMain extends javax.swing.JFrame {
         InputStream configFileInputStream;
         if (args.length == 0) {
             System.out.println("Use default config json");
-            
+
             configFileInputStream = Thread.currentThread()
                     .getContextClassLoader()
                     .getResourceAsStream("app_config_example.json");
         } else {
-            
+
             System.out.println("Read config json from parameter " + args[0]);
             configFileInputStream = new FileInputStream(args[0]);
-            
+
         }
         return configFileInputStream;
+    }
+
+    private static Path getConfigPath(String[] args) {
+
+        if (args.length > 0) {
+            Path configFile = Paths.get(args[0]);
+            return configFile.getParent();
+        }
+
+        return null;
+
     }
 
     private void initConfigSection(AppConfig appConfig) {

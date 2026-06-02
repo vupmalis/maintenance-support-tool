@@ -1,86 +1,93 @@
 {
-	"dataSources": [
-		{
-			"name": "PrimaryDB",
-			"type": "db",
-			"connectionDetails": {
-				"type": "PostgreSQL",
-				"host": "localhost",
-				"port": "5439",
-				"userName": "iot_manager",
-				"password": "qwe123",
-                                "connectionString": "jdbc:postgresql://localhost:5432/iot_devices"
-			}
-		}
-	],
-	"searchConfig": {
-		"searchOptions": [
-			{
-				"name": "Search by Id",
-				"dataSource": "PrimaryDB",
-                                "businessEntityType": "devices",
-				"request": "SELECT d.* FROM devices.devices AS d WHERE d.id=?",
-				"searchParameters": [
-					{
-						"name": "id",
-						"title": "Id",
-                                                "type": "long",
-						"parameterId": 1                                                
-					}				
-				]
-			},
-			{
-				"name": "Find all",
-				"dataSource": "PrimaryDB",
-                                "businessEntityType": "devices",
-				"request": "SELECT d.* FROM devices.devices AS d",
-				"searchParameters": []
-			},
-			{
-				"name": "All locations",
-				"dataSource": "PrimaryDB",
-                                "businessEntityType": "locations",
-				"request": "SELECT l.* FROM devices.locations AS l",
-				"searchParameters": []
-			}                          
-		]
-	},
-        "childEntities": [
-            {               
-                "businessEntityType": "locations",
-                "searchDetails": 
-                [
+    "dataSources": [
+        {
+            "name": "PrimaryDB",
+            "type": "db",
+            "connectionDetails": {
+                "type": "PostgreSQL",
+                "host": "localhost",
+                "port": "5439",
+                "userName": "iot_manager",
+                "password": "qwe123",
+                "connectionString": "jdbc:postgresql://localhost:5432/iot_devices"
+            }
+        }
+    ],
+    "searchConfig": {
+        "searchOptions": [
+            {
+                "name": "Search by Id",
+                "dataSource": "PrimaryDB",
+                "businessEntityType": "devices",
+                "request": "SELECT d.* FROM devices.devices AS d WHERE d.id=?",
+                "searchParameters": [
                     {
-                        "businessEntityType": "devices",
-                        "dataSource": "PrimaryDB",
-                        "request": "SELECT d.id, d.name, dt.name as device_type FROM devices.devices AS d join devices.device_types dt on dt.id = d.device_type_id WHERE d.location_id = ?"
-                    },
-                    {
-                        "businessEntityType": "automations",
-                        "dataSource": "PrimaryDB",
-                        "request": "SELECT a.id, a.name  FROM devices.automations AS a where a.location_id = ?"
-                    }                    
-                    
-        
+                        "name": "id",
+                        "title": "Id",
+                        "type": "long",
+                        "parameterId": 1                                                
+                    }				
                 ]
             },
-            {               
+            {
+                "name": "Find all",
+                "dataSource": "PrimaryDB",
                 "businessEntityType": "devices",
-                "searchDetails": 
-                [
-                    {
-                        "businessEntityType": "events",
-                        "dataSource": "PrimaryDB",
-                        "request": "SELECT de.id, de.event_type as name FROM devices.device_events AS de where de.device_id = ?"
-                    }                    
-                ]
-            }            
-        ],
-        "entityAttributes": [
-           {
-               "businessEntityType": "devices",
-               "dataSource": "PrimaryDB",
-               "request": "SELECT d.* FROM devices.devices d where d.id=?"
-           }         
+                "request": "SELECT d.* FROM devices.devices AS d",
+                "searchParameters": []
+            },
+            {
+                "name": "All locations",
+                "dataSource": "PrimaryDB",
+                "businessEntityType": "locations",
+                "request": "SELECT l.* FROM devices.locations AS l",
+                "searchParameters": []
+            }                          
         ]
+    },
+    "childEntities": [
+        {               
+            "businessEntityType": "locations",
+            "searchDetails": 
+                    [
+                        {
+                            "businessEntityType": "devices",
+                            "dataSource": "PrimaryDB",
+                            "request": "SELECT d.id, d.name, dt.name as device_type FROM devices.devices AS d join devices.device_types dt on dt.id = d.device_type_id WHERE d.location_id = ?"
+                        },
+                        {
+                            "businessEntityType": "automations",
+                            "dataSource": "PrimaryDB",
+                            "request": "SELECT a.id, a.name  FROM devices.automations AS a where a.location_id = ?"
+                        }                    
+
+
+                    ]
+        },
+        {               
+            "businessEntityType": "devices",
+            "searchDetails": 
+                    [
+                        {
+                            "businessEntityType": "events",
+                            "dataSource": "PrimaryDB",
+                            "request": "SELECT de.id, de.event_type as name FROM devices.device_events AS de where de.device_id = ?"
+                        }                    
+                    ]
+        }            
+    ],
+    "businessEntityConfig": [
+        {
+            "businessEntityType": "devices",
+            "attributes": {
+                "dataSource": "PrimaryDB",
+                "request": "SELECT d.* FROM devices.devices d where d.id=?"
+            },
+            "actions": [{ 
+                    "name": "Restart device",
+                    "script": "scripts/restartDevice.groovy"
+                }
+            ]
+        }
+    ]
 }

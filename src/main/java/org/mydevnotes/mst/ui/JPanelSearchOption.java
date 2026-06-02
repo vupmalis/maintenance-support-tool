@@ -21,6 +21,7 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
 import org.mydevnotes.mst.ApplicationContext;
+import org.mydevnotes.mst.DataSourceNotFoundException;
 import org.mydevnotes.mst.config.SearchOption;
 import org.mydevnotes.mst.config.SearchParameter;
 import org.mydevnotes.mst.dao.DBQueryExecutor;
@@ -174,27 +175,39 @@ public class JPanelSearchOption extends javax.swing.JPanel {
 
     private void jButtonSearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonSearchActionPerformed
 
-        if (ApplicationContext.getApplicationContext().getPosgreSQLDataSource(this.searchOption.getDataSource()) == null) {
+        try {
 
+            if (ApplicationContext.getApplicationContext().getPosgreSQLDataSource(this.searchOption.getDataSource()) == null) {
+
+                JOptionPane.showMessageDialog(
+                        this,
+                        "Not connected to " + this.searchOption.getDataSource(),
+                        "DB connection error",
+                        JOptionPane.ERROR_MESSAGE
+                );
+                return;
+            }
+
+            ApplicationContext.getApplicationContext().getEventLogger().addLog("Execute query " + this.searchOption.getName() + "; for " + this.paramValues + "\n");
+
+            try (Connection connection = ApplicationContext.getApplicationContext().getPosgreSQLDataSource(this.searchOption.getDataSource()).getConnection();) {
+                DefaultTableModel tableModel = DBQueryExecutor.execute(this.searchOption, connection, this.paramValues);
+
+                this.resultUi.setTableModel(tableModel, this.searchOption.getBusinessEntityType());
+
+            } catch (Exception ex) {
+                ApplicationContext.getApplicationContext().getEventLogger().addLog("Error during query execution " + ex.getMessage());
+                Logger.getLogger(JPanelSearchOption.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
+        } catch (DataSourceNotFoundException ex) {
+            System.getLogger(JPanelSearchOption.class.getName()).log(System.Logger.Level.ERROR, (String) null, ex);
             JOptionPane.showMessageDialog(
                     this,
-                    "Not connected to " + this.searchOption.getDataSource(),
+                    "Connection " + this.searchOption.getDataSource() + "not configured",
                     "DB connection error",
                     JOptionPane.ERROR_MESSAGE
             );
-            return;
-        }
-
-        ApplicationContext.getApplicationContext().getEventLogger().addLog("Execute query " + this.searchOption.getName() + "; for " + this.paramValues + "\n");
-
-        try (Connection connection = ApplicationContext.getApplicationContext().getPosgreSQLDataSource(this.searchOption.getDataSource()).getConnection();) {
-            DefaultTableModel tableModel = DBQueryExecutor.execute(this.searchOption, connection, this.paramValues);
-
-            this.resultUi.setTableModel(tableModel, this.searchOption.getBusinessEntityType());
-
-        } catch (Exception ex) {
-            ApplicationContext.getApplicationContext().getEventLogger().addLog("Error during query execution " + ex.getMessage());
-            Logger.getLogger(JPanelSearchOption.class.getName()).log(Level.SEVERE, null, ex);
         }
 
     }//GEN-LAST:event_jButtonSearchActionPerformed

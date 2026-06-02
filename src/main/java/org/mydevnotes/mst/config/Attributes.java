@@ -15,21 +15,12 @@ import jakarta.validation.constraints.NotNull;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
-    "businessEntityType",
     "dataSource",
     "request"
 })
 @Generated("jsonschema2pojo")
-public class EntityAttribute {
+public class Attributes {
 
-    /**
-     * 
-     * (Required)
-     * 
-     */
-    @JsonProperty("businessEntityType")
-    @NotNull
-    private String businessEntityType;
     /**
      * 
      * (Required)
@@ -48,26 +39,6 @@ public class EntityAttribute {
     private String request;
     @JsonIgnore
     private Map<String, @Valid Object> additionalProperties = new LinkedHashMap<String, Object>();
-
-    /**
-     * 
-     * (Required)
-     * 
-     */
-    @JsonProperty("businessEntityType")
-    public String getBusinessEntityType() {
-        return businessEntityType;
-    }
-
-    /**
-     * 
-     * (Required)
-     * 
-     */
-    @JsonProperty("businessEntityType")
-    public void setBusinessEntityType(String businessEntityType) {
-        this.businessEntityType = businessEntityType;
-    }
 
     /**
      * 

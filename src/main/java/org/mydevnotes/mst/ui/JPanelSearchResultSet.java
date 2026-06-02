@@ -6,6 +6,7 @@ import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.table.DefaultTableModel;
 import org.mydevnotes.mst.ApplicationContext;
+import org.mydevnotes.mst.BusinessEntitySelectionListener;
 import org.mydevnotes.mst.EventLogger;
 import org.mydevnotes.mst.dao.BusinessEntity;
 import org.mydevnotes.mst.ui.design.AlternateRowRenderer;
@@ -19,6 +20,7 @@ public class JPanelSearchResultSet extends javax.swing.JPanel {
     private SearchResultNavigationListener navigationListener;
     private EventLogger eventLogger;
     private String objectType;
+    private BusinessEntitySelectionListener businessEntitySelectionListener = ApplicationContext.getApplicationContext();
 
     public void setNavigationListener(SearchResultNavigationListener navigationListener) {
         this.navigationListener = navigationListener;
@@ -61,6 +63,10 @@ public class JPanelSearchResultSet extends javax.swing.JPanel {
                     parentEntity.setAttributes(getSelectedRowAsBusinessEntity(row));
 
                     this.eventLogger.addLog(String.format("Extracting details for object id=%s \n", parentEntity.getId()));
+                    
+                    this.businessEntitySelectionListener.onChildBusinessEntitySelected(null);
+                    this.businessEntitySelectionListener.onMainBusinessEntitySelected(parentEntity);
+                    
                     this.populateDetails(parentEntity);
                 });
     }
@@ -130,6 +136,8 @@ public class JPanelSearchResultSet extends javax.swing.JPanel {
         jScrollPane1 = new javax.swing.JScrollPane();
         jTableResults = new javax.swing.JTable();
 
+        setLayout(new java.awt.BorderLayout());
+
         jTableResults.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},
@@ -143,16 +151,7 @@ public class JPanelSearchResultSet extends javax.swing.JPanel {
         ));
         jScrollPane1.setViewportView(jTableResults);
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
-        this.setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 400, Short.MAX_VALUE)
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 162, Short.MAX_VALUE)
-        );
+        add(jScrollPane1, java.awt.BorderLayout.CENTER);
     }// </editor-fold>//GEN-END:initComponents
 
 

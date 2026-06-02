@@ -2,20 +2,30 @@ package org.mydevnotes.mst;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
+import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import org.mydevnotes.mst.config.AppConfig;
 import org.mydevnotes.mst.config.DataSource;
+import org.mydevnotes.mst.dao.BusinessEntity;
+import org.mydevnotes.mst.action.scripts.ScriptResourcesProvider;
 
 /**
  *
  * @author vupma
  */
-public class ApplicationContext {
+public class ApplicationContext  implements BusinessEntitySelectionListener, BusinessEntitySelectionProvider, ScriptResourcesProvider{
 
     String configValidationErrors = "";    
 
     private AppConfig appConfig;
+    
+    private BusinessEntity selectedBusinessEntity;
+    private BusinessEntity selectedChildBusinessEntity;
+    private List<BusinessEntityListener> selectionListeners = new ArrayList();
+    private Path configPath;
 
     public void setEventLogger(EventLogger eventLogger) {
         this.eventLogger = eventLogger;
@@ -87,8 +97,14 @@ public class ApplicationContext {
         }
     }
 
-    public HikariDataSource getPosgreSQLDataSource(String dataSourceName) {
-        return postgreSqlDataSources.get(dataSourceName);
+    @Override
+    public HikariDataSource getPosgreSQLDataSource(String dataSourceName) throws DataSourceNotFoundException{
+        
+        if (postgreSqlDataSources.containsKey(dataSourceName)) {        
+            return postgreSqlDataSources.get(dataSourceName);
+        } else {
+            throw new DataSourceNotFoundException("Config does not contains PostgreSQL Datasource " + dataSourceName);
+        }
     }
 
     public void closeAllDataSources() {
@@ -107,6 +123,54 @@ public class ApplicationContext {
                 e.printStackTrace();
             }
         });
+    }
+
+    @Override
+    public void onMainBusinessEntitySelected(BusinessEntity businessEntity) {
+        this.selectedBusinessEntity = businessEntity;
+        this.selectionListeners.forEach(listener -> listener.onBusinessEntitySelected(businessEntity));
+    }
+
+    @Override
+    public BusinessEntity getMainBusinessEntity() {
+        return this.selectedBusinessEntity;
+    }
+
+    @Override
+    public void onChildBusinessEntitySelected(BusinessEntity businessEntity) {
+        this.selectedChildBusinessEntity = businessEntity;
+        this.selectionListeners.forEach(listener -> listener.onBusinessEntitySelected(businessEntity));
+    }
+
+    @Override
+    public BusinessEntity getChildBusinessEntity() {
+        return this.selectedChildBusinessEntity;
+    }
+    
+    public void addSelectionListener(BusinessEntityListener selectionListener){
+        this.selectionListeners.add(selectionListener);
+    }
+
+    @Override
+    public Long getBusinessEntityId() {
+        return this.getChildBusinessEntity() == null ? this.getChildBusinessEntity().getId() : this.getMainBusinessEntity().getId();
+    }
+
+    @Override
+    public String getBusinessEntityType() {
+        return this.getChildBusinessEntity() == null ? this.getChildBusinessEntity().getType() : this.getMainBusinessEntity().getType();        
+    }
+
+    public boolean isConfigLoaded() {
+        return getAppConfig() != null;
+    }
+
+    public void setConfigPath(Path configPath) {
+        this.configPath = configPath;
+    }
+    
+    public Path getConfigPath(){
+        return this.configPath;
     }
 
 }

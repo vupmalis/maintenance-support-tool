@@ -19,7 +19,7 @@ import jakarta.validation.constraints.NotNull;
     "dataSources",
     "searchConfig",
     "childEntities",
-    "entityAttributes"
+    "businessEntityConfig"
 })
 @Generated("jsonschema2pojo")
 public class AppConfig {
@@ -54,9 +54,9 @@ public class AppConfig {
      * (Required)
      * 
      */
-    @JsonProperty("entityAttributes")
+    @JsonProperty("businessEntityConfig")
     @NotNull
-    private List<@Valid EntityAttribute> entityAttributes;
+    private List<@Valid BusinessEntityConfig> businessEntityConfig;
     @JsonIgnore
     private Map<String, @Valid Object> additionalProperties = new LinkedHashMap<String, Object>();
 
@@ -125,9 +125,9 @@ public class AppConfig {
      * (Required)
      * 
      */
-    @JsonProperty("entityAttributes")
-    public List<EntityAttribute> getEntityAttributes() {
-        return entityAttributes;
+    @JsonProperty("businessEntityConfig")
+    public List<BusinessEntityConfig> getBusinessEntityConfig() {
+        return businessEntityConfig;
     }
 
     /**
@@ -135,9 +135,9 @@ public class AppConfig {
      * (Required)
      * 
      */
-    @JsonProperty("entityAttributes")
-    public void setEntityAttributes(List<EntityAttribute> entityAttributes) {
-        this.entityAttributes = entityAttributes;
+    @JsonProperty("businessEntityConfig")
+    public void setBusinessEntityConfig(List<BusinessEntityConfig> businessEntityConfig) {
+        this.businessEntityConfig = businessEntityConfig;
     }
 
     @JsonAnyGetter
