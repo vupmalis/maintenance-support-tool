@@ -191,7 +191,7 @@
                 "request": {
                   "type": "string",
                   "examples": [
-                    "SELECT d.id, d.name as device_name , dt.name as device_type FROM devices.devices AS d join devices.device_types dt on dt.id = d.device_type_id WHERE d.location_id = ?"
+                    "SELECT d.id, d.name, dt.name as device_type FROM devices.devices AS d join devices.device_types dt on dt.id = d.device_type_id WHERE d.location_id = ?"
                   ]
                 }
               },
@@ -209,7 +209,7 @@
         ]
       }
     },
-    "entityAttributes": {
+    "businessEntityConfig": {
       "type": "array",
       "items": {
         "type": "object",
@@ -220,23 +220,56 @@
               "devices"
             ]
           },
-          "dataSource": {
-            "type": "string",
-            "examples": [
-              "PrimaryDB"
+          "attributes": {
+            "type": "object",
+            "properties": {
+              "dataSource": {
+                "type": "string",
+                "examples": [
+                  "PrimaryDB"
+                ]
+              },
+              "request": {
+                "type": "string",
+                "examples": [
+                  "SELECT d.* FROM devices.devices d where d.id=?"
+                ]
+              }
+            },
+            "required": [
+              "dataSource",
+              "request"
             ]
           },
-          "request": {
-            "type": "string",
-            "examples": [
-              "SELECT d.* FROM devices.devices d where d.id=?"
-            ]
+          "actions": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "examples": [
+                    "Restart device"
+                  ]
+                },
+                "script": {
+                  "type": "string",
+                  "examples": [
+                    "restartDevice.groovy"
+                  ]
+                }
+              },
+              "required": [
+                "name",
+                "script"
+              ]
+            }
           }
         },
         "required": [
           "businessEntityType",
-          "dataSource",
-          "request"
+          "attributes",
+          "actions"
         ]
       }
     }
@@ -245,7 +278,7 @@
     "dataSources",
     "searchConfig",
     "childEntities",
-    "entityAttributes"
+    "businessEntityConfig"
   ],
   "$schema": "https://json-schema.org/draft/2020-12/schema"
 }

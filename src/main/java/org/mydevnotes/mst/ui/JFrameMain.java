@@ -6,8 +6,12 @@ import com.networknt.schema.JsonSchema;
 import com.networknt.schema.JsonSchemaFactory;
 import com.networknt.schema.SpecVersion;
 import com.networknt.schema.ValidationMessage;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -23,7 +27,7 @@ import org.mydevnotes.mst.config.AppConfig;
  * @author vupma
  */
 public class JFrameMain extends javax.swing.JFrame {
-    
+
     private EventLogger eventLogger;
 
     /**
@@ -132,7 +136,7 @@ public class JFrameMain extends javax.swing.JFrame {
          * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
          */
         try {
-            
+
             /*
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
                 System.out.println(info.getName());
@@ -141,21 +145,16 @@ public class JFrameMain extends javax.swing.JFrame {
                     break;
                 }
             }
-            */
-           
+             */
             UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
-           
-            
+
         } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | javax.swing.UnsupportedLookAndFeelException ex) {
             java.util.logging.Logger.getLogger(JFrameMain.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
-        
+
         //</editor-fold>
-       
         loadAppConfig(args);
-        
-         
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
@@ -164,10 +163,13 @@ public class JFrameMain extends javax.swing.JFrame {
 
                 jFrameMain.eventLogger = jFrameMain.jPanelDebugOutput;
                 ApplicationContext.getApplicationContext().setEventLogger(jFrameMain.eventLogger);
-                jFrameMain.initConfigSection(ApplicationContext.getApplicationContext().getAppConfig());
-                
+
+                if (ApplicationContext.getApplicationContext().isConfigLoaded()) {
+                    jFrameMain.initConfigSection(ApplicationContext.getApplicationContext().getAppConfig());
+                }
+
                 jFrameMain.initSearchResultSection();
-                
+
                 jFrameMain.initShutdownHook();
 
                 jFrameMain.setVisible(true);
@@ -190,18 +192,12 @@ public class JFrameMain extends javax.swing.JFrame {
     // End of variables declaration//GEN-END:variables
 
     private static void loadAppConfig(String[] args) {
-        
-        var eventLog = ApplicationContext.getApplicationContext().getEventLogger();
-        
-        if (args.length == 0) { // TODO refactor to accept config file as input parameter
-            System.out.println("Reading config json");
+
+        try {
+
+            InputStream configFileInputStream = getConfigFileInputStream(args);
 
             ObjectMapper mapper = new ObjectMapper();
-            InputStream is
-                    = Thread.currentThread()
-                            .getContextClassLoader()
-                            .getResourceAsStream("app_config_example.json");
-
             JsonNode schemaNode;
             try {
                 schemaNode = mapper.readTree(
@@ -213,11 +209,11 @@ public class JFrameMain extends javax.swing.JFrame {
                 JsonSchemaFactory factory = JsonSchemaFactory.getInstance(SpecVersion.VersionFlag.V7);
                 JsonSchema schema = factory.getSchema(schemaNode);
 
-                JsonNode jsonNode = mapper.readTree(is);
+                JsonNode jsonNode = mapper.readTree(configFileInputStream);
                 Set<ValidationMessage> errors = schema.validate(jsonNode);
 
                 if (errors.isEmpty()) {
-                    System.out.println("Valid received JSON!");                   
+                    System.out.println("Valid received JSON!");
                 } else {
                     errors.forEach(System.out::println);
                     String validationErrors = errors.stream()
@@ -231,11 +227,9 @@ public class JFrameMain extends javax.swing.JFrame {
             }
 
             try {
-                is = Thread.currentThread()
-                        .getContextClassLoader()
-                        .getResourceAsStream("app_config_example.json");
+                configFileInputStream = getConfigFileInputStream(args);
 
-                AppConfig appConfig = mapper.readValue(is, AppConfig.class);
+                AppConfig appConfig = mapper.readValue(configFileInputStream, AppConfig.class);
 
                 ApplicationContext.getApplicationContext().setAppConfig(appConfig);
 
@@ -244,23 +238,55 @@ public class JFrameMain extends javax.swing.JFrame {
                 Logger.getLogger(JFrameMain.class.getName()).log(Level.SEVERE, null, ex);
             }
 
+            ApplicationContext.getApplicationContext().setConfigPath(getConfigPath(args));
+
+        } catch (FileNotFoundException ex) {
+            System.getLogger(JFrameMain.class.getName()).log(System.Logger.Level.ERROR, (String) null, ex);
         }
+    }
+
+    private static InputStream getConfigFileInputStream(String[] args) throws FileNotFoundException {
+        InputStream configFileInputStream;
+        if (args.length == 0) {
+            System.out.println("Use default config json");
+
+            configFileInputStream = Thread.currentThread()
+                    .getContextClassLoader()
+                    .getResourceAsStream("app_config_example.json");
+        } else {
+
+            System.out.println("Read config json from parameter " + args[0]);
+            configFileInputStream = new FileInputStream(args[0]);
+
+        }
+        return configFileInputStream;
+    }
+
+    private static Path getConfigPath(String[] args) {
+
+        if (args.length > 0) {
+            Path configFile = Paths.get(args[0]);
+            return configFile.getParent();
+        }
+
+        return null;
+
     }
 
     private void initConfigSection(AppConfig appConfig) {
 
-        appConfig.getDataSources().forEach(dataSource ->  jPanelConfigContainer.addDataSourceConfig(dataSource));
+        appConfig.getDataSources().forEach(dataSource -> jPanelConfigContainer.addDataSourceConfig(dataSource));
         appConfig.getSearchConfig().getSearchOptions().forEach(searchOption -> this.jPanelSearchOptionsContainer.addSearchOption(searchOption, this.jPanelsearchResultSet));
 
     }
-    
+
     private void initShutdownHook() {
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             System.out.println("Closing datasources...");
 
             ApplicationContext.getApplicationContext().closeAllDataSources();
         }));
-    }    
+    }
 
     private void initSearchResultSection() {
         this.jPanelsearchResultSet.setNavigationListener(jPanelSearchResultDetails);
