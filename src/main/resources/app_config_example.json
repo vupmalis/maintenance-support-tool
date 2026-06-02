@@ -40,7 +40,7 @@
                 "name": "All locations",
                 "dataSource": "PrimaryDB",
                 "businessEntityType": "locations",
-                "request": "SELECT l.* FROM devices.locations AS l",
+                "request": "SELECT l.*, 'note_pin.png' as h_icon FROM devices.locations AS l",
                 "searchParameters": []
             }                          
         ]
@@ -53,12 +53,12 @@
                         {
                             "businessEntityType": "devices",
                             "dataSource": "PrimaryDB",
-                            "request": "SELECT d.id, d.name, dt.name as device_type FROM devices.devices AS d join devices.device_types dt on dt.id = d.device_type_id WHERE d.location_id = ?"
+                            "request": "SELECT d.id, d.name, dt.name as device_type, 'lightbulb.png' as h_icon FROM devices.devices AS d join devices.device_types dt on dt.id = d.device_type_id WHERE d.location_id = ?"
                         },
                         {
                             "businessEntityType": "automations",
                             "dataSource": "PrimaryDB",
-                            "request": "SELECT a.id, a.name  FROM devices.automations AS a where a.location_id = ?"
+                            "request": "SELECT a.id, a.name, 'caution_high_voltage.png' as h_icon  FROM devices.automations AS a where a.location_id = ?"
                         }                    
 
 
@@ -81,7 +81,7 @@
             "businessEntityType": "devices",
             "attributes": {
                 "dataSource": "PrimaryDB",
-                "request": "SELECT d.* FROM devices.devices d where d.id=?"
+                "request": "SELECT d.*, 'lightbulb.png' as h_icon FROM devices.devices d where d.id=?"
             },
             "actions": [{ 
                     "name": "Restart device",

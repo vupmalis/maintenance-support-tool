@@ -14,6 +14,7 @@ public class BusinessEntity {
     private String type;
     private Map<String, Object> attributes;
     private List<BusinessEntity> children;
+    private String iconName = "";
     
     public Long getId() {
         return id;
@@ -53,5 +54,13 @@ public class BusinessEntity {
 
     public void setChildren(List<BusinessEntity> children) {
         this.children = children;
+    }
+
+    public String getIconName() {
+        return this.iconName;
+    }
+
+    public void setIconName(String iconName) {
+        this.iconName = iconName;
     }
 }

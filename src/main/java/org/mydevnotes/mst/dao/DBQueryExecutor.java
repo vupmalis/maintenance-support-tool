@@ -114,6 +114,7 @@ public class DBQueryExecutor {
             businessEntity.setId(businessEntityAttributes.containsKey("id") ? (Long) businessEntityAttributes.get("id") : null);
             businessEntity.setType(detailsObjectConfig.getBusinessEntityType());
             businessEntity.setName(businessEntityAttributes.containsKey("name") ? (String) businessEntityAttributes.get("name") : "untitled");
+            businessEntity.setIconName(businessEntityAttributes.containsKey("h_icon") ? (String) businessEntityAttributes.get("h_icon") : "");
             businessEntity.setAttributes(businessEntityAttributes);
 
             result.add(businessEntity);
