@@ -15,12 +15,21 @@ import jakarta.validation.constraints.NotNull;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
+    "displayName",
     "dataSource",
     "request"
 })
 @Generated("jsonschema2pojo")
 public class Attributes {
 
+    /**
+     * 
+     * (Required)
+     * 
+     */
+    @JsonProperty("displayName")
+    @NotNull
+    private String displayName;
     /**
      * 
      * (Required)
@@ -39,6 +48,26 @@ public class Attributes {
     private String request;
     @JsonIgnore
     private Map<String, @Valid Object> additionalProperties = new LinkedHashMap<String, Object>();
+
+    /**
+     * 
+     * (Required)
+     * 
+     */
+    @JsonProperty("displayName")
+    public String getDisplayName() {
+        return displayName;
+    }
+
+    /**
+     * 
+     * (Required)
+     * 
+     */
+    @JsonProperty("displayName")
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
+    }
 
     /**
      * 

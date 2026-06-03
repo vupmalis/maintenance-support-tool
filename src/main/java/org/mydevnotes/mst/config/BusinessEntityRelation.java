@@ -2,6 +2,7 @@
 package org.mydevnotes.mst.config;
 
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import javax.annotation.processing.Generated;
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
@@ -16,12 +17,10 @@ import jakarta.validation.constraints.NotNull;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
     "businessEntityType",
-    "dataSource",
-    "request",
-    "parentReference"
+    "childEntities"
 })
 @Generated("jsonschema2pojo")
-public class ChildEntity {
+public class BusinessEntityRelation {
 
     /**
      * 
@@ -36,25 +35,9 @@ public class ChildEntity {
      * (Required)
      * 
      */
-    @JsonProperty("dataSource")
+    @JsonProperty("childEntities")
     @NotNull
-    private String dataSource;
-    /**
-     * 
-     * (Required)
-     * 
-     */
-    @JsonProperty("request")
-    @NotNull
-    private String request;
-    /**
-     * 
-     * (Required)
-     * 
-     */
-    @JsonProperty("parentReference")
-    @NotNull
-    private String parentReference;
+    private List<@Valid ChildEntity> childEntities;
     @JsonIgnore
     private Map<String, @Valid Object> additionalProperties = new LinkedHashMap<String, Object>();
 
@@ -83,9 +66,9 @@ public class ChildEntity {
      * (Required)
      * 
      */
-    @JsonProperty("dataSource")
-    public String getDataSource() {
-        return dataSource;
+    @JsonProperty("childEntities")
+    public List<ChildEntity> getChildEntities() {
+        return childEntities;
     }
 
     /**
@@ -93,49 +76,9 @@ public class ChildEntity {
      * (Required)
      * 
      */
-    @JsonProperty("dataSource")
-    public void setDataSource(String dataSource) {
-        this.dataSource = dataSource;
-    }
-
-    /**
-     * 
-     * (Required)
-     * 
-     */
-    @JsonProperty("request")
-    public String getRequest() {
-        return request;
-    }
-
-    /**
-     * 
-     * (Required)
-     * 
-     */
-    @JsonProperty("request")
-    public void setRequest(String request) {
-        this.request = request;
-    }
-
-    /**
-     * 
-     * (Required)
-     * 
-     */
-    @JsonProperty("parentReference")
-    public String getParentReference() {
-        return parentReference;
-    }
-
-    /**
-     * 
-     * (Required)
-     * 
-     */
-    @JsonProperty("parentReference")
-    public void setParentReference(String parentReference) {
-        this.parentReference = parentReference;
+    @JsonProperty("childEntities")
+    public void setChildEntities(List<ChildEntity> childEntities) {
+        this.childEntities = childEntities;
     }
 
     @JsonAnyGetter

@@ -19,6 +19,7 @@ import jakarta.validation.constraints.NotNull;
     "name",
     "dataSource",
     "businessEntityType",
+    "requestScript",
     "request",
     "searchParameters"
 })
@@ -49,6 +50,14 @@ public class SearchOption {
     @JsonProperty("businessEntityType")
     @NotNull
     private String businessEntityType;
+    /**
+     * 
+     * (Required)
+     * 
+     */
+    @JsonProperty("requestScript")
+    @NotNull
+    private Object requestScript;
     /**
      * 
      * (Required)
@@ -126,6 +135,26 @@ public class SearchOption {
     @JsonProperty("businessEntityType")
     public void setBusinessEntityType(String businessEntityType) {
         this.businessEntityType = businessEntityType;
+    }
+
+    /**
+     * 
+     * (Required)
+     * 
+     */
+    @JsonProperty("requestScript")
+    public Object getRequestScript() {
+        return requestScript;
+    }
+
+    /**
+     * 
+     * (Required)
+     * 
+     */
+    @JsonProperty("requestScript")
+    public void setRequestScript(Object requestScript) {
+        this.requestScript = requestScript;
     }
 
     /**

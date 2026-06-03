@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.swing.table.DefaultTableModel;
+import org.mydevnotes.mst.config.ChildEntity;
 import org.mydevnotes.mst.config.SearchDetail;
 import org.mydevnotes.mst.config.SearchOption;
 
@@ -83,7 +84,7 @@ public class DBQueryExecutor {
         return model;
     }
 
-    public static List<BusinessEntity> execute(SearchDetail detailsObjectConfig, Connection connection, Object parentEntityId) throws SQLException {
+    public static List<BusinessEntity> execute(ChildEntity detailsObjectConfig, Connection connection, Object parentEntityId) throws SQLException {
 
         List<BusinessEntity> result = new ArrayList<>();
 

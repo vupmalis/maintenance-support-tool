@@ -18,7 +18,8 @@ import jakarta.validation.constraints.NotNull;
     "name",
     "title",
     "type",
-    "parameterId"
+    "parameterId",
+    "defaultValue"
 })
 @Generated("jsonschema2pojo")
 public class SearchParameter {
@@ -55,6 +56,14 @@ public class SearchParameter {
     @JsonProperty("parameterId")
     @NotNull
     private int parameterId;
+    /**
+     * 
+     * (Required)
+     * 
+     */
+    @JsonProperty("defaultValue")
+    @NotNull
+    private String defaultValue;
     @JsonIgnore
     private Map<String, @Valid Object> additionalProperties = new LinkedHashMap<String, Object>();
 
@@ -136,6 +145,26 @@ public class SearchParameter {
     @JsonProperty("parameterId")
     public void setParameterId(int parameterId) {
         this.parameterId = parameterId;
+    }
+
+    /**
+     * 
+     * (Required)
+     * 
+     */
+    @JsonProperty("defaultValue")
+    public String getDefaultValue() {
+        return defaultValue;
+    }
+
+    /**
+     * 
+     * (Required)
+     * 
+     */
+    @JsonProperty("defaultValue")
+    public void setDefaultValue(String defaultValue) {
+        this.defaultValue = defaultValue;
     }
 
     @JsonAnyGetter

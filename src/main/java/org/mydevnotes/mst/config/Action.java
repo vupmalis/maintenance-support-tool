@@ -16,6 +16,8 @@ import jakarta.validation.constraints.NotNull;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
     "name",
+    "toolTip",
+    "type",
     "script"
 })
 @Generated("jsonschema2pojo")
@@ -29,6 +31,22 @@ public class Action {
     @JsonProperty("name")
     @NotNull
     private String name;
+    /**
+     * 
+     * (Required)
+     * 
+     */
+    @JsonProperty("toolTip")
+    @NotNull
+    private String toolTip;
+    /**
+     * 
+     * (Required)
+     * 
+     */
+    @JsonProperty("type")
+    @NotNull
+    private String type;
     /**
      * 
      * (Required)
@@ -58,6 +76,46 @@ public class Action {
     @JsonProperty("name")
     public void setName(String name) {
         this.name = name;
+    }
+
+    /**
+     * 
+     * (Required)
+     * 
+     */
+    @JsonProperty("toolTip")
+    public String getToolTip() {
+        return toolTip;
+    }
+
+    /**
+     * 
+     * (Required)
+     * 
+     */
+    @JsonProperty("toolTip")
+    public void setToolTip(String toolTip) {
+        this.toolTip = toolTip;
+    }
+
+    /**
+     * 
+     * (Required)
+     * 
+     */
+    @JsonProperty("type")
+    public String getType() {
+        return type;
+    }
+
+    /**
+     * 
+     * (Required)
+     * 
+     */
+    @JsonProperty("type")
+    public void setType(String type) {
+        this.type = type;
     }
 
     /**
