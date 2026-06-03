@@ -30,10 +30,10 @@ public class DBQueryExecutor {
             var parameter = searchOption.getSearchParameters().get(i);
 
             switch (parameter.getType()) {
-                case "String" ->  {
+                case "String" -> {
                     ps.setString(i + 1, params.get(parameter.getName()));
                 }
-                case "long" ->  {
+                case "long" -> {
                     ps.setLong(i + 1, Long.parseLong(params.get(parameter.getName())));
                 }
             }
@@ -113,8 +113,8 @@ public class DBQueryExecutor {
 
             businessEntity.setId(businessEntityAttributes.containsKey("id") ? (Long) businessEntityAttributes.get("id") : null);
             businessEntity.setType(detailsObjectConfig.getBusinessEntityType());
-            businessEntity.setName(businessEntityAttributes.containsKey("name") ? (String) businessEntityAttributes.get("name") : "untitled");
-            businessEntity.setIconName(businessEntityAttributes.containsKey("h_icon") ? (String) businessEntityAttributes.get("h_icon") : "");
+            businessEntity.setName(businessEntityAttributes.containsKey("name") ? String.valueOf(businessEntityAttributes.get("name")) : "untitled");
+            businessEntity.setIconName(businessEntityAttributes.containsKey("h_icon") ? String.valueOf(businessEntityAttributes.get("h_icon")) : "");
             businessEntity.setAttributes(businessEntityAttributes);
 
             result.add(businessEntity);
@@ -122,5 +122,5 @@ public class DBQueryExecutor {
 
         return result;
     }
-    
+
 }
