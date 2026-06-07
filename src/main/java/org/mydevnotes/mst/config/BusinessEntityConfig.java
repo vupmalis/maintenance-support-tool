@@ -17,6 +17,7 @@ import jakarta.validation.constraints.NotNull;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
     "businessEntityType",
+    "dataSource",
     "details",
     "actions"
 })
@@ -31,6 +32,14 @@ public class BusinessEntityConfig {
     @JsonProperty("businessEntityType")
     @NotNull
     private String businessEntityType;
+    /**
+     * 
+     * (Required)
+     * 
+     */
+    @JsonProperty("dataSource")
+    @NotNull
+    private String dataSource;
     /**
      * 
      * (Required)
@@ -68,6 +77,26 @@ public class BusinessEntityConfig {
     @JsonProperty("businessEntityType")
     public void setBusinessEntityType(String businessEntityType) {
         this.businessEntityType = businessEntityType;
+    }
+
+    /**
+     * 
+     * (Required)
+     * 
+     */
+    @JsonProperty("dataSource")
+    public String getDataSource() {
+        return dataSource;
+    }
+
+    /**
+     * 
+     * (Required)
+     * 
+     */
+    @JsonProperty("dataSource")
+    public void setDataSource(String dataSource) {
+        this.dataSource = dataSource;
     }
 
     /**

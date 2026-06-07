@@ -14,6 +14,7 @@ public class BusinessEntity {
     private String type;
     private Map<String, Object> attributes;
     private List<BusinessEntity> children;
+    
     private String iconName = "";
     
     public Long getId() {

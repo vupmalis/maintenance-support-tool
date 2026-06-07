@@ -1,5 +1,6 @@
 package org.mydevnotes.mst.dao;
 
+import com.zaxxer.hikari.HikariDataSource;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -10,15 +11,25 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.swing.table.DefaultTableModel;
+import org.mydevnotes.mst.config.BusinessEntityConfig;
 import org.mydevnotes.mst.config.ChildEntity;
-import org.mydevnotes.mst.config.SearchDetail;
+import org.mydevnotes.mst.config.Detail;
 import org.mydevnotes.mst.config.SearchOption;
+import org.mydevnotes.mst.datasource.DataRetriever;
 
 /**
  *
  * @author vupma
  */
-public class DBQueryExecutor {
+public class PostgreSqlDataRetriever implements DataRetriever {
+
+    private final String dataSourceName;
+    private final HikariDataSource dataSource;
+    
+    public PostgreSqlDataRetriever(String dataSourceName, HikariDataSource dataSource){
+        this.dataSourceName = dataSourceName;
+        this.dataSource = dataSource;
+    }
 
     // TODO refactor to return BusinessEntity 
     public static DefaultTableModel execute(SearchOption searchOption, Connection connection, Map<String, String> params) throws SQLException, Exception {
@@ -84,13 +95,13 @@ public class DBQueryExecutor {
         return model;
     }
 
-    public static List<BusinessEntity> execute(ChildEntity detailsObjectConfig, Connection connection, Object parentEntityId) throws SQLException {
+    public static List<BusinessEntity> execute(BusinessEntityConfig entityConfig, ChildEntity relationConfig, Connection connection, Object parentEntityId) throws SQLException {
 
         List<BusinessEntity> result = new ArrayList<>();
 
-        System.out.println(detailsObjectConfig.getRequest());
+        System.out.println(relationConfig.getRequest());
 
-        PreparedStatement ps = connection.prepareStatement(detailsObjectConfig.getRequest());
+        PreparedStatement ps = connection.prepareStatement(relationConfig.getRequest());
         System.out.println("Parent Id = " + parentEntityId);
         ps.setLong(1, (long) parentEntityId);
         ResultSet rs = ps.executeQuery();
@@ -113,15 +124,34 @@ public class DBQueryExecutor {
             }
 
             businessEntity.setId(businessEntityAttributes.containsKey("id") ? (Long) businessEntityAttributes.get("id") : null);
-            businessEntity.setType(detailsObjectConfig.getBusinessEntityType());
+            businessEntity.setType(relationConfig.getBusinessEntityType());
             businessEntity.setName(businessEntityAttributes.containsKey("name") ? String.valueOf(businessEntityAttributes.get("name")) : "untitled");
             businessEntity.setIconName(businessEntityAttributes.containsKey("h_icon") ? String.valueOf(businessEntityAttributes.get("h_icon")) : "");
             businessEntity.setAttributes(businessEntityAttributes);
+            
+            if (entityConfig != null){
+                getBusinessEntityDetails(connection, businessEntity, entityConfig);
+            }
 
             result.add(businessEntity);
-        }
+        }       
+       
 
         return result;
+    }
+
+    private static void getBusinessEntityDetails(Connection connection, BusinessEntity businessEntity, BusinessEntityConfig entityConfig) {
+        
+    }
+
+    @Override
+    public List<BusinessEntity> getChildEntities(String parentId, ChildEntity childEntityConfig) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public Map<String, Object> getBusinessEntityDetails(String parentId, Detail detailsConfig) {
+        throw new UnsupportedOperationException("Not supported yet."); 
     }
 
 }

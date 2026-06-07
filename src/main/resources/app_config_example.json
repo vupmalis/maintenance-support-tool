@@ -36,6 +36,7 @@
                 "dataSource": "PrimaryDB",
                 "businessEntityType": "devices",               
                 "request": "SELECT d.* FROM devices.devices AS d",
+                "requestScript": null,
                 "searchParameters": []
             },
             {
@@ -43,6 +44,7 @@
                 "dataSource": "PrimaryDB",
                 "businessEntityType": "locations",                
                 "request": "SELECT l.*, 'note_pin.png' as h_icon FROM devices.locations AS l",
+                "requestScript": null,
                 "searchParameters": []
             }                          
         ]
@@ -83,14 +85,15 @@
     ],
     "businessEntityConfig": [
         {
-            "businessEntityType": "devices",
+            "businessEntityType": "devices",       
+            "dataSource": "PrimaryDB",
             "details": [
-                 { "attributes" : {
-                        "displayName": "attributes" ,
-                        "dataSource": "PrimaryDB",
-                        "request": "SELECT d.*, 'lightbulb.png' as h_icon FROM devices.devices d where d.id=?"
-                    }
-                 }
+                { 
+
+                    "displayName": "attributes",
+                    "dataSource": "PrimaryDB",
+                    "request": "SELECT d.*, 'lightbulb.png' as h_icon FROM devices.devices d where d.id=?"
+                }
             ],
             "actions": [{ 
                     "name": "Restart device",

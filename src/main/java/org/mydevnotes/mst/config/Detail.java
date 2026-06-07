@@ -15,7 +15,9 @@ import jakarta.validation.constraints.NotNull;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
-    "attributes"
+    "displayName",
+    "dataSource",
+    "request"
 })
 @Generated("jsonschema2pojo")
 public class Detail {
@@ -25,10 +27,25 @@ public class Detail {
      * (Required)
      * 
      */
-    @JsonProperty("attributes")
-    @Valid
+    @JsonProperty("displayName")
     @NotNull
-    private Attributes attributes;
+    private String displayName;
+    /**
+     * 
+     * (Required)
+     * 
+     */
+    @JsonProperty("dataSource")
+    @NotNull
+    private String dataSource;
+    /**
+     * 
+     * (Required)
+     * 
+     */
+    @JsonProperty("request")
+    @NotNull
+    private String request;
     @JsonIgnore
     private Map<String, @Valid Object> additionalProperties = new LinkedHashMap<String, Object>();
 
@@ -37,9 +54,9 @@ public class Detail {
      * (Required)
      * 
      */
-    @JsonProperty("attributes")
-    public Attributes getAttributes() {
-        return attributes;
+    @JsonProperty("displayName")
+    public String getDisplayName() {
+        return displayName;
     }
 
     /**
@@ -47,9 +64,49 @@ public class Detail {
      * (Required)
      * 
      */
-    @JsonProperty("attributes")
-    public void setAttributes(Attributes attributes) {
-        this.attributes = attributes;
+    @JsonProperty("displayName")
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
+    }
+
+    /**
+     * 
+     * (Required)
+     * 
+     */
+    @JsonProperty("dataSource")
+    public String getDataSource() {
+        return dataSource;
+    }
+
+    /**
+     * 
+     * (Required)
+     * 
+     */
+    @JsonProperty("dataSource")
+    public void setDataSource(String dataSource) {
+        this.dataSource = dataSource;
+    }
+
+    /**
+     * 
+     * (Required)
+     * 
+     */
+    @JsonProperty("request")
+    public String getRequest() {
+        return request;
+    }
+
+    /**
+     * 
+     * (Required)
+     * 
+     */
+    @JsonProperty("request")
+    public void setRequest(String request) {
+        this.request = request;
     }
 
     @JsonAnyGetter

@@ -11,12 +11,15 @@ import org.mydevnotes.mst.config.AppConfig;
 import org.mydevnotes.mst.config.DataSource;
 import org.mydevnotes.mst.dao.BusinessEntity;
 import org.mydevnotes.mst.action.scripts.ScriptResourcesProvider;
+import org.mydevnotes.mst.dao.PostgreSqlDataRetriever;
+import org.mydevnotes.mst.datasource.DataRetriever;
+import org.mydevnotes.mst.datasource.DataRetrieverProvider;
 
 /**
  *
  * @author vupma
  */
-public class ApplicationContext  implements BusinessEntitySelectionListener, BusinessEntitySelectionProvider, ScriptResourcesProvider{
+public class ApplicationContext  implements BusinessEntitySelectionListener, BusinessEntitySelectionProvider, ScriptResourcesProvider, DataRetrieverProvider{
 
     String configValidationErrors = "";    
 
@@ -31,6 +34,8 @@ public class ApplicationContext  implements BusinessEntitySelectionListener, Bus
         this.eventLogger = eventLogger;
     }
     private Map<String, HikariDataSource> postgreSqlDataSources = new HashMap<>();
+    private Map<String, PostgreSqlDataRetriever> postgreSqlDataRetrievers = new HashMap<>();
+    
     private EventLogger eventLogger;
 
     public EventLogger getEventLogger() {
@@ -80,6 +85,7 @@ public class ApplicationContext  implements BusinessEntitySelectionListener, Bus
         HikariDataSource newDataSource = new HikariDataSource(config);
 
         postgreSqlDataSources.put(dataSource.getName(), newDataSource);
+        postgreSqlDataRetrievers.put(dataSource.getName(), new PostgreSqlDataRetriever(dataSource.getName(), newDataSource));
         
         eventLogger.addLog("Created connection to " + dataSource.getName() + "\n");
     }
@@ -93,6 +99,7 @@ public class ApplicationContext  implements BusinessEntitySelectionListener, Bus
             }
             
             postgreSqlDataSources.remove(dataSource.getName());
+            postgreSqlDataRetrievers.remove(dataSource.getName());
             eventLogger.addLog("Disconnected from " + dataSource.getName() + "\n");
         }
     }
@@ -113,7 +120,14 @@ public class ApplicationContext  implements BusinessEntitySelectionListener, Bus
         this.postgreSqlDataSources.forEach((key, value) -> {
             try {
                 if (value != null) {
-                    value.close(); 
+                    
+                    if (!value.isClosed()){
+                        value.close(); 
+                    }
+                    
+                    postgreSqlDataRetrievers.remove(key);
+                    postgreSqlDataSources.remove(key);
+                    
                     System.out.println("Closed datasource " + key);
                     eventLogger.addLog("Disconnected from " + key + "\n");
                 }
@@ -171,6 +185,25 @@ public class ApplicationContext  implements BusinessEntitySelectionListener, Bus
     
     public Path getConfigPath(){
         return this.configPath;
+    }
+
+    @Override
+    public DataRetriever getDataRetriever(String name) {
+        
+        DataRetriever dataRetriever = null;
+        
+        DataSource dataSourceConfig = appConfig.getDataSources().stream().filter(ds -> ds.getName().equals(name)).findFirst().orElse(null);
+        
+        if (dataSourceConfig != null){
+            
+            //TODO introduce enum
+            dataRetriever = switch (dataSourceConfig.getType()) {
+                case "PostgreSQL" -> postgreSqlDataRetrievers.get(dataSourceConfig.getType());               
+                default -> throw new IllegalStateException("Unexpected value: " + (dataSourceConfig.getType()));
+            };
+        }
+        
+        return dataRetriever;
     }
 
 }

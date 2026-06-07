@@ -24,7 +24,7 @@ import org.mydevnotes.mst.ApplicationContext;
 import org.mydevnotes.mst.DataSourceNotFoundException;
 import org.mydevnotes.mst.config.SearchOption;
 import org.mydevnotes.mst.config.SearchParameter;
-import org.mydevnotes.mst.dao.DBQueryExecutor;
+import org.mydevnotes.mst.dao.PostgreSqlDataRetriever;
 
 /**
  *
@@ -191,7 +191,7 @@ public class JPanelSearchOption extends javax.swing.JPanel {
             ApplicationContext.getApplicationContext().getEventLogger().addLog("Execute query " + this.searchOption.getName() + "; for " + this.paramValues + "\n");
 
             try (Connection connection = ApplicationContext.getApplicationContext().getPosgreSQLDataSource(this.searchOption.getDataSource()).getConnection();) {
-                DefaultTableModel tableModel = DBQueryExecutor.execute(this.searchOption, connection, this.paramValues);
+                DefaultTableModel tableModel = PostgreSqlDataRetriever.execute(this.searchOption, connection, this.paramValues);
 
                 this.resultUi.setTableModel(tableModel, this.searchOption.getBusinessEntityType());
 

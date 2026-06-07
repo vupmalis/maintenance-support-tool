@@ -15,10 +15,11 @@ import org.mydevnotes.mst.ApplicationContext;
 import org.mydevnotes.mst.BusinessEntitySelectionListener;
 import org.mydevnotes.mst.DataSourceNotFoundException;
 import org.mydevnotes.mst.config.AppConfig;
+import org.mydevnotes.mst.config.BusinessEntityConfig;
 import org.mydevnotes.mst.config.ChildEntity;
 import org.mydevnotes.mst.config.DataSource;
 import org.mydevnotes.mst.dao.BusinessEntity;
-import org.mydevnotes.mst.dao.DBQueryExecutor;
+import org.mydevnotes.mst.dao.PostgreSqlDataRetriever;
 import org.mydevnotes.mst.ui.tree.BusinessEntityTreeCellRenderer;
 
 /**
@@ -93,7 +94,7 @@ public class JPanelSearchResultDetails extends javax.swing.JPanel implements Sea
 
         jScrollPane2.setViewportView(jPanelSearchResultSetAttributes);
 
-        jTabbedPane1.addTab("Attributes", jScrollPane2);
+        jTabbedPane1.addTab("Attributes", null, jScrollPane2, "");
 
         jSplitPane1.setRightComponent(jTabbedPane1);
         jTabbedPane1.getAccessibleContext().setAccessibleName("Attributes");
@@ -159,9 +160,11 @@ public class JPanelSearchResultDetails extends javax.swing.JPanel implements Sea
     private List<BusinessEntity> retrieveDetailsEntities(ChildEntity detailsObjectConfig, Object id) {
         List<BusinessEntity> detailsEntities = new ArrayList<>();
 
-        DataSource dataSource = ApplicationContext.getApplicationContext().getAppConfig().getDataSources().stream().filter(ds -> detailsObjectConfig.getDataSource().equals(ds.getName())).findFirst().orElse(null);
+        AppConfig appConfig = ApplicationContext.getApplicationContext().getAppConfig();
+        DataSource dataSource = appConfig.getDataSources().stream().filter(ds -> detailsObjectConfig.getDataSource().equals(ds.getName())).findFirst().orElse(null);
+        BusinessEntityConfig entityConfig = appConfig.getBusinessEntityConfig().stream().filter(beConfig -> beConfig.getBusinessEntityType().equals(detailsObjectConfig.getBusinessEntityType())).findFirst().orElse(null);
 
-        if (dataSource != null) {
+          if (dataSource != null) {
             if ("db".equals(dataSource.getType()) && "PostgreSQL".equals(dataSource.getConnectionDetails().getType())) {
 
                 try {
@@ -169,7 +172,7 @@ public class JPanelSearchResultDetails extends javax.swing.JPanel implements Sea
 
                     try (Connection connection = databaseDataStore.getConnection();) {
 
-                        detailsEntities = DBQueryExecutor.execute(detailsObjectConfig, connection, id);
+                        detailsEntities = PostgreSqlDataRetriever.execute(entityConfig, detailsObjectConfig, connection, id);
                         ApplicationContext.getApplicationContext().getEventLogger().addLog("Found " + detailsEntities.size() + " " + detailsObjectConfig.getBusinessEntityType() + "(s)\n");
 
                     } catch (Exception ex) {

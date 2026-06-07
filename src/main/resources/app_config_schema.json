@@ -159,7 +159,8 @@
             "required": [
               "name",
               "dataSource",
-              "businessEntityType",              
+              "businessEntityType",
+              "requestScript",
               "request",
               "searchParameters"
             ]
@@ -237,42 +238,40 @@
               "devices"
             ]
           },
+          "dataSource": {
+            "type": "string",
+            "examples": [
+              "PrimaryDB"
+            ]
+          },
           "details": {
             "type": "array",
             "items": {
               "type": "object",
               "properties": {
-                "attributes": {
-                  "type": "object",
-                  "properties": {
-                    "displayName": {
-                      "type": "string",
-                      "examples": [
-                        "attributes"
-                      ]
-                    },
-                    "dataSource": {
-                      "type": "string",
-                      "examples": [
-                        "PrimaryDB"
-                      ]
-                    },
-                    "request": {
-                      "type": "string",
-                      "examples": [
-                        "SELECT d.*, 'lightbulb.png' as h_icon FROM devices.devices d where d.id=?"
-                      ]
-                    }
-                  },
-                  "required": [
-                    "displayName",
-                    "dataSource",
-                    "request"
+                "displayName": {
+                  "type": "string",
+                  "examples": [
+                    "attributes"
+                  ]
+                },
+                "dataSource": {
+                  "type": "string",
+                  "examples": [
+                    "PrimaryDB"
+                  ]
+                },
+                "request": {
+                  "type": "string",
+                  "examples": [
+                    "SELECT d.*, 'lightbulb.png' as h_icon FROM devices.devices d where d.id=?"
                   ]
                 }
               },
               "required": [
-                "attributes"
+                "displayName",
+                "dataSource",
+                "request"
               ]
             }
           },
@@ -317,6 +316,7 @@
         },
         "required": [
           "businessEntityType",
+          "dataSource",
           "details",
           "actions"
         ]
