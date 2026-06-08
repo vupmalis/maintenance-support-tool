@@ -5,6 +5,7 @@ import java.util.List;
 import org.mydevnotes.mst.dao.BusinessEntity;
 import org.mydevnotes.mst.datasource.DataCollector;
 import org.mydevnotes.mst.datasource.DataRetrieverProvider;
+import org.mydevnotes.mst.datasource.DefaultDataCollector;
 
 /**
  *
@@ -15,6 +16,8 @@ public class ApplicationController implements BusinessEntitySelectionListener, B
     private BusinessEntity selectedBusinessEntity;
     private BusinessEntity selectedChildBusinessEntity;
     private final List<BusinessEntityListener> selectionListeners = new ArrayList();
+    private final DataCollector dataCollector = new DefaultDataCollector();
+    private final DataRetrieverProvider dataRetrieverProvider = ApplicationContext.getApplicationContext();
 
     @Override
     public void onMainBusinessEntitySelected(BusinessEntity businessEntity) {
@@ -24,11 +27,22 @@ public class ApplicationController implements BusinessEntitySelectionListener, B
 
     @Override
     public void onChildBusinessEntitySelected(BusinessEntity businessEntity) {
-        this.selectedChildBusinessEntity = businessEntity;
         
         
+        if (businessEntity != null){
+            this.selectedChildBusinessEntity = businessEntity;
+        
+            var entityConfig = ApplicationContext.getApplicationContext().getBusinessEntityConfig(businessEntity.getType());
+            
+            if (entityConfig != null){
+                dataCollector.populateBusinessEntityWithDetails(businessEntity, entityConfig, dataRetrieverProvider);
+            } else {
+                ApplicationContext.getApplicationContext().getEventLogger().addLog("Details for " + businessEntity.getType() + "not configured\n");
+            }
+        }    
         
         this.selectionListeners.forEach(listener -> listener.onBusinessEntitySelected(businessEntity));
+        
     }
 
     @Override

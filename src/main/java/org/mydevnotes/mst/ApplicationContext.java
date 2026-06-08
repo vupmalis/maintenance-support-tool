@@ -8,6 +8,7 @@ import java.util.Map;
 import org.mydevnotes.mst.config.AppConfig;
 import org.mydevnotes.mst.config.DataSource;
 import org.mydevnotes.mst.action.scripts.ScriptResourcesProvider;
+import org.mydevnotes.mst.config.BusinessEntityConfig;
 import org.mydevnotes.mst.dao.PostgreSqlDataRetriever;
 import org.mydevnotes.mst.datasource.DataRetriever;
 import org.mydevnotes.mst.datasource.DataRetrieverProvider;
@@ -178,5 +179,9 @@ public class ApplicationContext implements DataRetrieverProvider, ScriptResource
 
     public ApplicationController getApplicationController() {
         return this.applicationController;
+    }
+
+    public BusinessEntityConfig getBusinessEntityConfig(String businessEntityType) {
+        return this.appConfig.getBusinessEntityConfig().stream().filter(bec -> businessEntityType.equals(bec.getBusinessEntityType())).findFirst().orElse(null);
     }
 }
