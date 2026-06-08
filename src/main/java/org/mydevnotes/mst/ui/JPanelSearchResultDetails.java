@@ -30,7 +30,7 @@ public class JPanelSearchResultDetails extends javax.swing.JPanel implements Sea
 
     // safe guard against infinite loops
     private static final int MAX_TREE_HIGHT = 15;
-    private BusinessEntitySelectionListener businessEntitySelectionListener = ApplicationContext.getApplicationContext();
+    private BusinessEntitySelectionListener businessEntitySelectionListener = ApplicationContext.getApplicationContext().getApplicationController();
 
     /**
      * Creates new form JPanelDetails
@@ -157,7 +157,7 @@ public class JPanelSearchResultDetails extends javax.swing.JPanel implements Sea
         }
     }
 
-    private List<BusinessEntity> retrieveDetailsEntities(ChildEntity detailsObjectConfig, Object id) {
+    private List<BusinessEntity> retrieveDetailsEntities(ChildEntity detailsObjectConfig, String id) {
         List<BusinessEntity> detailsEntities = new ArrayList<>();
 
         AppConfig appConfig = ApplicationContext.getApplicationContext().getAppConfig();
@@ -172,7 +172,7 @@ public class JPanelSearchResultDetails extends javax.swing.JPanel implements Sea
 
                     try (Connection connection = databaseDataStore.getConnection();) {
 
-                        detailsEntities = PostgreSqlDataRetriever.execute(entityConfig, detailsObjectConfig, connection, id);
+                        detailsEntities = PostgreSqlDataRetriever.execute(entityConfig, detailsObjectConfig, connection, id, detailsObjectConfig.getParentReferenceType());
                         ApplicationContext.getApplicationContext().getEventLogger().addLog("Found " + detailsEntities.size() + " " + detailsObjectConfig.getBusinessEntityType() + "(s)\n");
 
                     } catch (Exception ex) {

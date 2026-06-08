@@ -4,14 +4,11 @@ import org.mydevnotes.mst.action.scripts.ScriptResourcesProvider
 
 import groovy.sql.Sql
 
-println "Start executiong of restartDevice"
-
 ScriptResourcesProvider scriptResourceProvider = scriptResourceProvider
 var dataSource = scriptResourceProvider.getPosgreSQLDataSource("PrimaryDB");
 var deviceId = scriptResourceProvider.getBusinessEntityId();
 
 var returnMessage = "Processing device id=${deviceId}"
-println returnMessage
 
 new Sql(dataSource).withCloseable {sql ->
 
@@ -27,7 +24,7 @@ new Sql(dataSource).withCloseable {sql ->
        SET status = ?
      WHERE id = ?
     ''',
-            ['RESTARED', deviceId.toLong()]
+            ['RESTARED', deviceId]
         )
 
         returnMessage = "Restarted device id = ${deviceId} (${rowsUpdated} rows)"

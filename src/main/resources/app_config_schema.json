@@ -210,13 +210,20 @@
                   "examples": [
                     "id"
                   ]
+                },
+                "parentReferenceType": {
+                  "type": "string",
+                  "examples": [
+                    "long"
+                  ]
                 }
               },
               "required": [
                 "businessEntityType",
                 "dataSource",
                 "request",
-                "parentReference"
+                "parentReference",
+                "parentReferenceType"
               ]
             }
           }
@@ -266,12 +273,26 @@
                   "examples": [
                     "SELECT d.*, 'lightbulb.png' as h_icon FROM devices.devices d where d.id=?"
                   ]
+                },
+                "reference": {
+                  "type": "string",
+                  "examples": [
+                    "id"
+                  ]
+                },
+                "referenceType": {
+                  "type": "string",
+                  "examples": [
+                    "long"
+                  ]
                 }
               },
               "required": [
                 "displayName",
                 "dataSource",
-                "request"
+                "request",
+                "reference",
+                "referenceType"
               ]
             }
           },
@@ -303,13 +324,27 @@
                   "examples": [
                     "scripts/restartDevice.groovy"
                   ]
+                },
+                "reference": {
+                  "type": "string",
+                  "examples": [
+                    "id"
+                  ]
+                },
+                "referenceType": {
+                  "type": "string",
+                  "examples": [
+                    "long"
+                  ]
                 }
               },
               "required": [
                 "name",
                 "toolTip",
                 "type",
-                "script"
+                "script",
+                "reference",
+                "referenceType"
               ]
             }
           }

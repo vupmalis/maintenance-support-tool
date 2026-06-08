@@ -17,7 +17,9 @@ import jakarta.validation.constraints.NotNull;
 @JsonPropertyOrder({
     "displayName",
     "dataSource",
-    "request"
+    "request",
+    "reference",
+    "referenceType"
 })
 @Generated("jsonschema2pojo")
 public class Detail {
@@ -46,6 +48,22 @@ public class Detail {
     @JsonProperty("request")
     @NotNull
     private String request;
+    /**
+     * 
+     * (Required)
+     * 
+     */
+    @JsonProperty("reference")
+    @NotNull
+    private String reference;
+    /**
+     * 
+     * (Required)
+     * 
+     */
+    @JsonProperty("referenceType")
+    @NotNull
+    private String referenceType;
     @JsonIgnore
     private Map<String, @Valid Object> additionalProperties = new LinkedHashMap<String, Object>();
 
@@ -107,6 +125,46 @@ public class Detail {
     @JsonProperty("request")
     public void setRequest(String request) {
         this.request = request;
+    }
+
+    /**
+     * 
+     * (Required)
+     * 
+     */
+    @JsonProperty("reference")
+    public String getReference() {
+        return reference;
+    }
+
+    /**
+     * 
+     * (Required)
+     * 
+     */
+    @JsonProperty("reference")
+    public void setReference(String reference) {
+        this.reference = reference;
+    }
+
+    /**
+     * 
+     * (Required)
+     * 
+     */
+    @JsonProperty("referenceType")
+    public String getReferenceType() {
+        return referenceType;
+    }
+
+    /**
+     * 
+     * (Required)
+     * 
+     */
+    @JsonProperty("referenceType")
+    public void setReferenceType(String referenceType) {
+        this.referenceType = referenceType;
     }
 
     @JsonAnyGetter

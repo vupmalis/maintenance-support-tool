@@ -11,7 +11,7 @@ public interface ScriptResourcesProvider {
     
     public DataSource getPosgreSQLDataSource(String dataSourceName) throws DataSourceNotFoundException;
     
-    public Long getBusinessEntityId();
+    public String getBusinessEntityId();
     
     public String getBusinessEntityType();
 }

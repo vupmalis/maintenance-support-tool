@@ -9,19 +9,21 @@ import java.util.Map;
  */
 public class BusinessEntity {    
     
-    private Long id;
+    private String id;
     private String name;
     private String type;
     private Map<String, Object> attributes;
+    private Map<String, Map<String, Object>> details;
+    
     private List<BusinessEntity> children;
     
     private String iconName = "";
     
-    public Long getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -64,4 +66,13 @@ public class BusinessEntity {
     public void setIconName(String iconName) {
         this.iconName = iconName;
     }
+
+    public Map<String, Map<String, Object>> getDetails() {
+        return details;
+    }
+
+    public void setDetails(Map<String, Map<String, Object>> details) {
+        this.details = details;
+    }
+    
 }

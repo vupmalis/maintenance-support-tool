@@ -18,7 +18,9 @@ import jakarta.validation.constraints.NotNull;
     "name",
     "toolTip",
     "type",
-    "script"
+    "script",
+    "reference",
+    "referenceType"
 })
 @Generated("jsonschema2pojo")
 public class Action {
@@ -55,6 +57,22 @@ public class Action {
     @JsonProperty("script")
     @NotNull
     private String script;
+    /**
+     * 
+     * (Required)
+     * 
+     */
+    @JsonProperty("reference")
+    @NotNull
+    private String reference;
+    /**
+     * 
+     * (Required)
+     * 
+     */
+    @JsonProperty("referenceType")
+    @NotNull
+    private String referenceType;
     @JsonIgnore
     private Map<String, @Valid Object> additionalProperties = new LinkedHashMap<String, Object>();
 
@@ -136,6 +154,46 @@ public class Action {
     @JsonProperty("script")
     public void setScript(String script) {
         this.script = script;
+    }
+
+    /**
+     * 
+     * (Required)
+     * 
+     */
+    @JsonProperty("reference")
+    public String getReference() {
+        return reference;
+    }
+
+    /**
+     * 
+     * (Required)
+     * 
+     */
+    @JsonProperty("reference")
+    public void setReference(String reference) {
+        this.reference = reference;
+    }
+
+    /**
+     * 
+     * (Required)
+     * 
+     */
+    @JsonProperty("referenceType")
+    public String getReferenceType() {
+        return referenceType;
+    }
+
+    /**
+     * 
+     * (Required)
+     * 
+     */
+    @JsonProperty("referenceType")
+    public void setReferenceType(String referenceType) {
+        this.referenceType = referenceType;
     }
 
     @JsonAnyGetter

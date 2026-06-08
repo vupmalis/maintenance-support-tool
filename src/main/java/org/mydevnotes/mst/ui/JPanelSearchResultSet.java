@@ -20,7 +20,7 @@ public class JPanelSearchResultSet extends javax.swing.JPanel {
     private SearchResultNavigationListener navigationListener;
     private EventLogger eventLogger;
     private String objectType;
-    private BusinessEntitySelectionListener businessEntitySelectionListener = ApplicationContext.getApplicationContext();
+    private BusinessEntitySelectionListener businessEntitySelectionListener = ApplicationContext.getApplicationContext().getApplicationController();
 
     public void setNavigationListener(SearchResultNavigationListener navigationListener) {
         this.navigationListener = navigationListener;
@@ -57,7 +57,7 @@ public class JPanelSearchResultSet extends javax.swing.JPanel {
                     row = this.jTableResults.convertRowIndexToModel(row);
 
                     BusinessEntity parentEntity = new BusinessEntity();
-                    parentEntity.setId((Long) this.getValueAt(jTableResults, row, "id"));
+                    parentEntity.setId(String.valueOf(this.getValueAt(jTableResults, row, "id")));
                     parentEntity.setType(this.objectType);
                     parentEntity.setName((String) this.getValueAt(jTableResults, row, "name"));
                     parentEntity.setAttributes(getSelectedRowAsBusinessEntity(row));

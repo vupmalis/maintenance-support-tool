@@ -23,11 +23,24 @@ public class DefaultDataCollector implements DataCollector{
 
     private BusinessEntity getBusinessEntity(DataRetrieverProvider dataSourceProvider, String entityId, BusinessEntityConfig entityConfig) {
         
-        BusinessEntity businessEntity = null;
+        BusinessEntity businessEntity = new BusinessEntity();
+        businessEntity.setId(entityId);
         
-        DataRetriever dataRetriever = dataSourceProvider.getDataRetriever(entityConfig.getDataSource());
+        entityConfig.getDetails().forEach(
+                detailsConfig -> {
+                        DataRetriever dataRetriever = dataSourceProvider.getDataRetriever(detailsConfig.getDataSource());
+                        var details = dataRetriever.getBusinessEntityDetails(entityId, detailsConfig);
+                       // businessEntity.get
+                        
+                }
+        
+        );
         
         
+        
+        
+        
+       
         
         return businessEntity;
     }

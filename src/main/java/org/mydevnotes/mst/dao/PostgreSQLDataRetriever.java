@@ -10,12 +10,16 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.table.DefaultTableModel;
+import org.mydevnotes.mst.ApplicationContext;
 import org.mydevnotes.mst.config.BusinessEntityConfig;
 import org.mydevnotes.mst.config.ChildEntity;
 import org.mydevnotes.mst.config.Detail;
 import org.mydevnotes.mst.config.SearchOption;
 import org.mydevnotes.mst.datasource.DataRetriever;
+import org.mydevnotes.mst.ui.JPanelSearchOption;
 
 /**
  *
@@ -25,8 +29,8 @@ public class PostgreSqlDataRetriever implements DataRetriever {
 
     private final String dataSourceName;
     private final HikariDataSource dataSource;
-    
-    public PostgreSqlDataRetriever(String dataSourceName, HikariDataSource dataSource){
+
+    public PostgreSqlDataRetriever(String dataSourceName, HikariDataSource dataSource) {
         this.dataSourceName = dataSourceName;
         this.dataSource = dataSource;
     }
@@ -95,7 +99,7 @@ public class PostgreSqlDataRetriever implements DataRetriever {
         return model;
     }
 
-    public static List<BusinessEntity> execute(BusinessEntityConfig entityConfig, ChildEntity relationConfig, Connection connection, Object parentEntityId) throws SQLException {
+    public static List<BusinessEntity> execute(BusinessEntityConfig entityConfig, ChildEntity relationConfig, Connection connection, String parentEntityId, String parentEntityIdType) throws SQLException {
 
         List<BusinessEntity> result = new ArrayList<>();
 
@@ -103,7 +107,11 @@ public class PostgreSqlDataRetriever implements DataRetriever {
 
         PreparedStatement ps = connection.prepareStatement(relationConfig.getRequest());
         System.out.println("Parent Id = " + parentEntityId);
-        ps.setLong(1, (long) parentEntityId);
+        if ( "long".equals(parentEntityIdType)){
+            ps.setLong(1, Long.parseLong(parentEntityId));
+        } else {
+            ps.setString(1, parentEntityId);
+        }
         ResultSet rs = ps.executeQuery();
 
         ResultSetMetaData meta = rs.getMetaData();
@@ -123,35 +131,74 @@ public class PostgreSqlDataRetriever implements DataRetriever {
                 businessEntityAttributes.put(columns[i - 1], rs.getObject(i));
             }
 
-            businessEntity.setId(businessEntityAttributes.containsKey("id") ? (Long) businessEntityAttributes.get("id") : null);
+            businessEntity.setId(businessEntityAttributes.containsKey("id") ? String.valueOf(businessEntityAttributes.get("id")) : null);
             businessEntity.setType(relationConfig.getBusinessEntityType());
             businessEntity.setName(businessEntityAttributes.containsKey("name") ? String.valueOf(businessEntityAttributes.get("name")) : "untitled");
             businessEntity.setIconName(businessEntityAttributes.containsKey("h_icon") ? String.valueOf(businessEntityAttributes.get("h_icon")) : "");
             businessEntity.setAttributes(businessEntityAttributes);
-            
-            if (entityConfig != null){
+
+            if (entityConfig != null) {
                 getBusinessEntityDetails(connection, businessEntity, entityConfig);
             }
 
             result.add(businessEntity);
-        }       
-       
+        }
 
         return result;
     }
 
     private static void getBusinessEntityDetails(Connection connection, BusinessEntity businessEntity, BusinessEntityConfig entityConfig) {
-        
+
     }
 
     @Override
     public List<BusinessEntity> getChildEntities(String parentId, ChildEntity childEntityConfig) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
+    
+    public static Map<String, Object> executeRequest(Connection connection, String entityId, String request) throws SQLException {
+
+        Map<String, Object> result = new HashMap<>();
+
+        System.out.println(request);
+
+        PreparedStatement ps = connection.prepareStatement(request);
+        System.out.println("Entity Id = " + entityId);
+        
+        ps.setString(1, entityId);
+        ResultSet rs = ps.executeQuery();
+
+        ResultSetMetaData meta = rs.getMetaData();
+
+        String[] columns = new String[meta.getColumnCount()];
+
+        for (int i = 1; i <= columns.length; i++) {
+            columns[i - 1] = meta.getColumnLabel(i);
+        }
+
+        while (rs.next()) {
+            for (int i = 1; i <= columns.length; i++) {
+                result.put(columns[i - 1], rs.getObject(i));
+            }
+        }
+
+        return result;
+    }    
 
     @Override
-    public Map<String, Object> getBusinessEntityDetails(String parentId, Detail detailsConfig) {
-        throw new UnsupportedOperationException("Not supported yet."); 
+    public Map<String, Object> getBusinessEntityDetails(String entityId, Detail detailsConfig) {
+
+        try (Connection connection = dataSource.getConnection();) {
+
+           return executeRequest(connection, entityId, detailsConfig.getRequest());
+
+        } catch (Exception ex) {
+            ApplicationContext.getApplicationContext().getEventLogger().addLog("Error during details query execution " + ex.getMessage());
+            Logger.getLogger(JPanelSearchOption.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        return new HashMap<>();
+
     }
 
 }

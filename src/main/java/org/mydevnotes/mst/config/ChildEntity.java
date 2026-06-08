@@ -18,7 +18,8 @@ import jakarta.validation.constraints.NotNull;
     "businessEntityType",
     "dataSource",
     "request",
-    "parentReference"
+    "parentReference",
+    "parentReferenceType"
 })
 @Generated("jsonschema2pojo")
 public class ChildEntity {
@@ -55,6 +56,14 @@ public class ChildEntity {
     @JsonProperty("parentReference")
     @NotNull
     private String parentReference;
+    /**
+     * 
+     * (Required)
+     * 
+     */
+    @JsonProperty("parentReferenceType")
+    @NotNull
+    private String parentReferenceType;
     @JsonIgnore
     private Map<String, @Valid Object> additionalProperties = new LinkedHashMap<String, Object>();
 
@@ -136,6 +145,26 @@ public class ChildEntity {
     @JsonProperty("parentReference")
     public void setParentReference(String parentReference) {
         this.parentReference = parentReference;
+    }
+
+    /**
+     * 
+     * (Required)
+     * 
+     */
+    @JsonProperty("parentReferenceType")
+    public String getParentReferenceType() {
+        return parentReferenceType;
+    }
+
+    /**
+     * 
+     * (Required)
+     * 
+     */
+    @JsonProperty("parentReferenceType")
+    public void setParentReferenceType(String parentReferenceType) {
+        this.parentReferenceType = parentReferenceType;
     }
 
     @JsonAnyGetter
