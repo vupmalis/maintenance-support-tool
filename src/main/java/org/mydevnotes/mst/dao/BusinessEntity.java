@@ -1,5 +1,6 @@
 package org.mydevnotes.mst.dao;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -7,18 +8,22 @@ import java.util.Map;
  *
  * @author vupma
  */
-public class BusinessEntity {    
-    
+public class BusinessEntity {
+
     private String id;
     private String name;
     private String type;
     private Map<String, Object> attributes;
-    private Map<String, Map<String, Object>> details;
-    
+    private final Map<String, Map<String, Object>> details = new HashMap<>();
+
+    public Map<String, Map<String, Object>> getDetails() {
+        return details;
+    }
+
     private List<BusinessEntity> children;
-    
+
     private String iconName = "";
-    
+
     public String getId() {
         return id;
     }
@@ -67,12 +72,4 @@ public class BusinessEntity {
         this.iconName = iconName;
     }
 
-    public Map<String, Map<String, Object>> getDetails() {
-        return details;
-    }
-
-    public void setDetails(Map<String, Map<String, Object>> details) {
-        this.details = details;
-    }
-    
 }

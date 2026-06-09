@@ -60,6 +60,8 @@ public class JPanelSearchResultDetails extends javax.swing.JPanel implements Sea
                 if (entityNode.getBusinessEntity() != null) {
                     this.businessEntitySelectionListener.onChildBusinessEntitySelected(entityNode.getBusinessEntity());
                     this.jPanelSearchResultSetAttributes.setBusinessEntity(entityNode.getBusinessEntity());
+
+                    this.refreshSelectionDetails(entityNode.getBusinessEntity());
                 }
             } else {
                 this.jPanelSearchResultSetAttributes.cleanup();
@@ -79,7 +81,7 @@ public class JPanelSearchResultDetails extends javax.swing.JPanel implements Sea
         jSplitPane1 = new javax.swing.JSplitPane();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTreeDetails = new javax.swing.JTree();
-        jTabbedPane1 = new javax.swing.JTabbedPane();
+        jTabbedPaneSelectionDetails = new javax.swing.JTabbedPane();
         jScrollPane2 = new javax.swing.JScrollPane();
         jPanelSearchResultSetAttributes = new org.mydevnotes.mst.ui.JPanelSearchResultSet();
         jPanelBusinessEntityActions1 = new org.mydevnotes.mst.ui.JPanelBusinessEntityActions();
@@ -90,14 +92,14 @@ public class JPanelSearchResultDetails extends javax.swing.JPanel implements Sea
 
         jSplitPane1.setLeftComponent(jScrollPane1);
 
-        jTabbedPane1.setToolTipText("");
+        jTabbedPaneSelectionDetails.setToolTipText("");
 
         jScrollPane2.setViewportView(jPanelSearchResultSetAttributes);
 
-        jTabbedPane1.addTab("Attributes", null, jScrollPane2, "");
+        jTabbedPaneSelectionDetails.addTab("Attributes", null, jScrollPane2, "");
 
-        jSplitPane1.setRightComponent(jTabbedPane1);
-        jTabbedPane1.getAccessibleContext().setAccessibleName("Attributes");
+        jSplitPane1.setRightComponent(jTabbedPaneSelectionDetails);
+        jTabbedPaneSelectionDetails.getAccessibleContext().setAccessibleName("Attributes");
 
         add(jSplitPane1, java.awt.BorderLayout.CENTER);
         add(jPanelBusinessEntityActions1, java.awt.BorderLayout.SOUTH);
@@ -110,7 +112,7 @@ public class JPanelSearchResultDetails extends javax.swing.JPanel implements Sea
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JSplitPane jSplitPane1;
-    private javax.swing.JTabbedPane jTabbedPane1;
+    private javax.swing.JTabbedPane jTabbedPaneSelectionDetails;
     private javax.swing.JTree jTreeDetails;
     // End of variables declaration//GEN-END:variables
 
@@ -164,7 +166,7 @@ public class JPanelSearchResultDetails extends javax.swing.JPanel implements Sea
         DataSource dataSource = appConfig.getDataSources().stream().filter(ds -> detailsObjectConfig.getDataSource().equals(ds.getName())).findFirst().orElse(null);
         BusinessEntityConfig entityConfig = appConfig.getBusinessEntityConfig().stream().filter(beConfig -> beConfig.getBusinessEntityType().equals(detailsObjectConfig.getBusinessEntityType())).findFirst().orElse(null);
 
-          if (dataSource != null) {
+        if (dataSource != null) {
             if ("db".equals(dataSource.getType()) && "PostgreSQL".equals(dataSource.getConnectionDetails().getType())) {
 
                 try {
@@ -202,6 +204,19 @@ public class JPanelSearchResultDetails extends javax.swing.JPanel implements Sea
         while (row < tree.getRowCount()) {
             tree.expandRow(row);
             row++;
+        }
+    }
+
+    private void refreshSelectionDetails(BusinessEntity selection) {
+
+        jTabbedPaneSelectionDetails.removeAll();
+        if (selection != null) {
+
+            selection.getDetails().forEach((key, value) -> {
+                JPanelSearchResultSet jPanelSearchResultSet = new JPanelSearchResultSet();
+                jPanelSearchResultSet.setBusinessEntityDetail(selection, key);
+                jTabbedPaneSelectionDetails.add(key, jPanelSearchResultSet);
+            });
         }
     }
 }

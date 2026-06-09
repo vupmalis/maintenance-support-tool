@@ -107,7 +107,7 @@ public class PostgreSqlDataRetriever implements DataRetriever {
 
         PreparedStatement ps = connection.prepareStatement(relationConfig.getRequest());
         System.out.println("Parent Id = " + parentEntityId);
-        if ( "long".equals(parentEntityIdType)){
+        if ("long".equals(parentEntityIdType)) {
             ps.setLong(1, Long.parseLong(parentEntityId));
         } else {
             ps.setString(1, parentEntityId);
@@ -155,8 +155,8 @@ public class PostgreSqlDataRetriever implements DataRetriever {
     public List<BusinessEntity> getChildEntities(String parentId, ChildEntity childEntityConfig) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
-    
-    public static Map<String, Object> executeRequest(Connection connection, String entityId, String request) throws SQLException {
+
+    public static Map<String, Object> executeRequest(Connection connection, String entityId, String entityIdType, String request) throws SQLException {
 
         Map<String, Object> result = new HashMap<>();
 
@@ -164,8 +164,12 @@ public class PostgreSqlDataRetriever implements DataRetriever {
 
         PreparedStatement ps = connection.prepareStatement(request);
         System.out.println("Entity Id = " + entityId);
-        
-        ps.setString(1, entityId);
+
+        if ("long".equals(entityIdType)) {
+            ps.setLong(1, Long.parseLong(entityId));
+        } else {
+            ps.setString(1, entityId);
+        }
         ResultSet rs = ps.executeQuery();
 
         ResultSetMetaData meta = rs.getMetaData();
@@ -183,20 +187,20 @@ public class PostgreSqlDataRetriever implements DataRetriever {
         }
 
         return result;
-    }    
+    }
 
     @Override
     public Map<String, Object> getBusinessEntityDetails(String entityId, Detail detailsConfig) {
 
         try (Connection connection = dataSource.getConnection();) {
 
-           return executeRequest(connection, entityId, detailsConfig.getRequest());
+            return executeRequest(connection, entityId, detailsConfig.getReferenceType(), detailsConfig.getRequest());
 
         } catch (Exception ex) {
             ApplicationContext.getApplicationContext().getEventLogger().addLog("Error during details query execution " + ex.getMessage());
             Logger.getLogger(JPanelSearchOption.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
+
         return new HashMap<>();
 
     }

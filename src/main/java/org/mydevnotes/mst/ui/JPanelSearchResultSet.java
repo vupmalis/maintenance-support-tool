@@ -123,6 +123,20 @@ public class JPanelSearchResultSet extends javax.swing.JPanel {
         this.setTableModel(model, businessEntity.getType());
 
     }
+    
+    public void setBusinessEntityDetail(BusinessEntity businessEntity, String detailName) {
+        DefaultTableModel model = new DefaultTableModel(new Object[]{"Property", "Value"}, 0);
+
+        if (businessEntity.getDetails() != null && businessEntity.getDetails().get(detailName) != null ) {
+            businessEntity.getDetails().get(detailName).forEach((key, value) -> {
+                Object[] row = new Object[]{key, value};
+                model.addRow(row);
+            });
+        }
+
+        this.setTableModel(model, businessEntity.getType());
+
+    }    
 
     /**
      * This method is called from within the constructor to initialize the form.

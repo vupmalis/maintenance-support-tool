@@ -17,7 +17,11 @@ public class ApplicationController implements BusinessEntitySelectionListener, B
     private BusinessEntity selectedChildBusinessEntity;
     private final List<BusinessEntityListener> selectionListeners = new ArrayList();
     private final DataCollector dataCollector = new DefaultDataCollector();
-    private final DataRetrieverProvider dataRetrieverProvider = ApplicationContext.getApplicationContext();
+    private DataRetrieverProvider dataRetrieverProvider; // = ApplicationContext.getApplicationContext();
+
+    public ApplicationController(DataRetrieverProvider dataRetrieverProvider) {
+        this.dataRetrieverProvider = dataRetrieverProvider;
+    }
 
     @Override
     public void onMainBusinessEntitySelected(BusinessEntity businessEntity) {
@@ -27,22 +31,21 @@ public class ApplicationController implements BusinessEntitySelectionListener, B
 
     @Override
     public void onChildBusinessEntitySelected(BusinessEntity businessEntity) {
-        
-        
-        if (businessEntity != null){
+
+        if (businessEntity != null) {
             this.selectedChildBusinessEntity = businessEntity;
-        
+
             var entityConfig = ApplicationContext.getApplicationContext().getBusinessEntityConfig(businessEntity.getType());
-            
-            if (entityConfig != null){
-                dataCollector.populateBusinessEntityWithDetails(businessEntity, entityConfig, dataRetrieverProvider);
+
+            if (entityConfig != null) {
+                dataCollector.populateBusinessEntityWithDetails(businessEntity, entityConfig, this.dataRetrieverProvider);
             } else {
                 ApplicationContext.getApplicationContext().getEventLogger().addLog("Details for " + businessEntity.getType() + "not configured\n");
             }
-        }    
-        
+        }
+
         this.selectionListeners.forEach(listener -> listener.onBusinessEntitySelected(businessEntity));
-        
+
     }
 
     @Override

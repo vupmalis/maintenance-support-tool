@@ -22,7 +22,8 @@ public class ApplicationContext implements DataRetrieverProvider, ScriptResource
     String configValidationErrors = "";
 
     private AppConfig appConfig;
-    private final ApplicationController applicationController = new ApplicationController();
+    private ApplicationController applicationController;
+    public final static ApplicationContext applicationContext = new ApplicationContext();
 
     private Path configPath;
 
@@ -54,7 +55,9 @@ public class ApplicationContext implements DataRetrieverProvider, ScriptResource
         this.configValidationErrors = configValidationErrors;
     }
 
-    public final static ApplicationContext applicationContext = new ApplicationContext();
+    public ApplicationContext() {
+        this.applicationController = new ApplicationController(this);
+    }
 
     public static ApplicationContext getApplicationContext() {
         return applicationContext;
@@ -156,9 +159,9 @@ public class ApplicationContext implements DataRetrieverProvider, ScriptResource
         if (dataSourceConfig != null) {
 
             //TODO introduce enum
-            dataRetriever = switch (dataSourceConfig.getType()) {
+            dataRetriever = switch (dataSourceConfig.getConnectionDetails().getType()) {
                 case "PostgreSQL" ->
-                    postgreSqlDataRetrievers.get(dataSourceConfig.getType());
+                    postgreSqlDataRetrievers.get(name);
                 default ->
                     throw new IllegalStateException("Unexpected value: " + (dataSourceConfig.getType()));
             };
