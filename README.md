@@ -18,3 +18,8 @@ Built-in [config example for reference](https://github.com/vupmalis/maintenance-
 ## Example config result
 
 ![Screenshot](images/main_screenshot.jpg)
+
+
+Credits
+
+Icons by [FatCow](http://www.fatcow.com/free-icons/)(now awailable anymore) 
