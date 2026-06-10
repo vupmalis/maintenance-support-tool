@@ -1,12 +1,14 @@
 # maintenance-support-tool
 
-Desktop tool for supporting maintenance tasks - this demo using Java Swing
+Desktop tool for supporting maintenance tasks - view and investigate business objects, execute tasks on specific objects etc...
 
 ## How to use
 
 - Create app config file - use example provided [here](https://github.com/vupmalis/maintenance-support-tool/blob/main/src/main/resources/app_config_example.json)
 - Build project
 - java -jar maintenance-support-tool-1.0-SNAPSHOT.jar "C:\examples\mst-config.json"
+
+For now (2026) seems best free tool for UI editing - Apache Netbeans IDE
 
 ## built-in example
 
