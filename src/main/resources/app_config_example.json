@@ -51,7 +51,7 @@
                 "searchParameters": []
             },
             {
-                "name": "Free search",
+                "name": "Specific locations",
                 "dataSource": "PrimaryDB",
                 "businessEntityType": "locations",                
                 "request": "SELECT l.*, 'note_pin.png' as h_icon FROM devices.locations AS l",
