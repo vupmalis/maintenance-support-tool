@@ -1,9 +1,6 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JPanel.java to edit this template
- */
 package org.mydevnotes.mst.ui;
 
+import javax.swing.text.DefaultCaret;
 import org.mydevnotes.mst.EventLogger;
 
 /**
@@ -17,6 +14,9 @@ public class JPanelDebugOutput extends javax.swing.JPanel implements EventLogger
      */
     public JPanelDebugOutput() {
         initComponents();
+        
+        DefaultCaret caret = (DefaultCaret) jTextAreaLogs.getCaret();
+        caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);        
     }
 
     /**
@@ -31,20 +31,13 @@ public class JPanelDebugOutput extends javax.swing.JPanel implements EventLogger
         jScrollPane1 = new javax.swing.JScrollPane();
         jTextAreaLogs = new javax.swing.JTextArea();
 
+        setLayout(new java.awt.BorderLayout());
+
         jTextAreaLogs.setColumns(20);
         jTextAreaLogs.setRows(5);
         jScrollPane1.setViewportView(jTextAreaLogs);
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
-        this.setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 400, Short.MAX_VALUE)
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane1)
-        );
+        add(jScrollPane1, java.awt.BorderLayout.CENTER);
     }// </editor-fold>//GEN-END:initComponents
 
 
@@ -55,6 +48,6 @@ public class JPanelDebugOutput extends javax.swing.JPanel implements EventLogger
 
     @Override
     public void addLog(String log) {
-        jTextAreaLogs.append(log);
+        jTextAreaLogs.append(log + System.lineSeparator());
     }
 }

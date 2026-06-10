@@ -110,6 +110,12 @@
                   "SELECT d.* FROM devices.devices AS d WHERE d.id=?"
                 ]
               },
+              "requestEditable": {
+                "type": "boolean",
+                "examples": [
+                  false
+                ]
+              },
               "searchParameters": {
                 "type": "array",
                 "items": {
@@ -162,6 +168,7 @@
               "businessEntityType",
               "requestScript",
               "request",
+              "requestEditable",
               "searchParameters"
             ]
           }

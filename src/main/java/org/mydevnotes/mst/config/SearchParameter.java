@@ -55,7 +55,7 @@ public class SearchParameter {
      */
     @JsonProperty("parameterId")
     @NotNull
-    private int parameterId;
+    private Integer parameterId;
     /**
      * 
      * (Required)
@@ -133,7 +133,7 @@ public class SearchParameter {
      * 
      */
     @JsonProperty("parameterId")
-    public int getParameterId() {
+    public Integer getParameterId() {
         return parameterId;
     }
 
@@ -143,7 +143,7 @@ public class SearchParameter {
      * 
      */
     @JsonProperty("parameterId")
-    public void setParameterId(int parameterId) {
+    public void setParameterId(Integer parameterId) {
         this.parameterId = parameterId;
     }
 
