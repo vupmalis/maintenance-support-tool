@@ -22,4 +22,4 @@ Built-in [config example for reference](https://github.com/vupmalis/maintenance-
 
 Credits
 
-Icons by [FatCow](http://www.fatcow.com/free-icons/)(now awailable anymore) 
+Icons by [FatCow](http://www.fatcow.com/free-icons/) (not awailable anymore) 
