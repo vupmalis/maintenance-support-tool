@@ -13,6 +13,7 @@ For now (2026) seems best free tool for UI editing - Apache Netbeans IDE
 ## built-in example
 
 Build-in example config uses this [database project](https://github.com/vupmalis/maintenance-support-tool-db)
+
 Built-in [config example for reference](https://github.com/vupmalis/maintenance-support-tool/blob/main/src/main/resources/app_config_example.json)
 
 ## Example config result
