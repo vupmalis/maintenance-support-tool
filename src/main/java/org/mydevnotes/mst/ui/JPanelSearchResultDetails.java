@@ -175,7 +175,7 @@ public class JPanelSearchResultDetails extends javax.swing.JPanel implements Sea
                     try (Connection connection = databaseDataStore.getConnection();) {
 
                         detailsEntities = PostgreSqlDataRetriever.execute(entityConfig, detailsObjectConfig, connection, id, detailsObjectConfig.getParentReferenceType());
-                        ApplicationContext.getApplicationContext().getEventLogger().addLog("Found " + detailsEntities.size() + " " + detailsObjectConfig.getBusinessEntityType() + "(s)\n");
+                        ApplicationContext.getApplicationContext().getEventLogger().addLog("Found " + detailsEntities.size() + " " + detailsObjectConfig.getBusinessEntityType() + "(s)");
 
                     } catch (Exception ex) {
                         ApplicationContext.getApplicationContext().getEventLogger().addLog("Error during details query execution " + ex.getMessage());

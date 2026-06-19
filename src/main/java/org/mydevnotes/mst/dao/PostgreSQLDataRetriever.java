@@ -19,6 +19,7 @@ import org.mydevnotes.mst.config.ChildEntity;
 import org.mydevnotes.mst.config.Detail;
 import org.mydevnotes.mst.config.SearchOption;
 import org.mydevnotes.mst.datasource.DataRetriever;
+import org.mydevnotes.mst.datasource.SearchParameters;
 import org.mydevnotes.mst.ui.JPanelSearchOption;
 
 /**
@@ -124,18 +125,7 @@ public class PostgreSqlDataRetriever implements DataRetriever {
 
         while (rs.next()) {
 
-            BusinessEntity businessEntity = new BusinessEntity();
-            Map<String, Object> businessEntityAttributes = new HashMap<>();
-
-            for (int i = 1; i <= columns.length; i++) {
-                businessEntityAttributes.put(columns[i - 1], rs.getObject(i));
-            }
-
-            businessEntity.setId(businessEntityAttributes.containsKey("id") ? String.valueOf(businessEntityAttributes.get("id")) : null);
-            businessEntity.setType(relationConfig.getBusinessEntityType());
-            businessEntity.setName(businessEntityAttributes.containsKey("name") ? String.valueOf(businessEntityAttributes.get("name")) : "untitled");
-            businessEntity.setIconName(businessEntityAttributes.containsKey("h_icon") ? String.valueOf(businessEntityAttributes.get("h_icon")) : "");
-            businessEntity.setAttributes(businessEntityAttributes);
+            var businessEntity = getBusinessEntityFromResultSet(relationConfig.getBusinessEntityType(), rs, columns);
 
             if (entityConfig != null) {
                 getBusinessEntityDetails(connection, businessEntity, entityConfig);
@@ -202,6 +192,82 @@ public class PostgreSqlDataRetriever implements DataRetriever {
         }
 
         return new HashMap<>();
+
+    }
+
+    private static BusinessEntity getBusinessEntityFromResultSet(String businessEntityType, ResultSet rs, String[] columns) throws SQLException {
+
+        BusinessEntity businessEntity = new BusinessEntity();
+        Map<String, Object> businessEntityAttributes = new HashMap<>();
+
+        for (int i = 1; i <= columns.length; i++) {
+            businessEntityAttributes.put(columns[i - 1], rs.getObject(i));
+        }
+
+        businessEntity.setId(businessEntityAttributes.containsKey("id") ? String.valueOf(businessEntityAttributes.get("id")) : null);
+        businessEntity.setType(businessEntityAttributes.containsKey("entity_type") ? String.valueOf(businessEntityAttributes.get("entity_type")) : businessEntityType);
+        businessEntity.setName(businessEntityAttributes.containsKey("name") ? String.valueOf(businessEntityAttributes.get("name")) : "untitled");
+        businessEntity.setIconName(businessEntityAttributes.containsKey("h_icon") ? String.valueOf(businessEntityAttributes.get("h_icon")) : "");
+        businessEntity.setAttributes(businessEntityAttributes);
+
+        return businessEntity;
+    }
+
+    public static BusinessEntitySearchResult executeRequest(String businessEntityType, Connection connection, String request, SearchParameters parameters) throws SQLException {
+
+        List<BusinessEntity> businessEntities = new ArrayList<>();
+
+        PreparedStatement ps = connection.prepareStatement(request);
+
+        int paramIndex = 0;
+        parameters.getValues().forEach((key, value) -> {
+
+            System.out.println("Set values " + key + "=" + value);
+
+            try {
+                switch (value) {
+                    case Long l ->
+                        ps.setLong(paramIndex, l);
+                    case String s ->
+                        ps.setString(paramIndex, s);
+                    default ->
+                        ps.setString(paramIndex, String.valueOf(value));
+                }
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+
+        });
+        ResultSet rs = ps.executeQuery();
+
+        ResultSetMetaData meta = rs.getMetaData();
+
+        String[] columns = new String[meta.getColumnCount()];
+
+        for (int i = 1; i <= columns.length; i++) {
+            columns[i - 1] = meta.getColumnLabel(i);
+        }
+
+        while (rs.next()) {
+            businessEntities.add(getBusinessEntityFromResultSet(businessEntityType, rs, columns));
+        }
+
+        return new BusinessEntitySearchResult(columns, businessEntities, businessEntityType);
+    }
+
+    @Override
+    public BusinessEntitySearchResult searchBusinessEntities(SearchOption searchOption, SearchParameters parameters) {
+
+        try (Connection connection = dataSource.getConnection();) {
+
+            return executeRequest(searchOption.getBusinessEntityType(), connection, searchOption.getRequest(), parameters);
+
+        } catch (Exception ex) {
+            ApplicationContext.getApplicationContext().getEventLogger().addLog("Error during details query execution " + ex.getMessage());
+            Logger.getLogger(JPanelSearchOption.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        return new BusinessEntitySearchResult(new String[0], new ArrayList<>(), searchOption.getBusinessEntityType());
 
     }
 

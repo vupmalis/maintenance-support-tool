@@ -4,11 +4,8 @@ import java.awt.BorderLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.sql.Connection;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -18,13 +15,13 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-import javax.swing.table.DefaultTableModel;
 import javax.swing.text.JTextComponent;
 import org.mydevnotes.mst.ApplicationContext;
-import org.mydevnotes.mst.DataSourceNotFoundException;
+import org.mydevnotes.mst.ApplicationController;
+import org.mydevnotes.mst.BusinessEntitySearchException;
 import org.mydevnotes.mst.config.SearchOption;
 import org.mydevnotes.mst.config.SearchParameter;
-import org.mydevnotes.mst.dao.PostgreSqlDataRetriever;
+import org.mydevnotes.mst.datasource.SearchParameters;
 
 /**
  *
@@ -36,7 +33,7 @@ public class JPanelSearchOption extends javax.swing.JPanel {
     private GridBagConstraints gbc;
     private int row = 0;
     private JPanelSearchResultSet resultUi;
-    Map<String, String> paramValues = new HashMap<>();
+    Map<String, Object> paramValues = new HashMap<>();
 
     /**
      * Creates new form JPanelSearchOption
@@ -135,7 +132,7 @@ public class JPanelSearchOption extends javax.swing.JPanel {
 
     public static void bindTextField(
             JTextComponent field,
-            Map<String, String> values
+            Map<String, Object> values
     ) {
 
         field.getDocument().addDocumentListener(
@@ -224,6 +221,21 @@ public class JPanelSearchOption extends javax.swing.JPanel {
 
     private void jButtonSearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonSearchActionPerformed
 
+        ApplicationController appController = ApplicationContext.getApplicationContext().getApplicationController();
+        try {
+            appController.searchBusinessEntities(this.searchOption, new SearchParameters(paramValues));
+        } catch (BusinessEntitySearchException ex) {
+            System.getLogger(JPanelSearchOption.class.getName()).log(System.Logger.Level.ERROR, (String) null, ex);
+            
+            JOptionPane.showMessageDialog(
+                    this,
+                    ex.getMessage(),
+                    "DB connection error",
+                    JOptionPane.ERROR_MESSAGE
+            );            
+        }
+        
+        /*
         try {
 
             if (ApplicationContext.getApplicationContext().getPosgreSQLDataSource(this.searchOption.getDataSource()) == null) {
@@ -237,10 +249,10 @@ public class JPanelSearchOption extends javax.swing.JPanel {
                 return;
             }
 
-            ApplicationContext.getApplicationContext().getEventLogger().addLog("Execute query " + this.searchOption.getName() + "; for " + this.paramValues + "\n");
+            ApplicationContext.getApplicationContext().getEventLogger().addLog("Execute query " + this.searchOption.getName() + "; for " + this.paramValues);
 
             try (Connection connection = ApplicationContext.getApplicationContext().getPosgreSQLDataSource(this.searchOption.getDataSource()).getConnection();) {
-                DefaultTableModel tableModel = PostgreSqlDataRetriever.execute(this.searchOption, connection, this.paramValues);
+                DefaultTableModel tableModel = PostgreSqlDataRetriever.execute(this.searchOption, connection, new SearchParameters(this.paramValues));
 
                 this.resultUi.setTableModel(tableModel, this.searchOption.getBusinessEntityType());
 
@@ -258,6 +270,7 @@ public class JPanelSearchOption extends javax.swing.JPanel {
                     JOptionPane.ERROR_MESSAGE
             );
         }
+*/
 
     }//GEN-LAST:event_jButtonSearchActionPerformed
 

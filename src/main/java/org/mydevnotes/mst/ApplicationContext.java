@@ -22,13 +22,14 @@ public class ApplicationContext implements DataRetrieverProvider, ScriptResource
     String configValidationErrors = "";
 
     private AppConfig appConfig;
-    private ApplicationController applicationController;
+    private final ApplicationController applicationController;
     public final static ApplicationContext applicationContext = new ApplicationContext();
 
     private Path configPath;
 
     public void setEventLogger(EventLogger eventLogger) {
         this.eventLogger = eventLogger;
+        this.applicationController.setEventLogger(eventLogger);
     }
     private final Map<String, HikariDataSource> postgreSqlDataSources = new HashMap<>();
     private final Map<String, PostgreSqlDataRetriever> postgreSqlDataRetrievers = new HashMap<>();
@@ -57,7 +58,7 @@ public class ApplicationContext implements DataRetrieverProvider, ScriptResource
     }
 
     public ApplicationContext() {
-        this.applicationController = new ApplicationController(this);
+        this.applicationController = new ApplicationController(this, this.getEventLogger());
     }
 
     public static ApplicationContext getApplicationContext() {
@@ -87,7 +88,7 @@ public class ApplicationContext implements DataRetrieverProvider, ScriptResource
         postgreSqlDataSources.put(dataSource.getName(), newDataSource);
         postgreSqlDataRetrievers.put(dataSource.getName(), new PostgreSqlDataRetriever(dataSource.getName(), newDataSource));
 
-        eventLogger.addLog("Created connection to " + dataSource.getName() + "\n");
+        eventLogger.addLog("Created connection to " + dataSource.getName());
     }
 
     public void disconnectPostgresqlConnection(DataSource dataSource) {
@@ -100,7 +101,7 @@ public class ApplicationContext implements DataRetrieverProvider, ScriptResource
 
             postgreSqlDataSources.remove(dataSource.getName());
             postgreSqlDataRetrievers.remove(dataSource.getName());
-            eventLogger.addLog("Disconnected from " + dataSource.getName() + "\n");
+            eventLogger.addLog("Disconnected from " + dataSource.getName());
         }
     }
 
@@ -126,11 +127,11 @@ public class ApplicationContext implements DataRetrieverProvider, ScriptResource
                     }
 
                     System.out.println("Closed datasource " + key);
-                    eventLogger.addLog("Disconnected from " + key + "\n");
+                    eventLogger.addLog("Disconnected from " + key);
                 }
             } catch (Exception e) {
                 System.err.println("Failed to close datasource " + key);
-                eventLogger.addLog("Failed to disconnect from " + key + ":" + e.getMessage() + "\n");
+                eventLogger.addLog("Failed to disconnect from " + key + ":" + e.getMessage());
                 e.printStackTrace();
             }
         });
