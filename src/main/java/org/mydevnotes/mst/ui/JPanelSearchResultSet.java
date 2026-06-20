@@ -1,12 +1,8 @@
 package org.mydevnotes.mst.ui;
 
-import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.stream.Stream;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.table.DefaultTableModel;
@@ -28,6 +24,11 @@ public class JPanelSearchResultSet extends javax.swing.JPanel implements Busines
     private EventLogger eventLogger;
     private String objectType;
     private BusinessEntitySelectionListener businessEntitySelectionListener = ApplicationContext.getApplicationContext().getApplicationController();
+    private boolean rowHaveDetails = false;
+
+    public void setRowHaveDetails(boolean rowHaveDetails) {
+        this.rowHaveDetails = rowHaveDetails;
+    }
 
     public void setNavigationListener(SearchResultNavigationListener navigationListener) {
         this.navigationListener = navigationListener;
@@ -61,20 +62,23 @@ public class JPanelSearchResultSet extends javax.swing.JPanel implements Busines
                         return;
                     }
 
-                    row = this.jTableResults.convertRowIndexToModel(row);
+                    if (this.rowHaveDetails) {
 
-                    BusinessEntity parentEntity = new BusinessEntity();
-                    parentEntity.setId(String.valueOf(this.getValueAt(jTableResults, row, "id")));
-                    parentEntity.setType(this.objectType);
-                    parentEntity.setName((String) this.getValueAt(jTableResults, row, "name"));
-                    parentEntity.setAttributes(getSelectedRowAsBusinessEntity(row));
+                        row = this.jTableResults.convertRowIndexToModel(row);
 
-                    this.eventLogger.addLog(String.format("Extracting details for object id=%s", parentEntity.getId()));
+                        BusinessEntity parentEntity = new BusinessEntity();
+                        parentEntity.setId(String.valueOf(this.getValueAt(jTableResults, row, "id")));
+                        parentEntity.setType(this.objectType);
+                        parentEntity.setName((String) this.getValueAt(jTableResults, row, "name"));
+                        parentEntity.setAttributes(getSelectedRowAsBusinessEntity(row));
 
-                    this.businessEntitySelectionListener.onChildBusinessEntitySelected(null);
-                    this.businessEntitySelectionListener.onMainBusinessEntitySelected(parentEntity);
+                        this.eventLogger.addLog(String.format("Extracting details for object id=%s", parentEntity.getId()));
 
-                    this.populateDetails(parentEntity);
+                        this.businessEntitySelectionListener.onChildBusinessEntitySelected(null);
+                        this.businessEntitySelectionListener.onMainBusinessEntitySelected(parentEntity);
+
+                        this.populateDetails(parentEntity);
+                    }
                 });
     }
 
@@ -197,6 +201,5 @@ public class JPanelSearchResultSet extends javax.swing.JPanel implements Busines
 
         return model;
     }
-    
-    
+
 }

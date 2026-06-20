@@ -39,6 +39,8 @@ public class JPanelSearchResultDetails extends javax.swing.JPanel implements Sea
         initComponents();
         this.jTreeDetails.setRowHeight(16);
         this.jTreeDetails.setCellRenderer(new BusinessEntityTreeCellRenderer());
+        
+        this.jPanelSearchResultSetAttributes.setRowHaveDetails(false);
 
         this.jTreeDetails.addTreeSelectionListener(e -> {
 
