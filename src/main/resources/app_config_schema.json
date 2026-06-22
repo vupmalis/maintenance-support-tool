@@ -101,10 +101,19 @@
                   "devices"
                 ]
               },
+              "requestScript": {
+                "type": "null"
+              },
               "request": {
                 "type": "string",
                 "examples": [
                   "SELECT d.* FROM devices.devices AS d WHERE d.id=?"
+                ]
+              },
+              "requestEditable": {
+                "type": "boolean",
+                "examples": [
+                  false
                 ]
               },
               "searchParameters": {
@@ -135,13 +144,20 @@
                       "examples": [
                         1
                       ]
+                    },
+                    "defaultValue": {
+                      "type": "string",
+                      "examples": [
+                        "10"
+                      ]
                     }
                   },
                   "required": [
                     "name",
                     "title",
                     "type",
-                    "parameterId"
+                    "parameterId",
+                    "defaultValue"
                   ]
                 }
               }
@@ -150,7 +166,9 @@
               "name",
               "dataSource",
               "businessEntityType",
+              "requestScript",
               "request",
+              "requestEditable",
               "searchParameters"
             ]
           }
@@ -160,7 +178,7 @@
         "searchOptions"
       ]
     },
-    "childEntities": {
+    "businessEntityRelations": {
       "type": "array",
       "items": {
         "type": "object",
@@ -171,7 +189,7 @@
               "locations"
             ]
           },
-          "searchDetails": {
+          "childEntities": {
             "type": "array",
             "items": {
               "type": "object",
@@ -191,21 +209,35 @@
                 "request": {
                   "type": "string",
                   "examples": [
-                    "SELECT d.id, d.name, dt.name as device_type FROM devices.devices AS d join devices.device_types dt on dt.id = d.device_type_id WHERE d.location_id = ?"
+                    "SELECT d.id, d.name, dt.name as device_type, 'lightbulb.png' as h_icon FROM devices.devices AS d join devices.device_types dt on dt.id = d.device_type_id WHERE d.location_id = ?"
+                  ]
+                },
+                "parentReference": {
+                  "type": "string",
+                  "examples": [
+                    "id"
+                  ]
+                },
+                "parentReferenceType": {
+                  "type": "string",
+                  "examples": [
+                    "long"
                   ]
                 }
               },
               "required": [
                 "businessEntityType",
                 "dataSource",
-                "request"
+                "request",
+                "parentReference",
+                "parentReferenceType"
               ]
             }
           }
         },
         "required": [
           "businessEntityType",
-          "searchDetails"
+          "childEntities"
         ]
       }
     },
@@ -220,26 +252,56 @@
               "devices"
             ]
           },
-          "attributes": {
-            "type": "object",
-            "properties": {
-              "dataSource": {
-                "type": "string",
-                "examples": [
-                  "PrimaryDB"
-                ]
-              },
-              "request": {
-                "type": "string",
-                "examples": [
-                  "SELECT d.* FROM devices.devices d where d.id=?"
-                ]
-              }
-            },
-            "required": [
-              "dataSource",
-              "request"
+          "dataSource": {
+            "type": "string",
+            "examples": [
+              "PrimaryDB"
             ]
+          },
+          "details": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "displayName": {
+                  "type": "string",
+                  "examples": [
+                    "attributes"
+                  ]
+                },
+                "dataSource": {
+                  "type": "string",
+                  "examples": [
+                    "PrimaryDB"
+                  ]
+                },
+                "request": {
+                  "type": "string",
+                  "examples": [
+                    "SELECT d.*, 'lightbulb.png' as h_icon FROM devices.devices d where d.id=?"
+                  ]
+                },
+                "reference": {
+                  "type": "string",
+                  "examples": [
+                    "id"
+                  ]
+                },
+                "referenceType": {
+                  "type": "string",
+                  "examples": [
+                    "long"
+                  ]
+                }
+              },
+              "required": [
+                "displayName",
+                "dataSource",
+                "request",
+                "reference",
+                "referenceType"
+              ]
+            }
           },
           "actions": {
             "type": "array",
@@ -252,23 +314,52 @@
                     "Restart device"
                   ]
                 },
+                "toolTip": {
+                  "type": "string",
+                  "examples": [
+                    "Restart selected device"
+                  ]
+                },
+                "type": {
+                  "type": "string",
+                  "examples": [
+                    "script"
+                  ]
+                },
                 "script": {
                   "type": "string",
                   "examples": [
-                    "restartDevice.groovy"
+                    "scripts/restartDevice.groovy"
+                  ]
+                },
+                "reference": {
+                  "type": "string",
+                  "examples": [
+                    "id"
+                  ]
+                },
+                "referenceType": {
+                  "type": "string",
+                  "examples": [
+                    "long"
                   ]
                 }
               },
               "required": [
                 "name",
-                "script"
+                "toolTip",
+                "type",
+                "script",
+                "reference",
+                "referenceType"
               ]
             }
           }
         },
         "required": [
           "businessEntityType",
-          "attributes",
+          "dataSource",
+          "details",
           "actions"
         ]
       }
@@ -277,7 +368,7 @@
   "required": [
     "dataSources",
     "searchConfig",
-    "childEntities",
+    "businessEntityRelations",
     "businessEntityConfig"
   ],
   "$schema": "https://json-schema.org/draft/2020-12/schema"

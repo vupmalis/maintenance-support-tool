@@ -15,10 +15,11 @@ import org.mydevnotes.mst.ApplicationContext;
 import org.mydevnotes.mst.BusinessEntitySelectionListener;
 import org.mydevnotes.mst.DataSourceNotFoundException;
 import org.mydevnotes.mst.config.AppConfig;
+import org.mydevnotes.mst.config.BusinessEntityConfig;
+import org.mydevnotes.mst.config.ChildEntity;
 import org.mydevnotes.mst.config.DataSource;
-import org.mydevnotes.mst.config.SearchDetail;
 import org.mydevnotes.mst.dao.BusinessEntity;
-import org.mydevnotes.mst.dao.DBQueryExecutor;
+import org.mydevnotes.mst.dao.PostgreSqlDataRetriever;
 import org.mydevnotes.mst.ui.tree.BusinessEntityTreeCellRenderer;
 
 /**
@@ -29,14 +30,17 @@ public class JPanelSearchResultDetails extends javax.swing.JPanel implements Sea
 
     // safe guard against infinite loops
     private static final int MAX_TREE_HIGHT = 15;
-    private BusinessEntitySelectionListener businessEntitySelectionListener = ApplicationContext.getApplicationContext();
+    private BusinessEntitySelectionListener businessEntitySelectionListener = ApplicationContext.getApplicationContext().getApplicationController();
 
     /**
      * Creates new form JPanelDetails
      */
     public JPanelSearchResultDetails() {
         initComponents();
+        this.jTreeDetails.setRowHeight(16);
         this.jTreeDetails.setCellRenderer(new BusinessEntityTreeCellRenderer());
+        
+        this.jPanelSearchResultSetAttributes.setRowHaveDetails(false);
 
         this.jTreeDetails.addTreeSelectionListener(e -> {
 
@@ -58,6 +62,8 @@ public class JPanelSearchResultDetails extends javax.swing.JPanel implements Sea
                 if (entityNode.getBusinessEntity() != null) {
                     this.businessEntitySelectionListener.onChildBusinessEntitySelected(entityNode.getBusinessEntity());
                     this.jPanelSearchResultSetAttributes.setBusinessEntity(entityNode.getBusinessEntity());
+
+                    this.refreshSelectionDetails(entityNode.getBusinessEntity());
                 }
             } else {
                 this.jPanelSearchResultSetAttributes.cleanup();
@@ -77,6 +83,7 @@ public class JPanelSearchResultDetails extends javax.swing.JPanel implements Sea
         jSplitPane1 = new javax.swing.JSplitPane();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTreeDetails = new javax.swing.JTree();
+        jTabbedPaneSelectionDetails = new javax.swing.JTabbedPane();
         jScrollPane2 = new javax.swing.JScrollPane();
         jPanelSearchResultSetAttributes = new org.mydevnotes.mst.ui.JPanelSearchResultSet();
         jPanelBusinessEntityActions1 = new org.mydevnotes.mst.ui.JPanelBusinessEntityActions();
@@ -87,9 +94,14 @@ public class JPanelSearchResultDetails extends javax.swing.JPanel implements Sea
 
         jSplitPane1.setLeftComponent(jScrollPane1);
 
+        jTabbedPaneSelectionDetails.setToolTipText("");
+
         jScrollPane2.setViewportView(jPanelSearchResultSetAttributes);
 
-        jSplitPane1.setRightComponent(jScrollPane2);
+        jTabbedPaneSelectionDetails.addTab("Attributes", null, jScrollPane2, "");
+
+        jSplitPane1.setRightComponent(jTabbedPaneSelectionDetails);
+        jTabbedPaneSelectionDetails.getAccessibleContext().setAccessibleName("Attributes");
 
         add(jSplitPane1, java.awt.BorderLayout.CENTER);
         add(jPanelBusinessEntityActions1, java.awt.BorderLayout.SOUTH);
@@ -102,6 +114,7 @@ public class JPanelSearchResultDetails extends javax.swing.JPanel implements Sea
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JSplitPane jSplitPane1;
+    private javax.swing.JTabbedPane jTabbedPaneSelectionDetails;
     private javax.swing.JTree jTreeDetails;
     // End of variables declaration//GEN-END:variables
 
@@ -127,10 +140,10 @@ public class JPanelSearchResultDetails extends javax.swing.JPanel implements Sea
         }
 
         AppConfig config = ApplicationContext.getApplicationContext().getAppConfig();
-        var detailsConfig = config.getChildEntities().stream().filter(cd -> parentEntity.getType().equals(cd.getBusinessEntityType())).findFirst().orElse(null);
+        var detailsConfig = config.getBusinessEntityRelations().stream().filter(cd -> parentEntity.getType().equals(cd.getBusinessEntityType())).findFirst().orElse(null);
 
         if (detailsConfig != null) {
-            for (SearchDetail detailsObjectConfig : detailsConfig.getSearchDetails()) {
+            for (ChildEntity detailsObjectConfig : detailsConfig.getChildEntities()) {
 
                 List<BusinessEntity> detailsEntities = retrieveDetailsEntities(detailsObjectConfig, parentEntity.getId());
 
@@ -148,10 +161,12 @@ public class JPanelSearchResultDetails extends javax.swing.JPanel implements Sea
         }
     }
 
-    private List<BusinessEntity> retrieveDetailsEntities(SearchDetail detailsObjectConfig, Object id) {
+    private List<BusinessEntity> retrieveDetailsEntities(ChildEntity detailsObjectConfig, String id) {
         List<BusinessEntity> detailsEntities = new ArrayList<>();
 
-        DataSource dataSource = ApplicationContext.getApplicationContext().getAppConfig().getDataSources().stream().filter(ds -> detailsObjectConfig.getDataSource().equals(ds.getName())).findFirst().orElse(null);
+        AppConfig appConfig = ApplicationContext.getApplicationContext().getAppConfig();
+        DataSource dataSource = appConfig.getDataSources().stream().filter(ds -> detailsObjectConfig.getDataSource().equals(ds.getName())).findFirst().orElse(null);
+        BusinessEntityConfig entityConfig = appConfig.getBusinessEntityConfig().stream().filter(beConfig -> beConfig.getBusinessEntityType().equals(detailsObjectConfig.getBusinessEntityType())).findFirst().orElse(null);
 
         if (dataSource != null) {
             if ("db".equals(dataSource.getType()) && "PostgreSQL".equals(dataSource.getConnectionDetails().getType())) {
@@ -161,8 +176,8 @@ public class JPanelSearchResultDetails extends javax.swing.JPanel implements Sea
 
                     try (Connection connection = databaseDataStore.getConnection();) {
 
-                        detailsEntities = DBQueryExecutor.execute(detailsObjectConfig, connection, id);
-                        ApplicationContext.getApplicationContext().getEventLogger().addLog("Found " + detailsEntities.size() + " " + detailsObjectConfig.getBusinessEntityType() + "(s)\n");
+                        detailsEntities = PostgreSqlDataRetriever.execute(entityConfig, detailsObjectConfig, connection, id, detailsObjectConfig.getParentReferenceType());
+                        ApplicationContext.getApplicationContext().getEventLogger().addLog("Found " + detailsEntities.size() + " " + detailsObjectConfig.getBusinessEntityType() + "(s)");
 
                     } catch (Exception ex) {
                         ApplicationContext.getApplicationContext().getEventLogger().addLog("Error during details query execution " + ex.getMessage());
@@ -191,6 +206,19 @@ public class JPanelSearchResultDetails extends javax.swing.JPanel implements Sea
         while (row < tree.getRowCount()) {
             tree.expandRow(row);
             row++;
+        }
+    }
+
+    private void refreshSelectionDetails(BusinessEntity selection) {
+
+        jTabbedPaneSelectionDetails.removeAll();
+        if (selection != null) {
+
+            selection.getDetails().forEach((key, value) -> {
+                JPanelSearchResultSet jPanelSearchResultSet = new JPanelSearchResultSet();
+                jPanelSearchResultSet.setBusinessEntityDetail(selection, key);
+                jTabbedPaneSelectionDetails.add(key, jPanelSearchResultSet);
+            });
         }
     }
 }

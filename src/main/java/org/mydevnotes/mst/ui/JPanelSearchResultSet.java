@@ -1,26 +1,34 @@
 package org.mydevnotes.mst.ui;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.table.DefaultTableModel;
 import org.mydevnotes.mst.ApplicationContext;
+import org.mydevnotes.mst.BusinessEntitySearchResultListener;
 import org.mydevnotes.mst.BusinessEntitySelectionListener;
 import org.mydevnotes.mst.EventLogger;
 import org.mydevnotes.mst.dao.BusinessEntity;
+import org.mydevnotes.mst.dao.BusinessEntitySearchResult;
 import org.mydevnotes.mst.ui.design.AlternateRowRenderer;
 
 /**
  *
  * @author vupma
  */
-public class JPanelSearchResultSet extends javax.swing.JPanel {
+public class JPanelSearchResultSet extends javax.swing.JPanel implements BusinessEntitySearchResultListener {
 
     private SearchResultNavigationListener navigationListener;
     private EventLogger eventLogger;
     private String objectType;
-    private BusinessEntitySelectionListener businessEntitySelectionListener = ApplicationContext.getApplicationContext();
+    private BusinessEntitySelectionListener businessEntitySelectionListener = ApplicationContext.getApplicationContext().getApplicationController();
+    private boolean rowHaveDetails = false;
+
+    public void setRowHaveDetails(boolean rowHaveDetails) {
+        this.rowHaveDetails = rowHaveDetails;
+    }
 
     public void setNavigationListener(SearchResultNavigationListener navigationListener) {
         this.navigationListener = navigationListener;
@@ -54,20 +62,23 @@ public class JPanelSearchResultSet extends javax.swing.JPanel {
                         return;
                     }
 
-                    row = this.jTableResults.convertRowIndexToModel(row);
+                    if (this.rowHaveDetails) {
 
-                    BusinessEntity parentEntity = new BusinessEntity();
-                    parentEntity.setId((Long) this.getValueAt(jTableResults, row, "id"));
-                    parentEntity.setType(this.objectType);
-                    parentEntity.setName((String) this.getValueAt(jTableResults, row, "name"));
-                    parentEntity.setAttributes(getSelectedRowAsBusinessEntity(row));
+                        row = this.jTableResults.convertRowIndexToModel(row);
 
-                    this.eventLogger.addLog(String.format("Extracting details for object id=%s \n", parentEntity.getId()));
-                    
-                    this.businessEntitySelectionListener.onChildBusinessEntitySelected(null);
-                    this.businessEntitySelectionListener.onMainBusinessEntitySelected(parentEntity);
-                    
-                    this.populateDetails(parentEntity);
+                        BusinessEntity parentEntity = new BusinessEntity();
+                        parentEntity.setId(String.valueOf(this.getValueAt(jTableResults, row, "id")));
+                        parentEntity.setType(this.objectType);
+                        parentEntity.setName((String) this.getValueAt(jTableResults, row, "name"));
+                        parentEntity.setAttributes(getSelectedRowAsBusinessEntity(row));
+
+                        this.eventLogger.addLog(String.format("Extracting details for object id=%s", parentEntity.getId()));
+
+                        this.businessEntitySelectionListener.onChildBusinessEntitySelected(null);
+                        this.businessEntitySelectionListener.onMainBusinessEntitySelected(parentEntity);
+
+                        this.populateDetails(parentEntity);
+                    }
                 });
     }
 
@@ -124,6 +135,20 @@ public class JPanelSearchResultSet extends javax.swing.JPanel {
 
     }
 
+    public void setBusinessEntityDetail(BusinessEntity businessEntity, String detailName) {
+        DefaultTableModel model = new DefaultTableModel(new Object[]{"Property", "Value"}, 0);
+
+        if (businessEntity.getDetails() != null && businessEntity.getDetails().get(detailName) != null) {
+            businessEntity.getDetails().get(detailName).forEach((key, value) -> {
+                Object[] row = new Object[]{key, value};
+                model.addRow(row);
+            });
+        }
+
+        this.setTableModel(model, businessEntity.getType());
+
+    }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -159,4 +184,22 @@ public class JPanelSearchResultSet extends javax.swing.JPanel {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable jTableResults;
     // End of variables declaration//GEN-END:variables
+
+    @Override
+    public void onBusinessEntitySearchResultReady(BusinessEntitySearchResult searchResult) {
+        this.setTableModel(buildBusinessEntityTableModel(searchResult), searchResult.getEntityType());
+    }
+
+    public static DefaultTableModel buildBusinessEntityTableModel(
+            BusinessEntitySearchResult searchResult
+    ) {
+        DefaultTableModel model = new DefaultTableModel(searchResult.getEntityAttributes(), 0);
+        searchResult.getSearchResult().forEach(businessEntity -> {
+            Object[] row = Arrays.stream(searchResult.getEntityAttributes()).map(key -> businessEntity.getAttributes().get(key)).toArray();
+            model.addRow(row);
+        });
+
+        return model;
+    }
+
 }

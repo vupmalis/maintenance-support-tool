@@ -17,7 +17,8 @@ import jakarta.validation.constraints.NotNull;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
     "businessEntityType",
-    "attributes",
+    "dataSource",
+    "details",
     "actions"
 })
 @Generated("jsonschema2pojo")
@@ -36,10 +37,17 @@ public class BusinessEntityConfig {
      * (Required)
      * 
      */
-    @JsonProperty("attributes")
-    @Valid
+    @JsonProperty("dataSource")
     @NotNull
-    private Attributes attributes;
+    private String dataSource;
+    /**
+     * 
+     * (Required)
+     * 
+     */
+    @JsonProperty("details")
+    @NotNull
+    private List<@Valid Detail> details;
     /**
      * 
      * (Required)
@@ -76,9 +84,9 @@ public class BusinessEntityConfig {
      * (Required)
      * 
      */
-    @JsonProperty("attributes")
-    public Attributes getAttributes() {
-        return attributes;
+    @JsonProperty("dataSource")
+    public String getDataSource() {
+        return dataSource;
     }
 
     /**
@@ -86,9 +94,29 @@ public class BusinessEntityConfig {
      * (Required)
      * 
      */
-    @JsonProperty("attributes")
-    public void setAttributes(Attributes attributes) {
-        this.attributes = attributes;
+    @JsonProperty("dataSource")
+    public void setDataSource(String dataSource) {
+        this.dataSource = dataSource;
+    }
+
+    /**
+     * 
+     * (Required)
+     * 
+     */
+    @JsonProperty("details")
+    public List<Detail> getDetails() {
+        return details;
+    }
+
+    /**
+     * 
+     * (Required)
+     * 
+     */
+    @JsonProperty("details")
+    public void setDetails(List<Detail> details) {
+        this.details = details;
     }
 
     /**

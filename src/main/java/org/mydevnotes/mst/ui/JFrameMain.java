@@ -35,6 +35,7 @@ public class JFrameMain extends javax.swing.JFrame {
      */
     public JFrameMain() {
         initComponents();
+        this.jPanelsearchResultSet.setRowHaveDetails(true);
     }
 
     /**
@@ -51,12 +52,11 @@ public class JFrameMain extends javax.swing.JFrame {
         jPanelConfigContainer = new org.mydevnotes.mst.ui.JPanelConfigContainer();
         jPanelSearchOptionsContainer = new org.mydevnotes.mst.ui.JPanelSearchOptionsContainer();
         jSplitPane2 = new javax.swing.JSplitPane();
-        jScrollPaneSearchResult = new javax.swing.JScrollPane();
-        jPanelsearchResultSet = new org.mydevnotes.mst.ui.JPanelSearchResultSet();
         jScrollPaneDetails = new javax.swing.JScrollPane();
         jSplitPane4 = new javax.swing.JSplitPane();
         jPanelDebugOutput = new org.mydevnotes.mst.ui.JPanelDebugOutput();
         jPanelSearchResultDetails = new org.mydevnotes.mst.ui.JPanelSearchResultDetails();
+        jPanelsearchResultSet = new org.mydevnotes.mst.ui.JPanelSearchResultSet();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Maintenance Support Tool");
@@ -78,10 +78,6 @@ public class JFrameMain extends javax.swing.JFrame {
         jSplitPane2.setDividerLocation(120);
         jSplitPane2.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
 
-        jScrollPaneSearchResult.setViewportView(jPanelsearchResultSet);
-
-        jSplitPane2.setTopComponent(jScrollPaneSearchResult);
-
         jSplitPane4.setDividerLocation(100);
         jSplitPane4.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
         jSplitPane4.setBottomComponent(jPanelDebugOutput);
@@ -90,6 +86,7 @@ public class JFrameMain extends javax.swing.JFrame {
         jScrollPaneDetails.setViewportView(jSplitPane4);
 
         jSplitPane2.setRightComponent(jScrollPaneDetails);
+        jSplitPane2.setLeftComponent(jPanelsearchResultSet);
 
         jSplitPane1.setRightComponent(jSplitPane2);
 
@@ -184,7 +181,6 @@ public class JFrameMain extends javax.swing.JFrame {
     private org.mydevnotes.mst.ui.JPanelSearchResultDetails jPanelSearchResultDetails;
     private org.mydevnotes.mst.ui.JPanelSearchResultSet jPanelsearchResultSet;
     private javax.swing.JScrollPane jScrollPaneDetails;
-    private javax.swing.JScrollPane jScrollPaneSearchResult;
     private javax.swing.JSplitPane jSplitPane1;
     private javax.swing.JSplitPane jSplitPane2;
     private javax.swing.JSplitPane jSplitPane3;
@@ -290,5 +286,6 @@ public class JFrameMain extends javax.swing.JFrame {
 
     private void initSearchResultSection() {
         this.jPanelsearchResultSet.setNavigationListener(jPanelSearchResultDetails);
+        ApplicationContext.getApplicationContext().getApplicationController().addSearchResultListener(jPanelsearchResultSet);
     }
 }

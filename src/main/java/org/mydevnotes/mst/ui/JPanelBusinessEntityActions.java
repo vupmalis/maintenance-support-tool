@@ -22,7 +22,7 @@ public class JPanelBusinessEntityActions extends javax.swing.JPanel implements B
      */
     public JPanelBusinessEntityActions() {
         initComponents();
-        ApplicationContext.getApplicationContext().addSelectionListener((BusinessEntityListener) this);
+        ApplicationContext.getApplicationContext().getApplicationController().addSelectionListener((BusinessEntityListener) this);
     }
 
     /**
