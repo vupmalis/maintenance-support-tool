@@ -19,46 +19,66 @@
                 "name": "Search by Id",
                 "dataSource": "PrimaryDB",
                 "businessEntityType": "devices",
+                "requestScript": null,
                 "request": "SELECT d.* FROM devices.devices AS d WHERE d.id=?",
+                "requestEditable": false,
                 "searchParameters": [
                     {
                         "name": "id",
                         "title": "Id",
                         "type": "long",
-                        "parameterId": 1                                                
+                        "parameterId": 1,
+                        "defaultValue": "10"
                     }				
                 ]
             },
             {
                 "name": "Find all",
                 "dataSource": "PrimaryDB",
-                "businessEntityType": "devices",
+                "businessEntityType": "devices",               
                 "request": "SELECT d.* FROM devices.devices AS d",
+                "requestEditable": false,
+                "requestScript": null,
                 "searchParameters": []
             },
             {
                 "name": "All locations",
                 "dataSource": "PrimaryDB",
-                "businessEntityType": "locations",
-                "request": "SELECT l.* FROM devices.locations AS l",
+                "businessEntityType": "locations",                
+                "request": "SELECT l.*, 'note_pin.png' as h_icon FROM devices.locations AS l",
+                "requestEditable": false,
+                "requestScript": null,
                 "searchParameters": []
-            }                          
+            },
+            {
+                "name": "Specific locations",
+                "dataSource": "PrimaryDB",
+                "businessEntityType": "locations",                
+                "request": "SELECT l.*, 'note_pin.png' as h_icon FROM devices.locations AS l",
+                "requestScript": null,
+                "requestEditable": true,
+                "searchParameters": []
+            }             
         ]
     },
-    "childEntities": [
+    "businessEntityRelations": [
         {               
             "businessEntityType": "locations",
-            "searchDetails": 
+            "childEntities": 
                     [
                         {
                             "businessEntityType": "devices",
                             "dataSource": "PrimaryDB",
-                            "request": "SELECT d.id, d.name, dt.name as device_type FROM devices.devices AS d join devices.device_types dt on dt.id = d.device_type_id WHERE d.location_id = ?"
+                            "request": "SELECT d.id, d.name, dt.name as device_type, 'lightbulb.png' as h_icon FROM devices.devices AS d join devices.device_types dt on dt.id = d.device_type_id WHERE d.location_id = ?",
+                            "parentReference": "id",
+                            "parentReferenceType": "long"
                         },
                         {
                             "businessEntityType": "automations",
                             "dataSource": "PrimaryDB",
-                            "request": "SELECT a.id, a.name  FROM devices.automations AS a where a.location_id = ?"
+                            "request": "SELECT a.id, a.name, 'caution_high_voltage.png' as h_icon  FROM devices.automations AS a where a.location_id = ?",
+                            "parentReference": "id",
+                            "parentReferenceType": "long"
                         }                    
 
 
@@ -66,26 +86,39 @@
         },
         {               
             "businessEntityType": "devices",
-            "searchDetails": 
+            "childEntities": 
                     [
                         {
                             "businessEntityType": "events",
                             "dataSource": "PrimaryDB",
-                            "request": "SELECT de.id, de.event_type as name FROM devices.device_events AS de where de.device_id = ?"
+                            "request": "SELECT de.id, de.event_type as name FROM devices.device_events AS de where de.device_id = ?",
+                            "parentReference": "id",
+                            "parentReferenceType": "long"
                         }                    
                     ]
         }            
     ],
     "businessEntityConfig": [
         {
-            "businessEntityType": "devices",
-            "attributes": {
-                "dataSource": "PrimaryDB",
-                "request": "SELECT d.* FROM devices.devices d where d.id=?"
-            },
+            "businessEntityType": "devices",       
+            "dataSource": "PrimaryDB",
+            "details": [
+                { 
+
+                    "displayName": "attributes",
+                    "dataSource": "PrimaryDB",
+                    "request": "SELECT d.*, 'lightbulb.png' as h_icon FROM devices.devices d where d.id=?",
+                    "reference": "id",
+                    "referenceType": "long"
+                }
+            ],
             "actions": [{ 
                     "name": "Restart device",
-                    "script": "scripts/restartDevice.groovy"
+                    "toolTip": "Restart selected device",
+                    "type": "script",
+                    "script": "scripts/restartDevice.groovy",
+                    "reference": "id",
+                    "referenceType": "long"                    
                 }
             ]
         }

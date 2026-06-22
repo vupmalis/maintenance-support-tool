@@ -19,7 +19,9 @@ import jakarta.validation.constraints.NotNull;
     "name",
     "dataSource",
     "businessEntityType",
+    "requestScript",
     "request",
+    "requestEditable",
     "searchParameters"
 })
 @Generated("jsonschema2pojo")
@@ -54,9 +56,25 @@ public class SearchOption {
      * (Required)
      * 
      */
+    @JsonProperty("requestScript")
+    @NotNull
+    private Object requestScript;
+    /**
+     * 
+     * (Required)
+     * 
+     */
     @JsonProperty("request")
     @NotNull
     private String request;
+    /**
+     * 
+     * (Required)
+     * 
+     */
+    @JsonProperty("requestEditable")
+    @NotNull
+    private Boolean requestEditable;
     /**
      * 
      * (Required)
@@ -133,6 +151,26 @@ public class SearchOption {
      * (Required)
      * 
      */
+    @JsonProperty("requestScript")
+    public Object getRequestScript() {
+        return requestScript;
+    }
+
+    /**
+     * 
+     * (Required)
+     * 
+     */
+    @JsonProperty("requestScript")
+    public void setRequestScript(Object requestScript) {
+        this.requestScript = requestScript;
+    }
+
+    /**
+     * 
+     * (Required)
+     * 
+     */
     @JsonProperty("request")
     public String getRequest() {
         return request;
@@ -146,6 +184,26 @@ public class SearchOption {
     @JsonProperty("request")
     public void setRequest(String request) {
         this.request = request;
+    }
+
+    /**
+     * 
+     * (Required)
+     * 
+     */
+    @JsonProperty("requestEditable")
+    public Boolean getRequestEditable() {
+        return requestEditable;
+    }
+
+    /**
+     * 
+     * (Required)
+     * 
+     */
+    @JsonProperty("requestEditable")
+    public void setRequestEditable(Boolean requestEditable) {
+        this.requestEditable = requestEditable;
     }
 
     /**

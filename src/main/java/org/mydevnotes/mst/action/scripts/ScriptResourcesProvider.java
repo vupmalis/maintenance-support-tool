@@ -2,6 +2,7 @@ package org.mydevnotes.mst.action.scripts;
 
 import javax.sql.DataSource;
 import org.mydevnotes.mst.DataSourceNotFoundException;
+import org.mydevnotes.mst.EventLogger;
 
 /**
  *
@@ -11,7 +12,9 @@ public interface ScriptResourcesProvider {
     
     public DataSource getPosgreSQLDataSource(String dataSourceName) throws DataSourceNotFoundException;
     
-    public Long getBusinessEntityId();
+    public String getBusinessEntityId();
     
     public String getBusinessEntityType();
+    
+    public EventLogger getEventLogger();
 }

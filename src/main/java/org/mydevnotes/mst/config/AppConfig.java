@@ -18,7 +18,7 @@ import jakarta.validation.constraints.NotNull;
 @JsonPropertyOrder({
     "dataSources",
     "searchConfig",
-    "childEntities",
+    "businessEntityRelations",
     "businessEntityConfig"
 })
 @Generated("jsonschema2pojo")
@@ -46,9 +46,9 @@ public class AppConfig {
      * (Required)
      * 
      */
-    @JsonProperty("childEntities")
+    @JsonProperty("businessEntityRelations")
     @NotNull
-    private List<@Valid ChildEntity> childEntities;
+    private List<@Valid BusinessEntityRelation> businessEntityRelations;
     /**
      * 
      * (Required)
@@ -105,9 +105,9 @@ public class AppConfig {
      * (Required)
      * 
      */
-    @JsonProperty("childEntities")
-    public List<ChildEntity> getChildEntities() {
-        return childEntities;
+    @JsonProperty("businessEntityRelations")
+    public List<BusinessEntityRelation> getBusinessEntityRelations() {
+        return businessEntityRelations;
     }
 
     /**
@@ -115,9 +115,9 @@ public class AppConfig {
      * (Required)
      * 
      */
-    @JsonProperty("childEntities")
-    public void setChildEntities(List<ChildEntity> childEntities) {
-        this.childEntities = childEntities;
+    @JsonProperty("businessEntityRelations")
+    public void setBusinessEntityRelations(List<BusinessEntityRelation> businessEntityRelations) {
+        this.businessEntityRelations = businessEntityRelations;
     }
 
     /**

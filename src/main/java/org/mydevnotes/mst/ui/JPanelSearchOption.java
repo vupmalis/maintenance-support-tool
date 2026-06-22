@@ -1,30 +1,27 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JPanel.java to edit this template
- */
 package org.mydevnotes.mst.ui;
 
+import java.awt.BorderLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-import javax.swing.table.DefaultTableModel;
+import javax.swing.text.JTextComponent;
 import org.mydevnotes.mst.ApplicationContext;
-import org.mydevnotes.mst.DataSourceNotFoundException;
+import org.mydevnotes.mst.ApplicationController;
+import org.mydevnotes.mst.BusinessEntitySearchException;
 import org.mydevnotes.mst.config.SearchOption;
 import org.mydevnotes.mst.config.SearchParameter;
-import org.mydevnotes.mst.dao.DBQueryExecutor;
+import org.mydevnotes.mst.datasource.SearchParameters;
 
 /**
  *
@@ -36,7 +33,7 @@ public class JPanelSearchOption extends javax.swing.JPanel {
     private GridBagConstraints gbc;
     private int row = 0;
     private JPanelSearchResultSet resultUi;
-    Map<String, String> paramValues = new HashMap<>();
+    Map<String, Object> paramValues = new HashMap<>();
 
     /**
      * Creates new form JPanelSearchOption
@@ -58,11 +55,19 @@ public class JPanelSearchOption extends javax.swing.JPanel {
 
         jPanel1.setLayout(new GridBagLayout());
 
-        for (SearchParameter parameter : searchOption.getSearchParameters()) {
-            JTextField newField = new JTextField(15);
-            newField.setName(parameter.getName());
-            bindTextField(newField, this.paramValues);
-            addField(parameter.getTitle(), newField);
+        if (this.searchOption.getRequestEditable()) {
+            JTextArea jTextAreaSQLStatement = new JTextArea(this.searchOption.getRequest());
+            bindTextFieldToSearchOption(jTextAreaSQLStatement, this.searchOption);
+            addTextArea(jPanel1, jTextAreaSQLStatement);
+
+        } else {
+
+            for (SearchParameter parameter : searchOption.getSearchParameters()) {
+                JTextField newField = new JTextField(15);
+                newField.setName(parameter.getName());
+                bindTextField(newField, this.paramValues);
+                addField(parameter.getTitle(), newField);
+            }
         }
     }
 
@@ -84,9 +89,50 @@ public class JPanelSearchOption extends javax.swing.JPanel {
         row++;
     }
 
+    private void addTextArea(JPanel panel, JTextArea textArea) {
+        textArea.setLineWrap(true);
+        textArea.setWrapStyleWord(true);
+
+        JScrollPane scrollPane = new JScrollPane(textArea);
+
+        panel.setLayout(new BorderLayout());
+        panel.add(scrollPane, BorderLayout.CENTER);
+        panel.revalidate();
+        panel.repaint();
+    }
+
+    public static void bindTextFieldToSearchOption(
+            JTextComponent field,
+            SearchOption searchOption
+    ) {
+        field.getDocument().addDocumentListener(
+                new DocumentListener() {
+
+            private void update() {
+                searchOption.setRequest(field.getText());
+            }
+
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                update();
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                update();
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                update();
+            }
+        }
+        );
+    }
+
     public static void bindTextField(
-            JTextField field,
-            Map<String, String> values
+            JTextComponent field,
+            Map<String, Object> values
     ) {
 
         field.getDocument().addDocumentListener(
@@ -175,6 +221,21 @@ public class JPanelSearchOption extends javax.swing.JPanel {
 
     private void jButtonSearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonSearchActionPerformed
 
+        ApplicationController appController = ApplicationContext.getApplicationContext().getApplicationController();
+        try {
+            appController.searchBusinessEntities(this.searchOption, new SearchParameters(paramValues));
+        } catch (BusinessEntitySearchException ex) {
+            System.getLogger(JPanelSearchOption.class.getName()).log(System.Logger.Level.ERROR, (String) null, ex);
+            
+            JOptionPane.showMessageDialog(
+                    this,
+                    ex.getMessage(),
+                    "DB connection error",
+                    JOptionPane.ERROR_MESSAGE
+            );            
+        }
+        
+        /*
         try {
 
             if (ApplicationContext.getApplicationContext().getPosgreSQLDataSource(this.searchOption.getDataSource()) == null) {
@@ -188,10 +249,10 @@ public class JPanelSearchOption extends javax.swing.JPanel {
                 return;
             }
 
-            ApplicationContext.getApplicationContext().getEventLogger().addLog("Execute query " + this.searchOption.getName() + "; for " + this.paramValues + "\n");
+            ApplicationContext.getApplicationContext().getEventLogger().addLog("Execute query " + this.searchOption.getName() + "; for " + this.paramValues);
 
             try (Connection connection = ApplicationContext.getApplicationContext().getPosgreSQLDataSource(this.searchOption.getDataSource()).getConnection();) {
-                DefaultTableModel tableModel = DBQueryExecutor.execute(this.searchOption, connection, this.paramValues);
+                DefaultTableModel tableModel = PostgreSqlDataRetriever.execute(this.searchOption, connection, new SearchParameters(this.paramValues));
 
                 this.resultUi.setTableModel(tableModel, this.searchOption.getBusinessEntityType());
 
@@ -209,6 +270,7 @@ public class JPanelSearchOption extends javax.swing.JPanel {
                     JOptionPane.ERROR_MESSAGE
             );
         }
+*/
 
     }//GEN-LAST:event_jButtonSearchActionPerformed
 

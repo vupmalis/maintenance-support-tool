@@ -16,7 +16,11 @@ import jakarta.validation.constraints.NotNull;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
     "name",
-    "script"
+    "toolTip",
+    "type",
+    "script",
+    "reference",
+    "referenceType"
 })
 @Generated("jsonschema2pojo")
 public class Action {
@@ -34,9 +38,41 @@ public class Action {
      * (Required)
      * 
      */
+    @JsonProperty("toolTip")
+    @NotNull
+    private String toolTip;
+    /**
+     * 
+     * (Required)
+     * 
+     */
+    @JsonProperty("type")
+    @NotNull
+    private String type;
+    /**
+     * 
+     * (Required)
+     * 
+     */
     @JsonProperty("script")
     @NotNull
     private String script;
+    /**
+     * 
+     * (Required)
+     * 
+     */
+    @JsonProperty("reference")
+    @NotNull
+    private String reference;
+    /**
+     * 
+     * (Required)
+     * 
+     */
+    @JsonProperty("referenceType")
+    @NotNull
+    private String referenceType;
     @JsonIgnore
     private Map<String, @Valid Object> additionalProperties = new LinkedHashMap<String, Object>();
 
@@ -65,6 +101,46 @@ public class Action {
      * (Required)
      * 
      */
+    @JsonProperty("toolTip")
+    public String getToolTip() {
+        return toolTip;
+    }
+
+    /**
+     * 
+     * (Required)
+     * 
+     */
+    @JsonProperty("toolTip")
+    public void setToolTip(String toolTip) {
+        this.toolTip = toolTip;
+    }
+
+    /**
+     * 
+     * (Required)
+     * 
+     */
+    @JsonProperty("type")
+    public String getType() {
+        return type;
+    }
+
+    /**
+     * 
+     * (Required)
+     * 
+     */
+    @JsonProperty("type")
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    /**
+     * 
+     * (Required)
+     * 
+     */
     @JsonProperty("script")
     public String getScript() {
         return script;
@@ -78,6 +154,46 @@ public class Action {
     @JsonProperty("script")
     public void setScript(String script) {
         this.script = script;
+    }
+
+    /**
+     * 
+     * (Required)
+     * 
+     */
+    @JsonProperty("reference")
+    public String getReference() {
+        return reference;
+    }
+
+    /**
+     * 
+     * (Required)
+     * 
+     */
+    @JsonProperty("reference")
+    public void setReference(String reference) {
+        this.reference = reference;
+    }
+
+    /**
+     * 
+     * (Required)
+     * 
+     */
+    @JsonProperty("referenceType")
+    public String getReferenceType() {
+        return referenceType;
+    }
+
+    /**
+     * 
+     * (Required)
+     * 
+     */
+    @JsonProperty("referenceType")
+    public void setReferenceType(String referenceType) {
+        this.referenceType = referenceType;
     }
 
     @JsonAnyGetter
