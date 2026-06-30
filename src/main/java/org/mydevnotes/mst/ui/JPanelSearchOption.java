@@ -65,7 +65,12 @@ public class JPanelSearchOption extends javax.swing.JPanel {
             for (SearchParameter parameter : searchOption.getSearchParameters()) {
                 JTextField newField = new JTextField(15);
                 newField.setName(parameter.getName());
-                bindTextField(newField, this.paramValues);
+                
+                if ("long".equals(parameter.getType())){
+                    bindLongField(newField, this.paramValues);               
+                } else {                    
+                    bindTextField(newField, this.paramValues);
+                }
                 addField(parameter.getTitle(), newField);
             }
         }
@@ -163,6 +168,36 @@ public class JPanelSearchOption extends javax.swing.JPanel {
         }
         );
     }
+    
+    public static void bindLongField(
+            JTextComponent field,
+            Map<String, Object> values
+    ) {
+
+        field.getDocument().addDocumentListener(
+                new DocumentListener() {
+
+            private void update() {
+                values.put(field.getName(), Long.valueOf(field.getText()));
+            }
+
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                update();
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                update();
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                update();
+            }
+        }
+        );
+    }    
 
     /**
      * This method is called from within the constructor to initialize the form.
