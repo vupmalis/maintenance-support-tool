@@ -153,8 +153,9 @@ public class JPanelSearchResultDetails extends javax.swing.JPanel implements Sea
                     root.add(detailsOfGivenTypeRoot);
 
                     detailsEntities.forEach(entity -> {
-                        detailsOfGivenTypeRoot.add(new DefaultMutableTreeNode(new BusinessEntityNode(entity)));
-                        addDetailsNodes(detailsOfGivenTypeRoot, entity, treeHight + 1);
+                        DefaultMutableTreeNode detailsEntity = new DefaultMutableTreeNode(new BusinessEntityNode(entity));
+                        detailsOfGivenTypeRoot.add(detailsEntity);
+                        addDetailsNodes(detailsEntity, entity, treeHight + 1);
                     });
                 }
             }

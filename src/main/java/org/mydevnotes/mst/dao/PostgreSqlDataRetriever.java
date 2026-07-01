@@ -219,27 +219,29 @@ public class PostgreSqlDataRetriever implements DataRetriever {
 
         PreparedStatement ps = connection.prepareStatement(request);
 
-        int paramIndex = 0;
-        parameters.getValues().forEach((key, value) -> {
+        int paramIndex = 1;      
+            
+        for (var entry : parameters.getValues().entrySet()) {            
 
-            System.out.println("Set values " + key + "=" + value);
+            System.out.println("Set values " + entry.getKey() + "=" + entry.getValue());
 
             try {
-                switch (value) {
+                switch (entry.getValue()) {
                     case Long l ->
                         ps.setLong(paramIndex, l);
                     case String s ->
                         ps.setString(paramIndex, s);
                     default ->
-                        ps.setString(paramIndex, String.valueOf(value));
+                        ps.setString(paramIndex, String.valueOf(entry.getValue()));
                 }
             } catch (SQLException e) {
                 throw new RuntimeException(e);
-            }
-
-        });
+            }            
+            
+            paramIndex++;
+        }
+        
         ResultSet rs = ps.executeQuery();
-
         ResultSetMetaData meta = rs.getMetaData();
 
         String[] columns = new String[meta.getColumnCount()];
