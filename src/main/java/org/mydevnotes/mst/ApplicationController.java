@@ -18,6 +18,7 @@ public class ApplicationController implements BusinessEntitySelectionListener, B
     private BusinessEntity selectedBusinessEntity;
     private BusinessEntity selectedChildBusinessEntity;
     private final List<BusinessEntityListener> selectionListeners = new ArrayList();
+    private final List<BusinessEntityListener> mainBusinessEntitySelectionListeners = new ArrayList();
     private final List<BusinessEntitySearchResultListener> searchResultListeners = new ArrayList();
     private final DataCollector dataCollector = new DefaultDataCollector();
     private final DataRetrieverProvider dataRetrieverProvider;
@@ -35,7 +36,9 @@ public class ApplicationController implements BusinessEntitySelectionListener, B
     @Override
     public void onMainBusinessEntitySelected(BusinessEntity businessEntity) {
         this.selectedBusinessEntity = businessEntity;
+        this.dataCollector.enrichBusinessEntityWithChildrens(0, businessEntity, ApplicationContext.getApplicationContext().getAppConfig().getBusinessEntityRelations(), dataRetrieverProvider);
         this.selectionListeners.forEach(listener -> listener.onBusinessEntitySelected(businessEntity));
+        this.mainBusinessEntitySelectionListeners.forEach(listener -> listener.onBusinessEntitySelected(businessEntity));
     }
 
     @Override
@@ -48,7 +51,7 @@ public class ApplicationController implements BusinessEntitySelectionListener, B
             var entityConfig = ApplicationContext.getApplicationContext().getBusinessEntityConfig(businessEntity.getType());
 
             if (entityConfig != null) {
-                dataCollector.populateBusinessEntityWithDetails(businessEntity, entityConfig, this.dataRetrieverProvider);
+                dataCollector.enrichBusinessEntityWithDetails(businessEntity, entityConfig, this.dataRetrieverProvider);
             } else {
                 ApplicationContext.getApplicationContext().getEventLogger().addLog("Details for " + businessEntity.getType() + "not configured");
             }
@@ -70,6 +73,10 @@ public class ApplicationController implements BusinessEntitySelectionListener, B
 
     public void addSelectionListener(BusinessEntityListener selectionListener) {
         this.selectionListeners.add(selectionListener);
+    }
+    
+    public void addMainBusinessEntitySelectionListeners(BusinessEntityListener selectionListener){
+        this.mainBusinessEntitySelectionListeners.add(selectionListener);
     }
 
     public void addSearchResultListener(BusinessEntitySearchResultListener listener) {

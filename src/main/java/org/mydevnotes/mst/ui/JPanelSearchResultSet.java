@@ -77,7 +77,7 @@ public class JPanelSearchResultSet extends javax.swing.JPanel implements Busines
                         this.businessEntitySelectionListener.onChildBusinessEntitySelected(null);
                         this.businessEntitySelectionListener.onMainBusinessEntitySelected(parentEntity);
 
-                        this.populateDetails(parentEntity);
+                        //this.populateDetails(parentEntity);
                     }
                 });
     }

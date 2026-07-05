@@ -1,8 +1,11 @@
 package org.mydevnotes.mst.datasource;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import org.mydevnotes.mst.config.BusinessEntityConfig;
+import org.mydevnotes.mst.config.BusinessEntityRelation;
+import org.mydevnotes.mst.config.ChildEntity;
 import org.mydevnotes.mst.config.Detail;
 import org.mydevnotes.mst.dao.BusinessEntity;
 
@@ -12,8 +15,11 @@ import org.mydevnotes.mst.dao.BusinessEntity;
  */
 public class DefaultDataCollector implements DataCollector {
 
+    // safe guard against infinite loops
+    private static final int MAX_TREE_HIGHT = 15;
+
     @Override
-    public void populateBusinessEntityWithDetails(BusinessEntity businessEntity, BusinessEntityConfig entityConfig, DataRetrieverProvider dataSourceProvider) {
+    public void enrichBusinessEntityWithDetails(BusinessEntity businessEntity, BusinessEntityConfig entityConfig, DataRetrieverProvider dataSourceProvider) {
 
         //BusinessEntity businessEntity = getBusinessEntity( dataSourceProvider, entityId, entityConfig);
         entityConfig.getDetails().forEach(
@@ -58,4 +64,32 @@ public class DefaultDataCollector implements DataCollector {
         return result;
     }
 
+    @Override
+    public void enrichBusinessEntityWithChildrens(int treeHight, BusinessEntity businessEntity, List<BusinessEntityRelation> entityRelations, DataRetrieverProvider dataSourceProvider) {
+
+        if (treeHight > MAX_TREE_HIGHT) {
+            return;
+        }
+
+        var entityRelationConfig = entityRelations.stream().filter(conf -> conf.getBusinessEntityType().equals(businessEntity.getType())).findFirst().orElse(null);
+
+        if (entityRelationConfig != null) {
+
+            entityRelationConfig.getChildEntities().forEach(relation -> {
+
+                List<BusinessEntity> childEntities = getChildEntities(businessEntity, relation, dataSourceProvider);
+                businessEntity.getChildrens().put(relation.getBusinessEntityType(), childEntities);
+
+                childEntities.forEach(childEntity -> {
+                    enrichBusinessEntityWithChildrens(treeHight + 1, childEntity, entityRelations, dataSourceProvider);
+                });
+            }
+            );
+        }
+    }
+
+    private List<BusinessEntity> getChildEntities(BusinessEntity businessEntity, ChildEntity childEntitiesConfig, DataRetrieverProvider dataSourceProvider) {
+        DataRetriever dataRetriever = dataSourceProvider.getDataRetriever(childEntitiesConfig.getDataSource());
+        return dataRetriever.getChildEntities(businessEntity.getId(), childEntitiesConfig);
+    }
 }

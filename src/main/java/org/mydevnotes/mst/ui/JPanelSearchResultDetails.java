@@ -12,6 +12,7 @@ import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import org.mydevnotes.mst.ApplicationContext;
+import org.mydevnotes.mst.BusinessEntityListener;
 import org.mydevnotes.mst.BusinessEntitySelectionListener;
 import org.mydevnotes.mst.DataSourceNotFoundException;
 import org.mydevnotes.mst.config.AppConfig;
@@ -26,7 +27,7 @@ import org.mydevnotes.mst.ui.tree.BusinessEntityTreeCellRenderer;
  *
  * @author vupma
  */
-public class JPanelSearchResultDetails extends javax.swing.JPanel implements SearchResultNavigationListener {
+public class JPanelSearchResultDetails extends javax.swing.JPanel implements SearchResultNavigationListener, BusinessEntityListener {
 
     // safe guard against infinite loops
     private static final int MAX_TREE_HIGHT = 15;
@@ -37,9 +38,10 @@ public class JPanelSearchResultDetails extends javax.swing.JPanel implements Sea
      */
     public JPanelSearchResultDetails() {
         initComponents();
+
         this.jTreeDetails.setRowHeight(16);
         this.jTreeDetails.setCellRenderer(new BusinessEntityTreeCellRenderer());
-        
+
         this.jPanelSearchResultSetAttributes.setRowHaveDetails(false);
 
         this.jTreeDetails.addTreeSelectionListener(e -> {
@@ -131,6 +133,7 @@ public class JPanelSearchResultDetails extends javax.swing.JPanel implements Sea
 
         jTreeDetails.setModel(model);
         expandAll(jTreeDetails);
+
     }
 
     private void addDetailsNodes(DefaultMutableTreeNode root, BusinessEntity parentEntity, int treeHight) {
@@ -221,5 +224,39 @@ public class JPanelSearchResultDetails extends javax.swing.JPanel implements Sea
                 jTabbedPaneSelectionDetails.add(key, jPanelSearchResultSet);
             });
         }
+    }
+
+    @Override
+    public void onBusinessEntitySelected(BusinessEntity businessEntity) {
+
+        DefaultMutableTreeNode root = new DefaultMutableTreeNode(new BusinessEntityNode(businessEntity));
+        this.populateTreeWithBusinessEntityChilds(root, businessEntity);
+
+        //this.businessEntitySelectionListener.onChildBusinessEntitySelected(null);
+        //DefaultMutableTreeNode root = new DefaultMutableTreeNode(new BusinessEntityNode(businessEntity));
+        //addDetailsNodes(root, businessEntity, 0);
+        DefaultTreeModel model
+                = new DefaultTreeModel(root);
+
+        this.jTreeDetails.setModel(model);
+        expandAll(this.jTreeDetails);
+
+    }
+
+    public void populateTreeWithBusinessEntityChilds(DefaultMutableTreeNode root, BusinessEntity businessEntity) {
+
+        businessEntity.getChildrens().forEach((childrenType, childrens) -> {
+
+            DefaultMutableTreeNode detailsOfGivenTypeRoot = new DefaultMutableTreeNode(childrenType);
+            root.add(detailsOfGivenTypeRoot);
+
+            childrens.forEach(child -> {
+                DefaultMutableTreeNode childNode = new DefaultMutableTreeNode(new BusinessEntityNode(child));
+                detailsOfGivenTypeRoot.add(childNode);
+                this.populateTreeWithBusinessEntityChilds(childNode, child);
+            });
+
+        });
+
     }
 }

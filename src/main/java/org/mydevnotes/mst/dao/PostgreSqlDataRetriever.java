@@ -143,7 +143,41 @@ public class PostgreSqlDataRetriever implements DataRetriever {
 
     @Override
     public List<BusinessEntity> getChildEntities(String parentId, ChildEntity childEntityConfig) {
-        throw new UnsupportedOperationException("Not supported yet.");
+
+        List<BusinessEntity> result = new ArrayList<>();
+
+        try (Connection connection = dataSource.getConnection();) {
+
+            System.out.println(childEntityConfig.getRequest());
+
+            PreparedStatement ps = connection.prepareStatement(childEntityConfig.getRequest());
+            System.out.println("Parent Id = " + parentId);
+            if ("long".equals(childEntityConfig.getParentReferenceType())) {
+                ps.setLong(1, Long.parseLong(parentId));
+            } else {
+                ps.setString(1, parentId);
+            }
+            ResultSet rs = ps.executeQuery();
+
+            ResultSetMetaData meta = rs.getMetaData();
+
+            String[] columns = new String[meta.getColumnCount()];
+
+            for (int i = 1; i <= columns.length; i++) {
+                columns[i - 1] = meta.getColumnLabel(i);
+            }
+
+            while (rs.next()) {
+                var businessEntity = getBusinessEntityFromResultSet(childEntityConfig.getBusinessEntityType(), rs, columns);
+                result.add(businessEntity);
+            }
+
+        } catch (Exception ex) {
+            ApplicationContext.getApplicationContext().getEventLogger().addLog("Error during details query execution " + ex.getMessage());
+            Logger.getLogger(JPanelSearchOption.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        return result;
     }
 
     public static Map<String, Object> executeRequest(Connection connection, String entityId, String entityIdType, String request) throws SQLException {
@@ -219,9 +253,9 @@ public class PostgreSqlDataRetriever implements DataRetriever {
 
         PreparedStatement ps = connection.prepareStatement(request);
 
-        int paramIndex = 1;      
-            
-        for (var entry : parameters.getValues().entrySet()) {            
+        int paramIndex = 1;
+
+        for (var entry : parameters.getValues().entrySet()) {
 
             System.out.println("Set values " + entry.getKey() + "=" + entry.getValue());
 
@@ -236,11 +270,11 @@ public class PostgreSqlDataRetriever implements DataRetriever {
                 }
             } catch (SQLException e) {
                 throw new RuntimeException(e);
-            }            
-            
+            }
+
             paramIndex++;
         }
-        
+
         ResultSet rs = ps.executeQuery();
         ResultSetMetaData meta = rs.getMetaData();
 
