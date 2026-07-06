@@ -287,7 +287,7 @@ public class JFrameMain extends javax.swing.JFrame {
     }
 
     private void initSearchResultSection() {
-        this.jPanelsearchResultSet.setNavigationListener(jPanelSearchResultDetails);
+        this.jPanelsearchResultSet.setEventLogger(this.eventLogger);
         ApplicationContext.getApplicationContext().getApplicationController().addSearchResultListener(jPanelsearchResultSet);
     }
 }
