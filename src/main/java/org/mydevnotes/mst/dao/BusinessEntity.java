@@ -15,6 +15,7 @@ public class BusinessEntity {
     private String type;
     private Map<String, Object> attributes;
     private final Map<String, Map<String, Object>> details = new HashMap<>();
+    private final Map<String, List<BusinessEntity>> childrens = new HashMap<>();
 
     public Map<String, Map<String, Object>> getDetails() {
         return details;
@@ -72,4 +73,8 @@ public class BusinessEntity {
         this.iconName = iconName;
     }
 
+    public Map<String, List<BusinessEntity>> getChildrens() {
+        return childrens;
+    }
+    
 }

@@ -38,7 +38,7 @@ public class ApplicationContext implements DataRetrieverProvider, ScriptResource
 
     @Override
     public EventLogger getEventLogger() {
-        return eventLogger;
+        return this.eventLogger;
     }
 
     public AppConfig getAppConfig() {

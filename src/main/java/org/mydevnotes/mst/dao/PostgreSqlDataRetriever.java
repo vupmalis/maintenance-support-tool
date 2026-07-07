@@ -12,9 +12,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.table.DefaultTableModel;
 import org.mydevnotes.mst.ApplicationContext;
-import org.mydevnotes.mst.config.BusinessEntityConfig;
 import org.mydevnotes.mst.config.ChildEntity;
 import org.mydevnotes.mst.config.Detail;
 import org.mydevnotes.mst.config.SearchOption;
@@ -28,122 +26,49 @@ import org.mydevnotes.mst.ui.JPanelSearchOption;
  */
 public class PostgreSqlDataRetriever implements DataRetriever {
 
-    private final String dataSourceName;
     private final HikariDataSource dataSource;
 
     public PostgreSqlDataRetriever(String dataSourceName, HikariDataSource dataSource) {
-        this.dataSourceName = dataSourceName;
         this.dataSource = dataSource;
-    }
-
-    // TODO refactor to return BusinessEntity 
-    public static DefaultTableModel execute(SearchOption searchOption, Connection connection, Map<String, String> params) throws SQLException, Exception {
-
-        PreparedStatement ps = connection.prepareStatement(searchOption.getRequest());
-
-        // Set parameters
-        for (int i = 0; i < searchOption.getSearchParameters().size(); i++) {
-
-            var parameter = searchOption.getSearchParameters().get(i);
-
-            switch (parameter.getType()) {
-                case "String" -> {
-                    ps.setString(i + 1, params.get(parameter.getName()));
-                }
-                case "long" -> {
-                    ps.setLong(i + 1, Long.parseLong(params.get(parameter.getName())));
-                }
-            }
-        }
-
-        System.out.println("Get result");
-
-        // Execute query
-        ResultSet rs = ps.executeQuery();
-
-        System.out.println("Process result");
-
-        return buildTableModel(rs);
-    }
-
-    public static DefaultTableModel buildTableModel(
-            ResultSet rs
-    ) throws Exception {
-
-        ResultSetMetaData meta = rs.getMetaData();
-
-        // Column names
-        int columnCount = meta.getColumnCount();
-
-        String[] columns = new String[columnCount];
-
-        for (int i = 1; i <= columnCount; i++) {
-            columns[i - 1] = meta.getColumnLabel(i);
-        }
-
-        // Table model
-        DefaultTableModel model
-                = new DefaultTableModel(columns, 0);
-
-        // Rows
-        while (rs.next()) {
-
-            Object[] row = new Object[columnCount];
-
-            for (int i = 1; i <= columnCount; i++) {
-                row[i - 1] = rs.getObject(i);
-            }
-
-            model.addRow(row);
-        }
-
-        return model;
-    }
-
-    public static List<BusinessEntity> execute(BusinessEntityConfig entityConfig, ChildEntity relationConfig, Connection connection, String parentEntityId, String parentEntityIdType) throws SQLException {
-
-        List<BusinessEntity> result = new ArrayList<>();
-
-        System.out.println(relationConfig.getRequest());
-
-        PreparedStatement ps = connection.prepareStatement(relationConfig.getRequest());
-        System.out.println("Parent Id = " + parentEntityId);
-        if ("long".equals(parentEntityIdType)) {
-            ps.setLong(1, Long.parseLong(parentEntityId));
-        } else {
-            ps.setString(1, parentEntityId);
-        }
-        ResultSet rs = ps.executeQuery();
-
-        ResultSetMetaData meta = rs.getMetaData();
-
-        String[] columns = new String[meta.getColumnCount()];
-
-        for (int i = 1; i <= columns.length; i++) {
-            columns[i - 1] = meta.getColumnLabel(i);
-        }
-
-        while (rs.next()) {
-
-            var businessEntity = getBusinessEntityFromResultSet(relationConfig.getBusinessEntityType(), rs, columns);
-
-            if (entityConfig != null) {
-                getBusinessEntityDetails(connection, businessEntity, entityConfig);
-            }
-
-            result.add(businessEntity);
-        }
-
-        return result;
-    }
-
-    private static void getBusinessEntityDetails(Connection connection, BusinessEntity businessEntity, BusinessEntityConfig entityConfig) {
-
     }
 
     @Override
     public List<BusinessEntity> getChildEntities(String parentId, ChildEntity childEntityConfig) {
-        throw new UnsupportedOperationException("Not supported yet.");
+
+        List<BusinessEntity> result = new ArrayList<>();
+
+        try (Connection connection = dataSource.getConnection();) {
+
+            System.out.println(childEntityConfig.getRequest());
+
+            PreparedStatement ps = connection.prepareStatement(childEntityConfig.getRequest());
+            System.out.println("Parent Id = " + parentId);
+            if ("long".equals(childEntityConfig.getParentReferenceType())) {
+                ps.setLong(1, Long.parseLong(parentId));
+            } else {
+                ps.setString(1, parentId);
+            }
+            ResultSet rs = ps.executeQuery();
+
+            ResultSetMetaData meta = rs.getMetaData();
+
+            String[] columns = new String[meta.getColumnCount()];
+
+            for (int i = 1; i <= columns.length; i++) {
+                columns[i - 1] = meta.getColumnLabel(i);
+            }
+
+            while (rs.next()) {
+                var businessEntity = getBusinessEntityFromResultSet(childEntityConfig.getBusinessEntityType(), rs, columns);
+                result.add(businessEntity);
+            }
+
+        } catch (Exception ex) {
+            ApplicationContext.getApplicationContext().getEventLogger().addLog("Error during details query execution " + ex.getMessage());
+            Logger.getLogger(JPanelSearchOption.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        return result;
     }
 
     public static Map<String, Object> executeRequest(Connection connection, String entityId, String entityIdType, String request) throws SQLException {
@@ -219,9 +144,9 @@ public class PostgreSqlDataRetriever implements DataRetriever {
 
         PreparedStatement ps = connection.prepareStatement(request);
 
-        int paramIndex = 1;      
-            
-        for (var entry : parameters.getValues().entrySet()) {            
+        int paramIndex = 1;
+
+        for (var entry : parameters.getValues().entrySet()) {
 
             System.out.println("Set values " + entry.getKey() + "=" + entry.getValue());
 
@@ -236,11 +161,11 @@ public class PostgreSqlDataRetriever implements DataRetriever {
                 }
             } catch (SQLException e) {
                 throw new RuntimeException(e);
-            }            
-            
+            }
+
             paramIndex++;
         }
-        
+
         ResultSet rs = ps.executeQuery();
         ResultSetMetaData meta = rs.getMetaData();
 

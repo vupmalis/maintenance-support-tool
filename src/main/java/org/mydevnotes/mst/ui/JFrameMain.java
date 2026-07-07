@@ -19,6 +19,7 @@ import java.util.stream.Collectors;
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 import org.mydevnotes.mst.ApplicationContext;
+import org.mydevnotes.mst.BusinessEntityListener;
 import org.mydevnotes.mst.EventLogger;
 import org.mydevnotes.mst.config.AppConfig;
 
@@ -36,6 +37,7 @@ public class JFrameMain extends javax.swing.JFrame {
     public JFrameMain() {
         initComponents();
         this.jPanelsearchResultSet.setRowHaveDetails(true);
+        ApplicationContext.getApplicationContext().getApplicationController().addMainBusinessEntitySelectionListeners((BusinessEntityListener) jPanelSearchResultDetails);
     }
 
     /**
@@ -285,7 +287,7 @@ public class JFrameMain extends javax.swing.JFrame {
     }
 
     private void initSearchResultSection() {
-        this.jPanelsearchResultSet.setNavigationListener(jPanelSearchResultDetails);
+        this.jPanelsearchResultSet.setEventLogger(this.eventLogger);
         ApplicationContext.getApplicationContext().getApplicationController().addSearchResultListener(jPanelsearchResultSet);
     }
 }

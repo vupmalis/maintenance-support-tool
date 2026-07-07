@@ -20,7 +20,6 @@ import org.mydevnotes.mst.ui.design.AlternateRowRenderer;
  */
 public class JPanelSearchResultSet extends javax.swing.JPanel implements BusinessEntitySearchResultListener {
 
-    private SearchResultNavigationListener navigationListener;
     private EventLogger eventLogger;
     private String objectType;
     private BusinessEntitySelectionListener businessEntitySelectionListener = ApplicationContext.getApplicationContext().getApplicationController();
@@ -28,11 +27,6 @@ public class JPanelSearchResultSet extends javax.swing.JPanel implements Busines
 
     public void setRowHaveDetails(boolean rowHaveDetails) {
         this.rowHaveDetails = rowHaveDetails;
-    }
-
-    public void setNavigationListener(SearchResultNavigationListener navigationListener) {
-        this.navigationListener = navigationListener;
-        this.eventLogger = ApplicationContext.getApplicationContext().getEventLogger();
     }
 
     /**
@@ -76,8 +70,6 @@ public class JPanelSearchResultSet extends javax.swing.JPanel implements Busines
 
                         this.businessEntitySelectionListener.onChildBusinessEntitySelected(null);
                         this.businessEntitySelectionListener.onMainBusinessEntitySelected(parentEntity);
-
-                        this.populateDetails(parentEntity);
                     }
                 });
     }
@@ -97,13 +89,6 @@ public class JPanelSearchResultSet extends javax.swing.JPanel implements Busines
         }
 
         return rowData;
-    }
-
-    private void populateDetails(BusinessEntity parentEntity) {
-
-        if (this.navigationListener != null) {
-            this.navigationListener.populateDetails(parentEntity);
-        }
     }
 
     public void setTableModel(DefaultTableModel model, String objectType) {
@@ -200,6 +185,10 @@ public class JPanelSearchResultSet extends javax.swing.JPanel implements Busines
         });
 
         return model;
+    }
+
+    void setEventLogger(EventLogger eventLogger) {
+        this.eventLogger = eventLogger;
     }
 
 }

@@ -65,10 +65,10 @@ public class JPanelSearchOption extends javax.swing.JPanel {
             for (SearchParameter parameter : searchOption.getSearchParameters()) {
                 JTextField newField = new JTextField(15);
                 newField.setName(parameter.getName());
-                
-                if ("long".equals(parameter.getType())){
-                    bindLongField(newField, this.paramValues);               
-                } else {                    
+
+                if ("long".equals(parameter.getType())) {
+                    bindLongField(newField, this.paramValues);
+                } else {
                     bindTextField(newField, this.paramValues);
                 }
                 addField(parameter.getTitle(), newField);
@@ -168,7 +168,7 @@ public class JPanelSearchOption extends javax.swing.JPanel {
         }
         );
     }
-    
+
     public static void bindLongField(
             JTextComponent field,
             Map<String, Object> values
@@ -197,7 +197,7 @@ public class JPanelSearchOption extends javax.swing.JPanel {
             }
         }
         );
-    }    
+    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -261,51 +261,14 @@ public class JPanelSearchOption extends javax.swing.JPanel {
             appController.searchBusinessEntities(this.searchOption, new SearchParameters(paramValues));
         } catch (BusinessEntitySearchException ex) {
             System.getLogger(JPanelSearchOption.class.getName()).log(System.Logger.Level.ERROR, (String) null, ex);
-            
+
             JOptionPane.showMessageDialog(
                     this,
                     ex.getMessage(),
                     "DB connection error",
                     JOptionPane.ERROR_MESSAGE
-            );            
-        }
-        
-        /*
-        try {
-
-            if (ApplicationContext.getApplicationContext().getPosgreSQLDataSource(this.searchOption.getDataSource()) == null) {
-
-                JOptionPane.showMessageDialog(
-                        this,
-                        "Not connected to " + this.searchOption.getDataSource(),
-                        "DB connection error",
-                        JOptionPane.ERROR_MESSAGE
-                );
-                return;
-            }
-
-            ApplicationContext.getApplicationContext().getEventLogger().addLog("Execute query " + this.searchOption.getName() + "; for " + this.paramValues);
-
-            try (Connection connection = ApplicationContext.getApplicationContext().getPosgreSQLDataSource(this.searchOption.getDataSource()).getConnection();) {
-                DefaultTableModel tableModel = PostgreSqlDataRetriever.execute(this.searchOption, connection, new SearchParameters(this.paramValues));
-
-                this.resultUi.setTableModel(tableModel, this.searchOption.getBusinessEntityType());
-
-            } catch (Exception ex) {
-                ApplicationContext.getApplicationContext().getEventLogger().addLog("Error during query execution " + ex.getMessage());
-                Logger.getLogger(JPanelSearchOption.class.getName()).log(Level.SEVERE, null, ex);
-            }
-
-        } catch (DataSourceNotFoundException ex) {
-            System.getLogger(JPanelSearchOption.class.getName()).log(System.Logger.Level.ERROR, (String) null, ex);
-            JOptionPane.showMessageDialog(
-                    this,
-                    "Connection " + this.searchOption.getDataSource() + "not configured",
-                    "DB connection error",
-                    JOptionPane.ERROR_MESSAGE
             );
         }
-*/
 
     }//GEN-LAST:event_jButtonSearchActionPerformed
 

@@ -1,35 +1,21 @@
 package org.mydevnotes.mst.ui;
 
 import org.mydevnotes.mst.ui.tree.BusinessEntityNode;
-import com.zaxxer.hikari.HikariDataSource;
-import java.sql.Connection;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.swing.JOptionPane;
 import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import org.mydevnotes.mst.ApplicationContext;
+import org.mydevnotes.mst.BusinessEntityListener;
 import org.mydevnotes.mst.BusinessEntitySelectionListener;
-import org.mydevnotes.mst.DataSourceNotFoundException;
-import org.mydevnotes.mst.config.AppConfig;
-import org.mydevnotes.mst.config.BusinessEntityConfig;
-import org.mydevnotes.mst.config.ChildEntity;
-import org.mydevnotes.mst.config.DataSource;
 import org.mydevnotes.mst.dao.BusinessEntity;
-import org.mydevnotes.mst.dao.PostgreSqlDataRetriever;
 import org.mydevnotes.mst.ui.tree.BusinessEntityTreeCellRenderer;
 
 /**
  *
  * @author vupma
  */
-public class JPanelSearchResultDetails extends javax.swing.JPanel implements SearchResultNavigationListener {
+public class JPanelSearchResultDetails extends javax.swing.JPanel implements BusinessEntityListener {
 
-    // safe guard against infinite loops
-    private static final int MAX_TREE_HIGHT = 15;
     private BusinessEntitySelectionListener businessEntitySelectionListener = ApplicationContext.getApplicationContext().getApplicationController();
 
     /**
@@ -37,9 +23,10 @@ public class JPanelSearchResultDetails extends javax.swing.JPanel implements Sea
      */
     public JPanelSearchResultDetails() {
         initComponents();
+
         this.jTreeDetails.setRowHeight(16);
         this.jTreeDetails.setCellRenderer(new BusinessEntityTreeCellRenderer());
-        
+
         this.jPanelSearchResultSetAttributes.setRowHaveDetails(false);
 
         this.jTreeDetails.addTreeSelectionListener(e -> {
@@ -118,89 +105,6 @@ public class JPanelSearchResultDetails extends javax.swing.JPanel implements Sea
     private javax.swing.JTree jTreeDetails;
     // End of variables declaration//GEN-END:variables
 
-    @Override
-    public void populateDetails(BusinessEntity parentEntity) {
-
-        this.businessEntitySelectionListener.onChildBusinessEntitySelected(null);
-        DefaultMutableTreeNode root = new DefaultMutableTreeNode(new BusinessEntityNode(parentEntity));
-
-        addDetailsNodes(root, parentEntity, 0);
-
-        DefaultTreeModel model
-                = new DefaultTreeModel(root);
-
-        jTreeDetails.setModel(model);
-        expandAll(jTreeDetails);
-    }
-
-    private void addDetailsNodes(DefaultMutableTreeNode root, BusinessEntity parentEntity, int treeHight) {
-
-        if (treeHight > MAX_TREE_HIGHT) {
-            return;
-        }
-
-        AppConfig config = ApplicationContext.getApplicationContext().getAppConfig();
-        var detailsConfig = config.getBusinessEntityRelations().stream().filter(cd -> parentEntity.getType().equals(cd.getBusinessEntityType())).findFirst().orElse(null);
-
-        if (detailsConfig != null) {
-            for (ChildEntity detailsObjectConfig : detailsConfig.getChildEntities()) {
-
-                List<BusinessEntity> detailsEntities = retrieveDetailsEntities(detailsObjectConfig, parentEntity.getId());
-
-                if (!detailsEntities.isEmpty()) {
-
-                    DefaultMutableTreeNode detailsOfGivenTypeRoot = new DefaultMutableTreeNode(detailsObjectConfig.getBusinessEntityType());
-                    root.add(detailsOfGivenTypeRoot);
-
-                    detailsEntities.forEach(entity -> {
-                        DefaultMutableTreeNode detailsEntity = new DefaultMutableTreeNode(new BusinessEntityNode(entity));
-                        detailsOfGivenTypeRoot.add(detailsEntity);
-                        addDetailsNodes(detailsEntity, entity, treeHight + 1);
-                    });
-                }
-            }
-        }
-    }
-
-    private List<BusinessEntity> retrieveDetailsEntities(ChildEntity detailsObjectConfig, String id) {
-        List<BusinessEntity> detailsEntities = new ArrayList<>();
-
-        AppConfig appConfig = ApplicationContext.getApplicationContext().getAppConfig();
-        DataSource dataSource = appConfig.getDataSources().stream().filter(ds -> detailsObjectConfig.getDataSource().equals(ds.getName())).findFirst().orElse(null);
-        BusinessEntityConfig entityConfig = appConfig.getBusinessEntityConfig().stream().filter(beConfig -> beConfig.getBusinessEntityType().equals(detailsObjectConfig.getBusinessEntityType())).findFirst().orElse(null);
-
-        if (dataSource != null) {
-            if ("db".equals(dataSource.getType()) && "PostgreSQL".equals(dataSource.getConnectionDetails().getType())) {
-
-                try {
-                    HikariDataSource databaseDataStore = ApplicationContext.getApplicationContext().getPosgreSQLDataSource(detailsObjectConfig.getDataSource());
-
-                    try (Connection connection = databaseDataStore.getConnection();) {
-
-                        detailsEntities = PostgreSqlDataRetriever.execute(entityConfig, detailsObjectConfig, connection, id, detailsObjectConfig.getParentReferenceType());
-                        ApplicationContext.getApplicationContext().getEventLogger().addLog("Found " + detailsEntities.size() + " " + detailsObjectConfig.getBusinessEntityType() + "(s)");
-
-                    } catch (Exception ex) {
-                        ApplicationContext.getApplicationContext().getEventLogger().addLog("Error during details query execution " + ex.getMessage());
-                        Logger.getLogger(JPanelSearchOption.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-
-                } catch (DataSourceNotFoundException ex) {
-                    System.getLogger(JPanelSearchResultDetails.class.getName()).log(System.Logger.Level.ERROR, (String) null, ex);
-
-                    JOptionPane.showMessageDialog(
-                            this,
-                            "Not connected to " + detailsObjectConfig.getDataSource(),
-                            "DB connection error",
-                            JOptionPane.ERROR_MESSAGE
-                    );
-                }
-            }
-        }
-
-        return detailsEntities;
-    }
-
     public static void expandAll(JTree tree) {
         int row = 0;
 
@@ -221,5 +125,35 @@ public class JPanelSearchResultDetails extends javax.swing.JPanel implements Sea
                 jTabbedPaneSelectionDetails.add(key, jPanelSearchResultSet);
             });
         }
+    }
+
+    @Override
+    public void onBusinessEntitySelected(BusinessEntity businessEntity) {
+
+        DefaultMutableTreeNode root = new DefaultMutableTreeNode(new BusinessEntityNode(businessEntity));
+        this.populateTreeWithBusinessEntityChilds(root, businessEntity);
+
+        DefaultTreeModel model = new DefaultTreeModel(root);
+
+        this.jTreeDetails.setModel(model);
+        expandAll(this.jTreeDetails);
+
+    }
+
+    public void populateTreeWithBusinessEntityChilds(DefaultMutableTreeNode root, BusinessEntity businessEntity) {
+
+        businessEntity.getChildrens().forEach((childrenType, childrens) -> {
+
+            DefaultMutableTreeNode detailsOfGivenTypeRoot = new DefaultMutableTreeNode(childrenType);
+            root.add(detailsOfGivenTypeRoot);
+
+            childrens.forEach(child -> {
+                DefaultMutableTreeNode childNode = new DefaultMutableTreeNode(new BusinessEntityNode(child));
+                detailsOfGivenTypeRoot.add(childNode);
+                this.populateTreeWithBusinessEntityChilds(childNode, child);
+            });
+
+        });
+
     }
 }
