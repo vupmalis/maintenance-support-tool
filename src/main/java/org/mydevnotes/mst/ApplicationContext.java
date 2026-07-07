@@ -9,6 +9,7 @@ import org.mydevnotes.mst.config.AppConfig;
 import org.mydevnotes.mst.config.DataSource;
 import org.mydevnotes.mst.action.scripts.ScriptResourcesProvider;
 import org.mydevnotes.mst.config.BusinessEntityConfig;
+import org.mydevnotes.mst.config.EnvironmentConfig;
 import org.mydevnotes.mst.dao.PostgreSqlDataRetriever;
 import org.mydevnotes.mst.datasource.DataRetriever;
 import org.mydevnotes.mst.datasource.DataRetrieverProvider;
@@ -22,6 +23,11 @@ public class ApplicationContext implements DataRetrieverProvider, ScriptResource
     String configValidationErrors = "";
 
     private AppConfig appConfig;
+    private EnvironmentConfig envConfig;
+
+    public EnvironmentConfig getEnvConfig() {
+        return envConfig;
+    }
     private final ApplicationController applicationController;
     public final static ApplicationContext applicationContext = new ApplicationContext();
 
@@ -45,7 +51,11 @@ public class ApplicationContext implements DataRetrieverProvider, ScriptResource
         return appConfig;
     }
 
-    public void setAppConfig(AppConfig appConfig) {
+    public void setConfig(EnvironmentConfig environmentConfig) {       
+        this.envConfig = environmentConfig;
+    }
+    
+    public void setConfig(AppConfig appConfig) {
         this.appConfig = appConfig;
     }
 
@@ -156,7 +166,7 @@ public class ApplicationContext implements DataRetrieverProvider, ScriptResource
 
         DataRetriever dataRetriever = null;
 
-        DataSource dataSourceConfig = appConfig.getDataSources().stream().filter(ds -> ds.getName().equals(name)).findFirst().orElse(null);
+        DataSource dataSourceConfig = envConfig.getDataSources().stream().filter(ds -> ds.getName().equals(name)).findFirst().orElse(null);
 
         if (dataSourceConfig != null) {
 

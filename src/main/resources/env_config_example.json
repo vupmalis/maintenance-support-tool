@@ -1,0 +1,16 @@
+{
+    "dataSources": [
+        {
+            "name": "PrimaryDB",
+            "type": "db",
+            "connectionDetails": {
+                "type": "PostgreSQL",
+                "host": "localhost",
+                "port": "5439",
+                "userName": "iot_manager",
+                "password": "qwe123",
+                "connectionString": "jdbc:postgresql://localhost:5432/iot_devices"
+            }
+        }
+    ]
+}
