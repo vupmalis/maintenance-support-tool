@@ -34,23 +34,6 @@ public class DefaultDataCollector implements DataCollector {
 
     }
 
-    private BusinessEntity getBusinessEntity(DataRetrieverProvider dataSourceProvider, String entityId, BusinessEntityConfig entityConfig) {
-
-        BusinessEntity businessEntity = new BusinessEntity();
-        businessEntity.setId(entityId);
-
-        entityConfig.getDetails().forEach(
-                detailsConfig -> {
-                    DataRetriever dataRetriever = dataSourceProvider.getDataRetriever(detailsConfig.getDataSource());
-                    var details = dataRetriever.getBusinessEntityDetails(entityId, detailsConfig);
-                    // businessEntity.get
-
-                }
-        );
-
-        return businessEntity;
-    }
-
     private Map<String, Object> getBusinessEntityDetail(BusinessEntity businessEntity, Detail detailConfig, DataRetrieverProvider dataSourceProvider) {
 
         Map<String, Object> result = new HashMap<>();
