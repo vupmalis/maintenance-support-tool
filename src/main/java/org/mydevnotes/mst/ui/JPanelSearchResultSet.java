@@ -1,11 +1,20 @@
 package org.mydevnotes.mst.ui;
 
+import java.awt.Component;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
+import javax.swing.DefaultCellEditor;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableCellEditor;
+import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableColumnModel;
 import org.mydevnotes.mst.ApplicationContext;
 import org.mydevnotes.mst.BusinessEntitySearchResultListener;
 import org.mydevnotes.mst.BusinessEntitySelectionListener;
@@ -94,6 +103,23 @@ public class JPanelSearchResultSet extends javax.swing.JPanel implements Busines
     public void setTableModel(DefaultTableModel model, String objectType) {
         this.jTableResults.setModel(model);
         this.objectType = objectType;
+
+        if (hasColumn(this.jTableResults, "export_to_timeline_enabled")) {
+            this.jTableResults.getColumn("export_to_timeline_enabled").setCellRenderer(new ButtonRenderer());
+            this.jTableResults.getColumn("export_to_timeline_enabled").setCellEditor(new ButtonEditor(new JCheckBox()));
+        }
+    }
+    
+    public static boolean hasColumn(JTable table, Object identifier) {
+        TableColumnModel columnModel = table.getColumnModel();
+
+        for (int i = 0; i < columnModel.getColumnCount(); i++) {
+            if (Objects.equals(columnModel.getColumn(i).getIdentifier(), identifier)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private Object getValueAt(JTable table, int row, String columnName) {
@@ -189,6 +215,71 @@ public class JPanelSearchResultSet extends javax.swing.JPanel implements Busines
 
     void setEventLogger(EventLogger eventLogger) {
         this.eventLogger = eventLogger;
+    }
+
+    private static class ButtonRenderer extends JButton implements TableCellRenderer {
+
+        public ButtonRenderer() {
+            setOpaque(true);
+        }
+
+        @Override
+        public Component getTableCellRendererComponent(
+                JTable table, Object value,
+                boolean isSelected, boolean hasFocus,
+                int row, int column) {
+
+            setText(value == null ? "" : value.toString());
+            return this;
+        }
+    }
+
+    private static class ButtonEditor extends DefaultCellEditor {
+
+        private final JButton button;
+        private String label;
+        private boolean clicked;
+        private int row;
+
+        public ButtonEditor(JCheckBox checkBox) {
+            super(checkBox);
+
+            button = new JButton();
+            button.setOpaque(true);
+
+            button.addActionListener(e -> fireEditingStopped());
+        }
+
+        @Override
+        public Component getTableCellEditorComponent(
+                JTable table, Object value,
+                boolean isSelected, int row, int column) {
+
+            this.row = row;
+            label = value == null ? "" : value.toString();
+            button.setText(label);
+            clicked = true;
+            return button;
+        }
+
+        @Override
+        public Object getCellEditorValue() {
+            if (clicked) {
+                JOptionPane.showMessageDialog(
+                        button,
+                        "Button clicked on row " + row
+                );
+            }
+            clicked = false;
+            return label;
+        }
+
+        @Override
+        public boolean stopCellEditing() {
+            clicked = false;
+            return super.stopCellEditing();
+        }
+
     }
 
 }

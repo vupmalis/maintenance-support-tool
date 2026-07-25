@@ -13,6 +13,7 @@ public class BusinessEntity {
     private String id;
     private String name;
     private String type;
+    private boolean exportToTimeLineEnabled;
     private Map<String, Object> attributes;
     private final Map<String, Map<String, Object>> details = new HashMap<>();
     private final Map<String, List<BusinessEntity>> childrens = new HashMap<>();
@@ -76,5 +77,15 @@ public class BusinessEntity {
     public Map<String, List<BusinessEntity>> getChildrens() {
         return childrens;
     }
+
+    public boolean isExportToTimeLineEnabled() {
+        return exportToTimeLineEnabled;
+    }
+
+    public void setExportToTimeLineEnabled(boolean exportToTimeLineEnabled) {
+        this.exportToTimeLineEnabled = exportToTimeLineEnabled;
+    }
+
+    
     
 }

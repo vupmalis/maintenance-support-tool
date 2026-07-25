@@ -133,6 +133,7 @@ public class PostgreSqlDataRetriever implements DataRetriever {
         businessEntity.setType(businessEntityAttributes.containsKey("entity_type") ? String.valueOf(businessEntityAttributes.get("entity_type")) : businessEntityType);
         businessEntity.setName(businessEntityAttributes.containsKey("name") ? String.valueOf(businessEntityAttributes.get("name")) : "untitled");
         businessEntity.setIconName(businessEntityAttributes.containsKey("h_icon") ? String.valueOf(businessEntityAttributes.get("h_icon")) : "");
+        businessEntity.setExportToTimeLineEnabled(businessEntityAttributes.containsKey("export_to_timeline_enabled") ? "Y".equals(String.valueOf(businessEntityAttributes.get("export_to_timeline_enabled"))) : false);
         businessEntity.setAttributes(businessEntityAttributes);
 
         return businessEntity;

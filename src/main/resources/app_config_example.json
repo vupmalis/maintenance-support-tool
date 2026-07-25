@@ -6,7 +6,7 @@
                 "dataSource": "PrimaryDB",
                 "businessEntityType": "devices",
                 "requestScript": null,
-                "request": "SELECT d.* FROM devices.devices AS d WHERE d.id=?",
+                "request": "SELECT d.*, 'Y' as export_to_timeline_enabled  FROM devices.devices AS d WHERE d.id=?",
                 "requestEditable": false,
                 "searchParameters": [
                     {
