@@ -3,6 +3,7 @@ package org.mydevnotes.mst.action.scripts;
 import javax.sql.DataSource;
 import org.mydevnotes.mst.DataSourceNotFoundException;
 import org.mydevnotes.mst.EventLogger;
+import org.mydevnotes.mst.dao.BusinessEntity;
 
 /**
  *
@@ -17,4 +18,6 @@ public interface ScriptResourcesProvider {
     public String getBusinessEntityType();
     
     public EventLogger getEventLogger();
+    
+    public BusinessEntity getBusinessEntity();
 }

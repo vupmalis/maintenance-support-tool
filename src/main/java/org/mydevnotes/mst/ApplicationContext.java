@@ -10,6 +10,7 @@ import org.mydevnotes.mst.config.DataSource;
 import org.mydevnotes.mst.action.scripts.ScriptResourcesProvider;
 import org.mydevnotes.mst.config.BusinessEntityConfig;
 import org.mydevnotes.mst.config.EnvironmentConfig;
+import org.mydevnotes.mst.dao.BusinessEntity;
 import org.mydevnotes.mst.dao.PostgreSqlDataRetriever;
 import org.mydevnotes.mst.datasource.DataRetriever;
 import org.mydevnotes.mst.datasource.DataRetrieverProvider;
@@ -198,5 +199,10 @@ public class ApplicationContext implements DataRetrieverProvider, ScriptResource
 
     public BusinessEntityConfig getBusinessEntityConfig(String businessEntityType) {
         return this.appConfig.getBusinessEntityConfig().stream().filter(bec -> businessEntityType.equals(bec.getBusinessEntityType())).findFirst().orElse(null);
+    }
+
+    @Override
+    public BusinessEntity getBusinessEntity() {
+        return this.applicationController.getChildBusinessEntity() == null ? this.applicationController.getChildBusinessEntity() : this.applicationController.getMainBusinessEntity();
     }
 }

@@ -3,8 +3,10 @@ package org.mydevnotes.mst.ui;
 import java.awt.Component;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Stream;
 import javax.swing.DefaultCellEditor;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -12,7 +14,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumnModel;
 import org.mydevnotes.mst.ApplicationContext;
@@ -33,6 +34,7 @@ public class JPanelSearchResultSet extends javax.swing.JPanel implements Busines
     private String objectType;
     private BusinessEntitySelectionListener businessEntitySelectionListener = ApplicationContext.getApplicationContext().getApplicationController();
     private boolean rowHaveDetails = false;
+    private List<BusinessEntity> searchResult;
 
     public void setRowHaveDetails(boolean rowHaveDetails) {
         this.rowHaveDetails = rowHaveDetails;
@@ -85,6 +87,7 @@ public class JPanelSearchResultSet extends javax.swing.JPanel implements Busines
 
     public void cleanup() {
         this.jTableResults.setModel(new DefaultTableModel(new String[]{}, 0));
+        this.searchResult = null;
     }
 
     private Map<String, Object> getSelectedRowAsBusinessEntity(int row) {
@@ -104,12 +107,15 @@ public class JPanelSearchResultSet extends javax.swing.JPanel implements Busines
         this.jTableResults.setModel(model);
         this.objectType = objectType;
 
+        /*
         if (hasColumn(this.jTableResults, "export_to_timeline_enabled")) {
             this.jTableResults.getColumn("export_to_timeline_enabled").setCellRenderer(new ButtonRenderer());
             this.jTableResults.getColumn("export_to_timeline_enabled").setCellEditor(new ButtonEditor(new JCheckBox()));
         }
+        */
+
     }
-    
+
     public static boolean hasColumn(JTable table, Object identifier) {
         TableColumnModel columnModel = table.getColumnModel();
 
@@ -199,12 +205,17 @@ public class JPanelSearchResultSet extends javax.swing.JPanel implements Busines
     @Override
     public void onBusinessEntitySearchResultReady(BusinessEntitySearchResult searchResult) {
         this.setTableModel(buildBusinessEntityTableModel(searchResult), searchResult.getEntityType());
+        this.searchResult = searchResult.getSearchResult();
     }
 
     public static DefaultTableModel buildBusinessEntityTableModel(
             BusinessEntitySearchResult searchResult
     ) {
-        DefaultTableModel model = new DefaultTableModel(searchResult.getEntityAttributes(), 0);
+        String[] columns = Stream.concat(
+                Arrays.stream(searchResult.getEntityAttributes()),
+                Arrays.stream(new String[]{"entityObject"})
+        ).toArray(String[]::new);
+        DefaultTableModel model = new DefaultTableModel(columns, 0);
         searchResult.getSearchResult().forEach(businessEntity -> {
             Object[] row = Arrays.stream(searchResult.getEntityAttributes()).map(key -> businessEntity.getAttributes().get(key)).toArray();
             model.addRow(row);
@@ -269,6 +280,7 @@ public class JPanelSearchResultSet extends javax.swing.JPanel implements Busines
                         button,
                         "Button clicked on row " + row
                 );
+
             }
             clicked = false;
             return label;

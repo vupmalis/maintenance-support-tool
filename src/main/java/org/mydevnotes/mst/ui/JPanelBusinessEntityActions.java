@@ -7,6 +7,7 @@ import javax.swing.SwingUtilities;
 import org.mydevnotes.mst.ApplicationContext;
 import org.mydevnotes.mst.BusinessEntityListener;
 import org.mydevnotes.mst.action.ActionScriptExecutor;
+import org.mydevnotes.mst.config.Action;
 import org.mydevnotes.mst.config.AppConfig;
 import org.mydevnotes.mst.dao.BusinessEntity;
 
@@ -60,39 +61,59 @@ public class JPanelBusinessEntityActions extends javax.swing.JPanel implements B
             if (entityConfig != null) {
 
                 entityConfig.getActions().forEach(actionConfig -> {
-                    JButton actionButton = new JButton(actionConfig.getName());
-                    actionButton.setToolTipText("Todo - add toolTip to config");
-                    actionButton.addActionListener(e -> {
-
-                        new Thread(() -> {
-                            try {
-                                ActionScriptExecutor engine = new ActionScriptExecutor();
-
-                                Object result = engine.execute(
-                                        ApplicationContext.getApplicationContext().getConfigPath(),
-                                        Path.of(actionConfig.getScript()),
-                                        businessEntity
-                                );
-
-                                SwingUtilities.invokeLater(()
-                                        -> JOptionPane.showMessageDialog(null, "Result: " + result)
-                                );
-
-                            } catch (Exception ex) {
-                                ex.printStackTrace();
-                            }
-                        }).start();
-
-                    });
+                    JButton actionButton = createActionButton(actionConfig, businessEntity);
                     this.add(actionButton);
-
                 });
             }
 
+            if (businessEntity.getAttributes().containsKey("export_to_timeline_enabled")) {
+                Action actionConfig = new Action();
+                actionConfig.setName("Show timeline");
+                actionConfig.setToolTip("Open timeline in browser");
+                actionConfig.setType("script");
+                actionConfig.setReference("id");
+                actionConfig.setScript("scripts/showTimeLine.groovy");
+                actionConfig.setReferenceType("long");
+
+                JButton actionButton = createActionButton(actionConfig, businessEntity);
+                this.add(actionButton);
+            }
         }
 
         this.revalidate();
         this.repaint();
 
+    }
+
+    private JButton createActionButton(Action actionConfig, BusinessEntity businessEntity) {
+        JButton actionButton = new JButton(actionConfig.getName());
+        actionButton.setToolTipText("Todo - add toolTip to config");
+        actionButton.addActionListener(e -> {
+
+            new Thread(() -> {
+                try {
+                    ActionScriptExecutor engine = new ActionScriptExecutor();
+
+                    Object result = engine.execute(
+                            ApplicationContext.getApplicationContext().getConfigPath(),
+                            Path.of(actionConfig.getScript()),
+                            businessEntity
+                    );
+
+                    SwingUtilities.invokeLater(()
+                            -> {
+                        if (result != null) {
+                            JOptionPane.showMessageDialog(null, "Result: " + result);
+                        }
+                    }
+                    );
+
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+            }).start();
+
+        });
+        return actionButton;
     }
 }
