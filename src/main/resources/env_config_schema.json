@@ -1,0 +1,83 @@
+{
+  "type": "object",
+  "properties": {
+    "dataSources": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "examples": [
+              "PrimaryDB"
+            ]
+          },
+          "type": {
+            "type": "string",
+            "examples": [
+              "db"
+            ]
+          },
+          "connectionDetails": {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "examples": [
+                  "PostgreSQL"
+                ]
+              },
+              "host": {
+                "type": "string",
+                "examples": [
+                  "localhost"
+                ]
+              },
+              "port": {
+                "type": "string",
+                "examples": [
+                  "5439"
+                ]
+              },
+              "userName": {
+                "type": "string",
+                "examples": [
+                  "iot_manager"
+                ]
+              },
+              "password": {
+                "type": "string",
+                "examples": [
+                  "qwe123"
+                ]
+              },
+              "connectionString": {
+                "type": "string",
+                "examples": [
+                  "jdbc:postgresql://localhost:5432/iot_devices"
+                ]
+              }
+            },
+            "required": [
+              "type",
+              "host",
+              "port",
+              "userName",
+              "password",
+              "connectionString"
+            ]
+          }
+        },
+        "required": [
+          "name",
+          "type",
+          "connectionDetails"
+        ]
+      }
+    }
+  },
+  "required": [
+    "dataSources"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema"
+}

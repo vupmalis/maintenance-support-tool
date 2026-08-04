@@ -1,18 +1,4 @@
 {
-    "dataSources": [
-        {
-            "name": "PrimaryDB",
-            "type": "db",
-            "connectionDetails": {
-                "type": "PostgreSQL",
-                "host": "localhost",
-                "port": "5439",
-                "userName": "iot_manager",
-                "password": "qwe123",
-                "connectionString": "jdbc:postgresql://localhost:5432/iot_devices"
-            }
-        }
-    ],
     "searchConfig": {
         "searchOptions": [
             {
@@ -20,7 +6,7 @@
                 "dataSource": "PrimaryDB",
                 "businessEntityType": "devices",
                 "requestScript": null,
-                "request": "SELECT d.* FROM devices.devices AS d WHERE d.id=?",
+                "request": "SELECT d.*, 'Y' as export_to_timeline_enabled, d.created_at as start_date  FROM devices.devices AS d WHERE d.id=?",
                 "requestEditable": false,
                 "searchParameters": [
                     {
@@ -45,7 +31,7 @@
                 "name": "All locations",
                 "dataSource": "PrimaryDB",
                 "businessEntityType": "locations",                
-                "request": "SELECT l.*, 'note_pin.png' as h_icon FROM devices.locations AS l",
+                "request": "SELECT l.*, 'note_pin.png' as h_icon, 'Y' as export_to_timeline_enabled FROM devices.locations AS l",
                 "requestEditable": false,
                 "requestScript": null,
                 "searchParameters": []
@@ -69,7 +55,7 @@
                         {
                             "businessEntityType": "devices",
                             "dataSource": "PrimaryDB",
-                            "request": "SELECT d.id, d.name, dt.name as device_type, 'lightbulb.png' as h_icon FROM devices.devices AS d join devices.device_types dt on dt.id = d.device_type_id WHERE d.location_id = ?",
+                            "request": "SELECT d.id, d.name, dt.name as device_type, 'lightbulb.png' as h_icon, d.created_at as start_date FROM devices.devices AS d join devices.device_types dt on dt.id = d.device_type_id WHERE d.location_id = ?",
                             "parentReference": "id",
                             "parentReferenceType": "long"
                         },
@@ -91,7 +77,7 @@
                         {
                             "businessEntityType": "events",
                             "dataSource": "PrimaryDB",
-                            "request": "SELECT de.id, de.event_type as name FROM devices.device_events AS de where de.device_id = ?",
+                            "request": "SELECT de.id, de.event_type as name, de.created_at as start_date FROM devices.device_events de where de.device_id = ?",
                             "parentReference": "id",
                             "parentReferenceType": "long"
                         }                    
@@ -121,6 +107,21 @@
                     "referenceType": "long"                    
                 }
             ]
-        }
+        },
+        {
+            "businessEntityType": "events",       
+            "dataSource": "PrimaryDB",
+            "details": [
+                { 
+                    "displayName": "attributes",
+                    "dataSource": "PrimaryDB",
+                    "request": "SELECT de.id, de.event_type as name, de.created_at, de.created_at as start_date, de.payload FROM devices.device_events AS de where de.id = ?",
+                    "reference": "id",
+                    "referenceType": "long"
+                }
+            ],
+            "actions": [
+            ]
+        }        
     ]
 }

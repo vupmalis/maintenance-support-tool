@@ -6,6 +6,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -129,11 +131,8 @@ public class PostgreSqlDataRetriever implements DataRetriever {
             businessEntityAttributes.put(columns[i - 1], rs.getObject(i));
         }
 
-        businessEntity.setId(businessEntityAttributes.containsKey("id") ? String.valueOf(businessEntityAttributes.get("id")) : null);
-        businessEntity.setType(businessEntityAttributes.containsKey("entity_type") ? String.valueOf(businessEntityAttributes.get("entity_type")) : businessEntityType);
-        businessEntity.setName(businessEntityAttributes.containsKey("name") ? String.valueOf(businessEntityAttributes.get("name")) : "untitled");
-        businessEntity.setIconName(businessEntityAttributes.containsKey("h_icon") ? String.valueOf(businessEntityAttributes.get("h_icon")) : "");
-        businessEntity.setAttributes(businessEntityAttributes);
+        businessEntity.setAttributes(businessEntityAttributes);        
+        businessEntity.loadFieldValuesFromAttributes(businessEntityType);
 
         return businessEntity;
     }

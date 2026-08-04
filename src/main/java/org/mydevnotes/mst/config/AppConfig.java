@@ -16,7 +16,6 @@ import jakarta.validation.constraints.NotNull;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
-    "dataSources",
     "searchConfig",
     "businessEntityRelations",
     "businessEntityConfig"
@@ -24,14 +23,6 @@ import jakarta.validation.constraints.NotNull;
 @Generated("jsonschema2pojo")
 public class AppConfig {
 
-    /**
-     * 
-     * (Required)
-     * 
-     */
-    @JsonProperty("dataSources")
-    @NotNull
-    private List<@Valid DataSource> dataSources;
     /**
      * 
      * (Required)
@@ -59,26 +50,6 @@ public class AppConfig {
     private List<@Valid BusinessEntityConfig> businessEntityConfig;
     @JsonIgnore
     private Map<String, @Valid Object> additionalProperties = new LinkedHashMap<String, Object>();
-
-    /**
-     * 
-     * (Required)
-     * 
-     */
-    @JsonProperty("dataSources")
-    public List<DataSource> getDataSources() {
-        return dataSources;
-    }
-
-    /**
-     * 
-     * (Required)
-     * 
-     */
-    @JsonProperty("dataSources")
-    public void setDataSources(List<DataSource> dataSources) {
-        this.dataSources = dataSources;
-    }
 
     /**
      * 

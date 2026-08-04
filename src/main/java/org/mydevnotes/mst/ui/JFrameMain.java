@@ -22,6 +22,7 @@ import org.mydevnotes.mst.ApplicationContext;
 import org.mydevnotes.mst.BusinessEntityListener;
 import org.mydevnotes.mst.EventLogger;
 import org.mydevnotes.mst.config.AppConfig;
+import org.mydevnotes.mst.config.EnvironmentConfig;
 
 /**
  *
@@ -153,7 +154,10 @@ public class JFrameMain extends javax.swing.JFrame {
         //</editor-fold>
 
         //</editor-fold>
-        loadAppConfig(args);
+        
+        // TODO validate and retrieve file name for arges before loading
+        loadAppConfig(args, 0, "app_config_schema.json", "app_config_example.json", AppConfig.class);
+        loadAppConfig(args, 1, "env_config_schema.json", "env_config_example.json", EnvironmentConfig.class);
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
@@ -164,7 +168,7 @@ public class JFrameMain extends javax.swing.JFrame {
                 ApplicationContext.getApplicationContext().setEventLogger(jFrameMain.eventLogger);
 
                 if (ApplicationContext.getApplicationContext().isConfigLoaded()) {
-                    jFrameMain.initConfigSection(ApplicationContext.getApplicationContext().getAppConfig());
+                    jFrameMain.initConfigSection(ApplicationContext.getApplicationContext().getAppConfig(), ApplicationContext.getApplicationContext().getEnvConfig());
                 }
 
                 jFrameMain.initSearchResultSection();
@@ -189,11 +193,11 @@ public class JFrameMain extends javax.swing.JFrame {
     private javax.swing.JSplitPane jSplitPane4;
     // End of variables declaration//GEN-END:variables
 
-    private static void loadAppConfig(String[] args) {
+    private static void loadAppConfig(String[] args, int argIndex, String schemaFileName, String defaultConfigFile, Class<?> configClass) {
 
         try {
 
-            InputStream configFileInputStream = getConfigFileInputStream(args);
+            InputStream configFileInputStream = getConfigFileInputStream(args, argIndex, defaultConfigFile);
 
             ObjectMapper mapper = new ObjectMapper();
             JsonNode schemaNode;
@@ -201,7 +205,7 @@ public class JFrameMain extends javax.swing.JFrame {
                 schemaNode = mapper.readTree(
                         Thread.currentThread()
                                 .getContextClassLoader()
-                                .getResourceAsStream("app_config_schema.json")
+                                .getResourceAsStream(schemaFileName)
                 );
 
                 JsonSchemaFactory factory = JsonSchemaFactory.getInstance(SpecVersion.VersionFlag.V7);
@@ -225,36 +229,43 @@ public class JFrameMain extends javax.swing.JFrame {
             }
 
             try {
-                configFileInputStream = getConfigFileInputStream(args);
+                configFileInputStream = getConfigFileInputStream(args, argIndex, defaultConfigFile);
 
-                AppConfig appConfig = mapper.readValue(configFileInputStream, AppConfig.class);
+                var config = mapper.readValue(configFileInputStream, configClass);
 
-                ApplicationContext.getApplicationContext().setAppConfig(appConfig);
+                switch (config) {
+                    case EnvironmentConfig environmentConfig ->
+                        ApplicationContext.getApplicationContext().setConfig(environmentConfig);
+                    case AppConfig appConfig ->
+                        ApplicationContext.getApplicationContext().setConfig(appConfig);
+                    default ->
+                        throw new IllegalArgumentException("Unknown config");
+                }
 
-                appConfig.getSearchConfig().getSearchOptions().forEach(search -> System.out.println("appConfig: " + search.getName()));
+                //appConfig.getSearchConfig().getSearchOptions().forEach(search -> System.out.println("appConfig: " + search.getName()));
             } catch (IOException ex) {
                 Logger.getLogger(JFrameMain.class.getName()).log(Level.SEVERE, null, ex);
             }
 
             ApplicationContext.getApplicationContext().setConfigPath(getConfigPath(args));
 
-        } catch (FileNotFoundException ex) {
+        } catch (Exception ex) {
             System.getLogger(JFrameMain.class.getName()).log(System.Logger.Level.ERROR, (String) null, ex);
         }
     }
 
-    private static InputStream getConfigFileInputStream(String[] args) throws FileNotFoundException {
+    private static InputStream getConfigFileInputStream(String[] args, int argIndex, String defaultConfigFile) throws FileNotFoundException {
         InputStream configFileInputStream;
         if (args.length == 0) {
             System.out.println("Use default config json");
 
             configFileInputStream = Thread.currentThread()
                     .getContextClassLoader()
-                    .getResourceAsStream("app_config_example.json");
+                    .getResourceAsStream(defaultConfigFile);
         } else {
 
-            System.out.println("Read config json from parameter " + args[0]);
-            configFileInputStream = new FileInputStream(args[0]);
+            System.out.println("Read config json from parameter " + args[argIndex]);
+            configFileInputStream = new FileInputStream(args[argIndex]);
 
         }
         return configFileInputStream;
@@ -271,9 +282,9 @@ public class JFrameMain extends javax.swing.JFrame {
 
     }
 
-    private void initConfigSection(AppConfig appConfig) {
+    private void initConfigSection(AppConfig appConfig, EnvironmentConfig environmentConfig) {
 
-        appConfig.getDataSources().forEach(dataSource -> jPanelConfigContainer.addDataSourceConfig(dataSource));
+        environmentConfig.getDataSources().forEach(dataSource -> jPanelConfigContainer.addDataSourceConfig(dataSource));
         appConfig.getSearchConfig().getSearchOptions().forEach(searchOption -> this.jPanelSearchOptionsContainer.addSearchOption(searchOption, this.jPanelsearchResultSet));
 
     }

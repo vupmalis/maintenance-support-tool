@@ -59,7 +59,19 @@
             <groupId>org.apache.groovy</groupId>
             <artifactId>groovy-sql</artifactId>
             <version>4.0.28</version>
-        </dependency>                                        
+        </dependency>    
+        
+        <dependency>
+            <groupId>org.apache.groovy</groupId>
+            <artifactId>groovy-json</artifactId>
+            <version>4.0.28</version>
+        </dependency>  
+        
+        <dependency>
+            <groupId>io.trino</groupId>
+            <artifactId>trino-jdbc</artifactId>
+            <version>483</version>
+        </dependency>                                                                                                                                                                                                                                                                                                                                          
         
     </dependencies>
     
@@ -114,8 +126,17 @@
                     </execution>
                 </executions>
 
-            </plugin>            
-
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.3</version>
+                <configuration>
+                    <compilerArgs>
+                        <arg>--enable-preview</arg>
+                    </compilerArgs>
+                </configuration>
+            </plugin>
         </plugins>
     </build>    
 </project>

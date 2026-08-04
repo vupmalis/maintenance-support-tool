@@ -2,16 +2,23 @@ package org.mydevnotes.mst;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.mydevnotes.mst.config.AppConfig;
 import org.mydevnotes.mst.config.DataSource;
 import org.mydevnotes.mst.action.scripts.ScriptResourcesProvider;
 import org.mydevnotes.mst.config.BusinessEntityConfig;
+import org.mydevnotes.mst.config.EnvironmentConfig;
+import org.mydevnotes.mst.dao.BusinessEntity;
 import org.mydevnotes.mst.dao.PostgreSqlDataRetriever;
 import org.mydevnotes.mst.datasource.DataRetriever;
 import org.mydevnotes.mst.datasource.DataRetrieverProvider;
+import org.mydevnotes.mst.web.StaticFileHttpServer;
 
 /**
  *
@@ -22,6 +29,12 @@ public class ApplicationContext implements DataRetrieverProvider, ScriptResource
     String configValidationErrors = "";
 
     private AppConfig appConfig;
+    private EnvironmentConfig envConfig;
+    private StaticFileHttpServer staticFileHttpServer;
+
+    public EnvironmentConfig getEnvConfig() {
+        return envConfig;
+    }
     private final ApplicationController applicationController;
     public final static ApplicationContext applicationContext = new ApplicationContext();
 
@@ -45,7 +58,11 @@ public class ApplicationContext implements DataRetrieverProvider, ScriptResource
         return appConfig;
     }
 
-    public void setAppConfig(AppConfig appConfig) {
+    public void setConfig(EnvironmentConfig environmentConfig) {
+        this.envConfig = environmentConfig;
+    }
+
+    public void setConfig(AppConfig appConfig) {
         this.appConfig = appConfig;
     }
 
@@ -156,7 +173,7 @@ public class ApplicationContext implements DataRetrieverProvider, ScriptResource
 
         DataRetriever dataRetriever = null;
 
-        DataSource dataSourceConfig = appConfig.getDataSources().stream().filter(ds -> ds.getName().equals(name)).findFirst().orElse(null);
+        DataSource dataSourceConfig = envConfig.getDataSources().stream().filter(ds -> ds.getName().equals(name)).findFirst().orElse(null);
 
         if (dataSourceConfig != null) {
 
@@ -188,5 +205,29 @@ public class ApplicationContext implements DataRetrieverProvider, ScriptResource
 
     public BusinessEntityConfig getBusinessEntityConfig(String businessEntityType) {
         return this.appConfig.getBusinessEntityConfig().stream().filter(bec -> businessEntityType.equals(bec.getBusinessEntityType())).findFirst().orElse(null);
+    }
+
+    @Override
+    public BusinessEntity getBusinessEntity() {
+        return this.applicationController.getChildBusinessEntity() == null ? this.applicationController.getChildBusinessEntity() : this.applicationController.getMainBusinessEntity();
+    }
+
+    @Override
+    public StaticFileHttpServer getStaticFileHttpServer() {
+
+        if (this.staticFileHttpServer == null) {
+            try {
+                String currentPath = System.getProperty("user.dir");
+                Path currentDirectory = Path.of(currentPath).resolve("htmlview");
+                Files.createDirectories(currentDirectory);
+                this.staticFileHttpServer = new StaticFileHttpServer(currentDirectory, 0);
+                
+                this.staticFileHttpServer.start();
+            } catch (IOException ex) {
+                Logger.getLogger(ApplicationContext.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
+        }
+        return this.staticFileHttpServer;
     }
 }
