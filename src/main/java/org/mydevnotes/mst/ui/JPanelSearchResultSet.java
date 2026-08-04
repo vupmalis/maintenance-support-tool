@@ -72,10 +72,13 @@ public class JPanelSearchResultSet extends javax.swing.JPanel implements Busines
                         row = this.jTableResults.convertRowIndexToModel(row);
 
                         BusinessEntity parentEntity = new BusinessEntity();
+                        parentEntity.setAttributes(getSelectedRowAsBusinessEntity(row));
+                        parentEntity.loadFieldValuesFromAttributes(this.objectType);                        
+                        
                         parentEntity.setId(String.valueOf(this.getValueAt(jTableResults, row, "id")));
                         parentEntity.setType(this.objectType);
                         parentEntity.setName((String) this.getValueAt(jTableResults, row, "name"));
-                        parentEntity.setAttributes(getSelectedRowAsBusinessEntity(row));
+
 
                         this.eventLogger.addLog(String.format("Extracting details for object id=%s", parentEntity.getId()));
 

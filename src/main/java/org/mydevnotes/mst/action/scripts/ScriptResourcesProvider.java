@@ -4,6 +4,7 @@ import javax.sql.DataSource;
 import org.mydevnotes.mst.DataSourceNotFoundException;
 import org.mydevnotes.mst.EventLogger;
 import org.mydevnotes.mst.dao.BusinessEntity;
+import org.mydevnotes.mst.web.StaticFileHttpServer;
 
 /**
  *
@@ -20,4 +21,6 @@ public interface ScriptResourcesProvider {
     public EventLogger getEventLogger();
     
     public BusinessEntity getBusinessEntity();
+    
+    public StaticFileHttpServer getStaticFileHttpServer();
 }
