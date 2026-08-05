@@ -11,8 +11,10 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.net.URI;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Map;
 import java.util.concurrent.Executors;
 
@@ -63,7 +65,7 @@ public class StaticFileHttpServer implements AutoCloseable {
     }
 
     @Override
-    public void close() {        
+    public void close() {
         server.stop(0);
     }
 
@@ -76,9 +78,9 @@ public class StaticFileHttpServer implements AutoCloseable {
     }
 
     public URI getUri(String relativePath) {
-        
+
         System.out.println("requested " + relativePath);
-        
+
         if (relativePath.startsWith("/")) {
             relativePath = relativePath.substring(1);
         }
@@ -102,6 +104,23 @@ public class StaticFileHttpServer implements AutoCloseable {
 
             if (requestPath.equals("/")) {
                 requestPath = "/index.html";
+            }
+
+            if (requestPath.equals("/api/businessentities")) {
+                Path file = root.resolve("timeline/businessEntity.json");
+
+                byte[] content = Files.readAllBytes(file);
+
+                exchange.getResponseHeaders()
+                        .set("Content-Type", "application/json; charset=UTF-8");
+
+                exchange.sendResponseHeaders(200, content.length);
+
+                try (OutputStream os = exchange.getResponseBody()) {
+                    os.write(content);
+                }
+
+                return;
             }
 
             Path file = root.resolve(requestPath.substring(1)).normalize();
@@ -131,14 +150,14 @@ public class StaticFileHttpServer implements AutoCloseable {
 
             exchange.sendResponseHeaders(200, length);
 
-            try (InputStream in = Files.newInputStream(file);
-                 OutputStream out = exchange.getResponseBody()) {
+            try (InputStream in = Files.newInputStream(file); OutputStream out = exchange.getResponseBody()) {
 
                 in.transferTo(out);
             }
 
             exchange.close();
         }
+
     }
 
     private static void send404(HttpExchange exchange) throws IOException {
@@ -185,6 +204,5 @@ public class StaticFileHttpServer implements AutoCloseable {
 
         Desktop.getDesktop().browse(getBaseUri().resolve(path));
     }
-    
-    
+
 }

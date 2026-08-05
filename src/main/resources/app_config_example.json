@@ -77,7 +77,7 @@
                         {
                             "businessEntityType": "events",
                             "dataSource": "PrimaryDB",
-                            "request": "SELECT de.id, de.event_type as name, de.created_at as start_date FROM devices.device_events de where de.device_id = ?",
+                            "request": "SELECT de.id, de.event_type as name, de.created_at as start_date, de.created_at as end_date FROM devices.device_events de where de.device_id = ?",
                             "parentReference": "id",
                             "parentReferenceType": "long"
                         }                    
