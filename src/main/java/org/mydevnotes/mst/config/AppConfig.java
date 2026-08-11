@@ -18,7 +18,8 @@ import jakarta.validation.constraints.NotNull;
 @JsonPropertyOrder({
     "searchConfig",
     "businessEntityRelations",
-    "businessEntityConfig"
+    "businessEntityConfig",
+    "staticWebAppConfig"
 })
 @Generated("jsonschema2pojo")
 public class AppConfig {
@@ -48,6 +49,14 @@ public class AppConfig {
     @JsonProperty("businessEntityConfig")
     @NotNull
     private List<@Valid BusinessEntityConfig> businessEntityConfig;
+    /**
+     * 
+     * (Required)
+     * 
+     */
+    @JsonProperty("staticWebAppConfig")
+    @NotNull
+    private List<@Valid StaticWebAppConfig> staticWebAppConfig;
     @JsonIgnore
     private Map<String, @Valid Object> additionalProperties = new LinkedHashMap<String, Object>();
 
@@ -109,6 +118,26 @@ public class AppConfig {
     @JsonProperty("businessEntityConfig")
     public void setBusinessEntityConfig(List<BusinessEntityConfig> businessEntityConfig) {
         this.businessEntityConfig = businessEntityConfig;
+    }
+
+    /**
+     * 
+     * (Required)
+     * 
+     */
+    @JsonProperty("staticWebAppConfig")
+    public List<StaticWebAppConfig> getStaticWebAppConfig() {
+        return staticWebAppConfig;
+    }
+
+    /**
+     * 
+     * (Required)
+     * 
+     */
+    @JsonProperty("staticWebAppConfig")
+    public void setStaticWebAppConfig(List<StaticWebAppConfig> staticWebAppConfig) {
+        this.staticWebAppConfig = staticWebAppConfig;
     }
 
     @JsonAnyGetter
