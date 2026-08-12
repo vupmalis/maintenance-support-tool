@@ -22,5 +22,5 @@ public interface ScriptResourcesProvider {
     
     public BusinessEntity getBusinessEntity();
     
-    public StaticFileHttpServer getStaticFileHttpServer();
+    public StaticFileHttpServer getStaticFileHttpServer() throws Exception;
 }

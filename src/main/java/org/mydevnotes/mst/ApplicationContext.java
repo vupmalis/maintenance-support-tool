@@ -31,6 +31,7 @@ public class ApplicationContext implements DataRetrieverProvider, ScriptResource
     private AppConfig appConfig;
     private EnvironmentConfig envConfig;
     private StaticFileHttpServer staticFileHttpServer;
+    private Path staticFileHttpServerRootLocation;
 
     public EnvironmentConfig getEnvConfig() {
         return envConfig;
@@ -213,15 +214,14 @@ public class ApplicationContext implements DataRetrieverProvider, ScriptResource
     }
 
     @Override
-    public StaticFileHttpServer getStaticFileHttpServer() {
+    public StaticFileHttpServer getStaticFileHttpServer() throws Exception {
 
         if (this.staticFileHttpServer == null) {
             try {
-                String currentPath = System.getProperty("user.dir");
-                Path currentDirectory = Path.of(currentPath).resolve("htmlview");
+                Path currentDirectory = this.getStaticFileHttpServerRootLocation().resolve("htmlview");
                 Files.createDirectories(currentDirectory);
                 this.staticFileHttpServer = new StaticFileHttpServer(currentDirectory, 0);
-                
+
                 this.staticFileHttpServer.start();
             } catch (IOException ex) {
                 Logger.getLogger(ApplicationContext.class.getName()).log(Level.SEVERE, null, ex);
@@ -230,4 +230,17 @@ public class ApplicationContext implements DataRetrieverProvider, ScriptResource
         }
         return this.staticFileHttpServer;
     }
+
+    public Path getStaticFileHttpServerRootLocation() throws Exception {
+        if (this.staticFileHttpServerRootLocation == null) {
+            throw new Exception("Static web app location root not configured");
+        }
+
+        return this.staticFileHttpServerRootLocation;
+    }
+
+    public void setStaticFileHttpServerRootLocation(Path staticWebAppRootLocation) {
+        this.staticFileHttpServerRootLocation = staticWebAppRootLocation;
+    }
+    
 }

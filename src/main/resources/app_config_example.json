@@ -31,7 +31,7 @@
                 "name": "All locations",
                 "dataSource": "PrimaryDB",
                 "businessEntityType": "locations",                
-                "request": "SELECT l.*, 'note_pin.png' as h_icon, 'Y' as export_to_timeline_enabled FROM devices.locations AS l",
+                "request": "SELECT l.*, l.created_at as start_date, 'note_pin.png' as h_icon, 'Y' as export_to_timeline_enabled FROM devices.locations AS l",
                 "requestEditable": false,
                 "requestScript": null,
                 "searchParameters": []
@@ -123,5 +123,11 @@
             "actions": [
             ]
         }        
+    ],
+    "staticWebAppConfig": [
+        {
+            "name" : "TimeLine",
+            "path" : "timeline"            
+        }    
     ]
 }

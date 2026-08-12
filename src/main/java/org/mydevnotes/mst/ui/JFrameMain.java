@@ -154,10 +154,10 @@ public class JFrameMain extends javax.swing.JFrame {
         //</editor-fold>
 
         //</editor-fold>
-        
         // TODO validate and retrieve file name for arges before loading
         loadAppConfig(args, 0, "app_config_schema.json", "app_config_example.json", AppConfig.class);
         loadAppConfig(args, 1, "env_config_schema.json", "env_config_example.json", EnvironmentConfig.class);
+        loadStaticFileHttpServerConfig(args, 2);
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
@@ -192,6 +192,16 @@ public class JFrameMain extends javax.swing.JFrame {
     private javax.swing.JSplitPane jSplitPane3;
     private javax.swing.JSplitPane jSplitPane4;
     // End of variables declaration//GEN-END:variables
+
+    private static void loadStaticFileHttpServerConfig(String[] args, int locaFileHttpServerRootArgIndex) {
+
+        String path = System.getProperty("user.dir");
+        if (args.length >= locaFileHttpServerRootArgIndex) {
+            path = args[locaFileHttpServerRootArgIndex];
+        }
+
+        ApplicationContext.getApplicationContext().setStaticFileHttpServerRootLocation(Path.of(path));
+    }
 
     private static void loadAppConfig(String[] args, int argIndex, String schemaFileName, String defaultConfigFile, Class<?> configClass) {
 
