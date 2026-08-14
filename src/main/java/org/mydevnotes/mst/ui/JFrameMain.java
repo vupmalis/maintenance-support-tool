@@ -195,12 +195,12 @@ public class JFrameMain extends javax.swing.JFrame {
 
     private static void loadStaticFileHttpServerConfig(String[] args, int locaFileHttpServerRootArgIndex) {
 
-        String path = System.getProperty("user.dir");
+        Path path = Path.of(System.getProperty("user.dir"), "htmlview");
         if (args.length >= locaFileHttpServerRootArgIndex) {
-            path = args[locaFileHttpServerRootArgIndex];
+            path = Path.of(args[locaFileHttpServerRootArgIndex]);
         }
 
-        ApplicationContext.getApplicationContext().setStaticFileHttpServerRootLocation(Path.of(path));
+        ApplicationContext.getApplicationContext().setStaticFileHttpServerRootLocation(path);
     }
 
     private static void loadAppConfig(String[] args, int argIndex, String schemaFileName, String defaultConfigFile, Class<?> configClass) {

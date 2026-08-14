@@ -218,7 +218,7 @@ public class ApplicationContext implements DataRetrieverProvider, ScriptResource
 
         if (this.staticFileHttpServer == null) {
             try {
-                Path currentDirectory = this.getStaticFileHttpServerRootLocation().resolve("htmlview");
+                Path currentDirectory = this.getStaticFileHttpServerRootLocation().resolve(this.getStaticFileHttpServerRootLocation());
                 Files.createDirectories(currentDirectory);
                 this.staticFileHttpServer = new StaticFileHttpServer(currentDirectory, 0);
 
