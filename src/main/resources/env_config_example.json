@@ -3,6 +3,7 @@
         {
             "name": "PrimaryDB",
             "type": "db",
+            "isProd": false,
             "connectionDetails": {
                 "type": "PostgreSQL",
                 "host": "localhost",
