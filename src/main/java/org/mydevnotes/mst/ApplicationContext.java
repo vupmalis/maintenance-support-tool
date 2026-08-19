@@ -243,4 +243,10 @@ public class ApplicationContext implements DataRetrieverProvider, ScriptResource
         this.staticFileHttpServerRootLocation = staticWebAppRootLocation;
     }
     
+    public boolean isProduction(){
+        var prodEnv = this.envConfig.getDataSources().stream().filter(env -> env.getIsProd()).findFirst();        
+        
+        return !prodEnv.isEmpty();
+    }
+    
 }
