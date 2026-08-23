@@ -12,6 +12,19 @@
                 "password": "qwe123",
                 "connectionString": "jdbc:postgresql://localhost:5432/iot_devices"
             }
+        },
+        {    
+            "name": "ActiveMQ",
+            "type": "jms",
+            "isProd": false,
+            "connectionDetails": {
+                "type": "ActiveMQ",
+                "host": "localhost",
+                "port": "61616",
+                "userName": "admin",
+                "password": "admin",
+                "connectionString": "tcp://localhost:61616"
+            }            
         }
     ]
 }

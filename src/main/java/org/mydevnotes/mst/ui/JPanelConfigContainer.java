@@ -1,6 +1,7 @@
 package org.mydevnotes.mst.ui;
 
 import org.mydevnotes.mst.config.DataSource;
+import org.mydevnotes.mst.datasource.DataSourceType;
 
 /**
  *
@@ -17,10 +18,11 @@ public class JPanelConfigContainer extends javax.swing.JPanel {
     
     public void addDataSourceConfig(DataSource dataSource){
         
-        switch (dataSource.getType()) {
-            case "db":
-                jTabbedPane.addTab(dataSource.getName(),new JPanelDBConfig(dataSource));                
-                break;
+        DataSourceType dataSourceType= DataSourceType.fromValue(dataSource.getType());
+        switch (dataSourceType) {
+            case DataSourceType.DB -> jTabbedPane.addTab(dataSource.getName(),new JPanelDBConfig(dataSource));
+            // TODO once specific values needed for JMS create new component
+            case DataSourceType.JMS -> jTabbedPane.addTab(dataSource.getName(),new JPanelDBConfig(dataSource));
         }        
                 
     }
