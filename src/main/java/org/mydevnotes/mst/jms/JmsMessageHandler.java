@@ -10,7 +10,7 @@ import org.mydevnotes.mst.datasource.AbstractDataSource;
  */
 public interface JmsMessageHandler extends AbstractDataSource{
     
-    public void send(String queueName, Message message);
+    public void send(String queueName, String messageText);
     public Message receive(String queueName, long timeout);
     public List<Message> browse(String queueName);
 }

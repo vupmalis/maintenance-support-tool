@@ -6,6 +6,7 @@ import jakarta.jms.JMSException;
 import jakarta.jms.Message;
 import jakarta.jms.Queue;
 import jakarta.jms.QueueBrowser;
+import jakarta.jms.TextMessage;
 import java.util.ArrayList;
 import java.util.Enumeration;
 
@@ -39,9 +40,11 @@ public class ActiveMQJmsMessageHandler implements JmsMessageHandler {
     }
 
     @Override
-    public void send(String queueName, Message message) {
+    public void send(String queueName, String messageText) {
 
         var queue = context.createQueue(queueName);
+        TextMessage message = context.createTextMessage(messageText);
+        
         this.context.createProducer()
                 .send(queue, message);
     }

@@ -105,6 +105,14 @@
                     "script": "scripts/restartDevice.groovy",
                     "reference": "id",
                     "referenceType": "long"                    
+                },
+                { 
+                    "name": "Process",
+                    "toolTip": "Add device to queue for processing",
+                    "type": "script",
+                    "script": "scripts/putToQueue.groovy",
+                    "reference": "id",
+                    "referenceType": "long"                    
                 }
             ]
         },
