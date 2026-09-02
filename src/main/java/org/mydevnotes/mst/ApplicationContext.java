@@ -210,12 +210,12 @@ public class ApplicationContext implements DataRetrieverProvider, ScriptResource
 
     @Override
     public String getBusinessEntityType() {
-        return this.applicationController.getChildBusinessEntity() == null ? this.applicationController.getChildBusinessEntity().getType() : this.applicationController.getMainBusinessEntity().getType();
+        return this.applicationController.getChildBusinessEntity() != null ? this.applicationController.getChildBusinessEntity().getType() : this.applicationController.getMainBusinessEntity().getType();
     }
 
     @Override
     public String getBusinessEntityId() {
-        return this.applicationController.getChildBusinessEntity() == null ? this.applicationController.getChildBusinessEntity().getId() : this.applicationController.getMainBusinessEntity().getId();
+        return this.applicationController.getChildBusinessEntity() != null ? this.applicationController.getChildBusinessEntity().getId() : this.applicationController.getMainBusinessEntity().getId();
     }
 
     public ApplicationController getApplicationController() {

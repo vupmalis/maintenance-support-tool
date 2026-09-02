@@ -15,7 +15,7 @@ var deviceId = scriptResourceProvider.getBusinessEntityId();
 EventLogger eventLogger = scriptResourceProvider.getEventLogger();
 
 var returnMessage = "Put device id=${deviceId} to queue"
-println returnMessage
+eventLogger.addLog(returnMessage)
 
 
 dataSource.send("test", "{\"id\":${deviceId} }")
