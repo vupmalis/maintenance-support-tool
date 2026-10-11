@@ -18,6 +18,12 @@
               "db"
             ]
           },
+          "isProd": {
+            "type": "boolean",
+            "examples": [
+              false
+            ]
+          },
           "connectionDetails": {
             "type": "object",
             "properties": {
@@ -48,13 +54,13 @@
               "password": {
                 "type": "string",
                 "examples": [
-                  "qwe123"
+                  "test"
                 ]
               },
               "connectionString": {
                 "type": "string",
                 "examples": [
-                  "jdbc:postgresql://localhost:5432/iot_devices"
+                  "iot_devices"
                 ]
               }
             },
@@ -71,6 +77,7 @@
         "required": [
           "name",
           "type",
+          "isProd",
           "connectionDetails"
         ]
       }

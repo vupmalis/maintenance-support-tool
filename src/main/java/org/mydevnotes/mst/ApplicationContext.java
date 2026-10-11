@@ -1,6 +1,5 @@
 package org.mydevnotes.mst;
 
-import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -16,8 +15,12 @@ import org.mydevnotes.mst.config.BusinessEntityConfig;
 import org.mydevnotes.mst.config.EnvironmentConfig;
 import org.mydevnotes.mst.dao.BusinessEntity;
 import org.mydevnotes.mst.dao.PostgreSqlDataRetriever;
+import org.mydevnotes.mst.datasource.AbstractDataSource;
 import org.mydevnotes.mst.datasource.DataRetriever;
 import org.mydevnotes.mst.datasource.DataRetrieverProvider;
+import org.mydevnotes.mst.datasource.DataSourceConnectionType;
+import org.mydevnotes.mst.datasource.DataSourceFactory;
+import org.mydevnotes.mst.datasource.HikariDataSourceWrapper;
 import org.mydevnotes.mst.web.StaticFileHttpServer;
 
 /**
@@ -31,6 +34,7 @@ public class ApplicationContext implements DataRetrieverProvider, ScriptResource
     private AppConfig appConfig;
     private EnvironmentConfig envConfig;
     private StaticFileHttpServer staticFileHttpServer;
+    private Path staticFileHttpServerRootLocation;
 
     public EnvironmentConfig getEnvConfig() {
         return envConfig;
@@ -44,7 +48,9 @@ public class ApplicationContext implements DataRetrieverProvider, ScriptResource
         this.eventLogger = eventLogger;
         this.applicationController.setEventLogger(eventLogger);
     }
-    private final Map<String, HikariDataSource> postgreSqlDataSources = new HashMap<>();
+
+    //TODO use abstract datasource
+    private final Map<String, AbstractDataSource> dataSources = new HashMap<>();
     private final Map<String, PostgreSqlDataRetriever> postgreSqlDataRetrievers = new HashMap<>();
 
     private EventLogger eventLogger;
@@ -90,6 +96,7 @@ public class ApplicationContext implements DataRetrieverProvider, ScriptResource
 
         disconnectPostgresqlConnection(dataSource);
 
+        /*
         HikariConfig config = new HikariConfig();
 
         config.setJdbcUrl(dataSource.getConnectionDetails().getConnectionString());
@@ -101,23 +108,26 @@ public class ApplicationContext implements DataRetrieverProvider, ScriptResource
         config.setIdleTimeout(30000);
 
         HikariDataSource newDataSource = new HikariDataSource(config);
+         */
+        AbstractDataSource newDataSource = DataSourceFactory.createDataSource(dataSource);
+        dataSources.put(dataSource.getName(), newDataSource);
 
-        postgreSqlDataSources.put(dataSource.getName(), newDataSource);
-        postgreSqlDataRetrievers.put(dataSource.getName(), new PostgreSqlDataRetriever(dataSource.getName(), newDataSource));
+        if (DataSourceConnectionType.POSTGRESQL.equals(newDataSource.getType())) {
+            postgreSqlDataRetrievers.put(dataSource.getName(), new PostgreSqlDataRetriever(dataSource.getName(), ((HikariDataSourceWrapper) newDataSource).getDataSource()));
+        }
 
         eventLogger.addLog("Created connection to " + dataSource.getName());
     }
 
     public void disconnectPostgresqlConnection(DataSource dataSource) {
-        if (postgreSqlDataSources.containsKey(dataSource.getName())) {
-            HikariDataSource oldDataSource = postgreSqlDataSources.get(dataSource.getName());
+        if (dataSources.containsKey(dataSource.getName())) {
+            var oldDataSource = dataSources.get(dataSource.getName());
+            oldDataSource.close();
+            dataSources.remove(dataSource.getName());
 
-            if (oldDataSource != null && !oldDataSource.isClosed()) {
-                oldDataSource.close();
+            if (DataSourceConnectionType.POSTGRESQL.equals(oldDataSource.getType())) {
+                postgreSqlDataRetrievers.remove(dataSource.getName());
             }
-
-            postgreSqlDataSources.remove(dataSource.getName());
-            postgreSqlDataRetrievers.remove(dataSource.getName());
             eventLogger.addLog("Disconnected from " + dataSource.getName());
         }
     }
@@ -125,8 +135,17 @@ public class ApplicationContext implements DataRetrieverProvider, ScriptResource
     @Override
     public HikariDataSource getPosgreSQLDataSource(String dataSourceName) throws DataSourceNotFoundException {
 
-        if (postgreSqlDataSources.containsKey(dataSourceName)) {
-            return postgreSqlDataSources.get(dataSourceName);
+        if (dataSources.containsKey(dataSourceName)) {
+
+            AbstractDataSource abstractDataSource = dataSources.get(dataSourceName);
+
+            if (DataSourceConnectionType.POSTGRESQL.equals(abstractDataSource.getType())) {
+                HikariDataSourceWrapper dataSourceWrapper = (HikariDataSourceWrapper) abstractDataSource;
+                return dataSourceWrapper.getDataSource();
+            }
+
+            throw new RuntimeException("Data source %s no an postgresql datasource".formatted(dataSourceName));
+
         } else {
             throw new DataSourceNotFoundException("Config does not contains PostgreSQL Datasource " + dataSourceName);
         }
@@ -135,7 +154,7 @@ public class ApplicationContext implements DataRetrieverProvider, ScriptResource
     public synchronized void closeAllDataSources() {
 
         eventLogger.addLog("Disconnected from all datasources...");
-        this.postgreSqlDataSources.forEach((key, value) -> {
+        this.dataSources.forEach((key, value) -> {
             try {
                 if (value != null) {
 
@@ -152,7 +171,7 @@ public class ApplicationContext implements DataRetrieverProvider, ScriptResource
                 e.printStackTrace();
             }
         });
-        postgreSqlDataSources.clear();
+        dataSources.clear();
         postgreSqlDataRetrievers.clear();
     }
 
@@ -177,10 +196,10 @@ public class ApplicationContext implements DataRetrieverProvider, ScriptResource
 
         if (dataSourceConfig != null) {
 
-            //TODO introduce enum
-            dataRetriever = switch (dataSourceConfig.getConnectionDetails().getType()) {
-                case "PostgreSQL" ->
-                    postgreSqlDataRetrievers.get(name);
+            DataSourceConnectionType connectionType = DataSourceConnectionType.fromValue(dataSourceConfig.getConnectionDetails().getType());
+            dataRetriever = switch (connectionType) {
+                case DataSourceConnectionType.POSTGRESQL ->
+                    this.postgreSqlDataRetrievers.get(name);
                 default ->
                     throw new IllegalStateException("Unexpected value: " + (dataSourceConfig.getType()));
             };
@@ -191,12 +210,12 @@ public class ApplicationContext implements DataRetrieverProvider, ScriptResource
 
     @Override
     public String getBusinessEntityType() {
-        return this.applicationController.getChildBusinessEntity() == null ? this.applicationController.getChildBusinessEntity().getType() : this.applicationController.getMainBusinessEntity().getType();
+        return this.applicationController.getChildBusinessEntity() != null ? this.applicationController.getChildBusinessEntity().getType() : this.applicationController.getMainBusinessEntity().getType();
     }
 
     @Override
     public String getBusinessEntityId() {
-        return this.applicationController.getChildBusinessEntity() == null ? this.applicationController.getChildBusinessEntity().getId() : this.applicationController.getMainBusinessEntity().getId();
+        return this.applicationController.getChildBusinessEntity() != null ? this.applicationController.getChildBusinessEntity().getId() : this.applicationController.getMainBusinessEntity().getId();
     }
 
     public ApplicationController getApplicationController() {
@@ -213,15 +232,14 @@ public class ApplicationContext implements DataRetrieverProvider, ScriptResource
     }
 
     @Override
-    public StaticFileHttpServer getStaticFileHttpServer() {
+    public StaticFileHttpServer getStaticFileHttpServer() throws Exception {
 
         if (this.staticFileHttpServer == null) {
             try {
-                String currentPath = System.getProperty("user.dir");
-                Path currentDirectory = Path.of(currentPath).resolve("htmlview");
+                Path currentDirectory = this.getStaticFileHttpServerRootLocation().resolve(this.getStaticFileHttpServerRootLocation());
                 Files.createDirectories(currentDirectory);
                 this.staticFileHttpServer = new StaticFileHttpServer(currentDirectory, 0);
-                
+
                 this.staticFileHttpServer.start();
             } catch (IOException ex) {
                 Logger.getLogger(ApplicationContext.class.getName()).log(Level.SEVERE, null, ex);
@@ -230,4 +248,35 @@ public class ApplicationContext implements DataRetrieverProvider, ScriptResource
         }
         return this.staticFileHttpServer;
     }
+
+    public Path getStaticFileHttpServerRootLocation() throws Exception {
+        if (this.staticFileHttpServerRootLocation == null) {
+            throw new Exception("Static web app location root not configured");
+        }
+
+        return this.staticFileHttpServerRootLocation;
+    }
+
+    public void setStaticFileHttpServerRootLocation(Path staticWebAppRootLocation) {
+        this.staticFileHttpServerRootLocation = staticWebAppRootLocation;
+    }
+
+    public boolean isProduction() {
+        var prodEnv = this.envConfig.getDataSources().stream().filter(env -> env.getIsProd()).findFirst();
+
+        return !prodEnv.isEmpty();
+    }
+
+    @Override
+    public AbstractDataSource getDataSource(String dataSourceName) throws DataSourceNotFoundException {
+
+        if (this.dataSources.containsKey(dataSourceName)) {
+
+            return this.dataSources.get(dataSourceName);
+
+        } else {
+            throw new DataSourceNotFoundException("Config does not contains PostgreSQL Datasource " + dataSourceName);
+        }
+    }
+
 }

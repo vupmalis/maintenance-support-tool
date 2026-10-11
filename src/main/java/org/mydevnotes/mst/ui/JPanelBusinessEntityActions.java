@@ -9,6 +9,7 @@ import org.mydevnotes.mst.BusinessEntityListener;
 import org.mydevnotes.mst.action.ActionScriptExecutor;
 import org.mydevnotes.mst.config.Action;
 import org.mydevnotes.mst.config.AppConfig;
+import org.mydevnotes.mst.config.EnvironmentConfig;
 import org.mydevnotes.mst.dao.BusinessEntity;
 
 /**
@@ -54,16 +55,20 @@ public class JPanelBusinessEntityActions extends javax.swing.JPanel implements B
 
         if (businessEntity != null) {
 
-            AppConfig appConfig = ApplicationContext.getApplicationContext().getAppConfig();
+            var isProduction = ApplicationContext.getApplicationContext().isProduction();
 
-            var entityConfig = appConfig.getBusinessEntityConfig().stream().filter(cfg -> cfg.getBusinessEntityType().equals(businessEntity.getType())).findFirst().orElse(null);
+            if (!isProduction) {
+                AppConfig appConfig = ApplicationContext.getApplicationContext().getAppConfig();
 
-            if (entityConfig != null) {
+                var entityConfig = appConfig.getBusinessEntityConfig().stream().filter(cfg -> cfg.getBusinessEntityType().equals(businessEntity.getType())).findFirst().orElse(null);
 
-                entityConfig.getActions().forEach(actionConfig -> {
-                    JButton actionButton = createActionButton(actionConfig, businessEntity);
-                    this.add(actionButton);
-                });
+                if (entityConfig != null) {
+
+                    entityConfig.getActions().forEach(actionConfig -> {
+                        JButton actionButton = createActionButton(actionConfig, businessEntity);
+                        this.add(actionButton);
+                    });
+                }
             }
 
             if (businessEntity.getAttributes().containsKey("export_to_timeline_enabled")) {

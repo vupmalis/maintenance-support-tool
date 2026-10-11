@@ -33,7 +33,7 @@
               "request": {
                 "type": "string",
                 "examples": [
-                  "SELECT d.* FROM devices.devices AS d WHERE d.id=?"
+                  "SELECT d.*, 'Y' as export_to_timeline_enabled, d.created_at as start_date  FROM devices.devices AS d WHERE d.id=?"
                 ]
               },
               "requestEditable": {
@@ -135,7 +135,7 @@
                 "request": {
                   "type": "string",
                   "examples": [
-                    "SELECT d.id, d.name, dt.name as device_type, 'lightbulb.png' as h_icon FROM devices.devices AS d join devices.device_types dt on dt.id = d.device_type_id WHERE d.location_id = ?"
+                    "SELECT d.id, d.name, dt.name as device_type, 'lightbulb.png' as h_icon, d.created_at as start_date FROM devices.devices AS d join devices.device_types dt on dt.id = d.device_type_id WHERE d.location_id = ?"
                   ]
                 },
                 "parentReference": {
@@ -289,12 +289,37 @@
           "actions"
         ]
       }
+    },
+    "staticWebAppConfig": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "examples": [
+              "TimeLine"
+            ]
+          },
+          "path": {
+            "type": "string",
+            "examples": [
+              "timeline"
+            ]
+          }
+        },
+        "required": [
+          "name",
+          "path"
+        ]
+      }
     }
   },
   "required": [
     "searchConfig",
     "businessEntityRelations",
-    "businessEntityConfig"
+    "businessEntityConfig",
+    "staticWebAppConfig"
   ],
   "$schema": "https://json-schema.org/draft/2020-12/schema"
 }

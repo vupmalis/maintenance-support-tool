@@ -1,6 +1,8 @@
 
 import java.awt.Desktop
 import java.nio.file.Path
+import java.nio.file.*
+import java.util.zip.ZipInputStream
 import org.mydevnotes.mst.web.StaticFileHttpServer
 import org.mydevnotes.mst.action.scripts.ScriptResourcesProvider
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -31,6 +33,7 @@ File file = serverRootPath
 file.parentFile.mkdirs()
 file.text = json
 
+// open page
 server.openBrowser(timelinePath + "/index.html");
 
 return null;

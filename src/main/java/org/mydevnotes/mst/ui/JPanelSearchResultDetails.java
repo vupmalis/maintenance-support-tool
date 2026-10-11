@@ -136,7 +136,7 @@ public class JPanelSearchResultDetails extends javax.swing.JPanel implements Bus
         DefaultTreeModel model = new DefaultTreeModel(root);
 
         this.jTreeDetails.setModel(model);
-        expandAll(this.jTreeDetails);
+        //expandAll(this.jTreeDetails);
 
     }
 

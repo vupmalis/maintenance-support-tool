@@ -17,6 +17,7 @@ import jakarta.validation.constraints.NotNull;
 @JsonPropertyOrder({
     "name",
     "type",
+    "isProd",
     "connectionDetails"
 })
 @Generated("jsonschema2pojo")
@@ -38,6 +39,14 @@ public class DataSource {
     @JsonProperty("type")
     @NotNull
     private String type;
+    /**
+     * 
+     * (Required)
+     * 
+     */
+    @JsonProperty("isProd")
+    @NotNull
+    private Boolean isProd;
     /**
      * 
      * (Required)
@@ -88,6 +97,26 @@ public class DataSource {
     @JsonProperty("type")
     public void setType(String type) {
         this.type = type;
+    }
+
+    /**
+     * 
+     * (Required)
+     * 
+     */
+    @JsonProperty("isProd")
+    public Boolean getIsProd() {
+        return isProd;
+    }
+
+    /**
+     * 
+     * (Required)
+     * 
+     */
+    @JsonProperty("isProd")
+    public void setIsProd(Boolean isProd) {
+        this.isProd = isProd;
     }
 
     /**
